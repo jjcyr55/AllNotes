@@ -1,0 +1,129 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:AllNotes.ViewModels"
+             xmlns:fab="clr-namespace:Refractored.FabControl;assembly=Refractored.FabControl"
+             xmlns:converters="clr-namespace:AllNotes.Converters"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="AllNotes.MainPage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ColorConverter x:Key="colorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <!--<ContentPage.BindingContext>
+        <local:MainPageViewModel />
+    </ContentPage.BindingContext>-->
+
+    <AbsoluteLayout>
+        <ScrollView AbsoluteLayout.LayoutBounds = "0,0,1,1" AbsoluteLayout.LayoutFlags = "All">
+            <StackLayout>
+                <FlexLayout JustifyContent="Center" AlignContent="Center" Margin="100">
+                    <Label Text="All Notes" FontSize='30' FontAttributes="Bold" />
+                </FlexLayout>
+
+                <Grid x:Name="NotesGrid" RowDefinitions="Auto" Padding="0" Margin="20,0" RowSpacing="0">
+                    <CollectionView x:Name="NotesCV" SelectionMode="{Binding SelectionMode}" SelectedItems="{Binding SelectedNotes}" ItemsSource="{Binding Notes}">
+                        <CollectionView.ItemsLayout>
+                            <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="0" VerticalItemSpacing="30" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.EmptyView>
+                            <Label Text="You have no notes..." />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <FlexLayout Direction="Column" AlignItems="Center">
+                                    <VisualStateManager.VisualStateGroups x:Name="CommonStates">
+                                        <VisualStateGroup>
+                                            <VisualState Name="Normal">
+                                                <VisualState.Setters>
+                                                    <Setter TargetName="Check" Property="Image.IsVisible" Value="False" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                            <VisualState Name="Selected">
+                                                <VisualState.Setters>
+                                                    <Setter TargetName="Check" Property="Image.IsVisible" Value="True" />
+                                                </VisualState.Setters>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+
+                                    <Frame CornerRadius="15"
+                                   HorizontalOptions="Center"
+                                   VerticalOptions="Start"
+                                   HasShadow="True"
+                                   IsClippedToBounds="True"
+                                   Padding="0">
+
+                                        <AbsoluteLayout HeightRequest="100"
+                                                    WidthRequest="100"
+                                                    BackgroundColor="{Binding Color, Converter={StaticResource colorConverter}}"
+                                                    xct:TouchEffect.NativeAnimation="true"
+                                                    xct:TouchEffect.Command="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.TapNoteCommand}"
+                                                    xct:TouchEffect.CommandParameter="{Binding .}"
+                                                    xct:TouchEffect.LongPressCommand="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.LongPressNoteCommand}"
+                                                    xct:TouchEffect.LongPressCommandParameter="{Binding .}">
+                                            <Image
+                                                x:Name="Check"
+                                                Source="check.png"
+                                                HeightRequest="20"
+                                                WidthRequest="20"
+                                                BackgroundColor="Transparent"
+                                                Margin="5"
+                                                IsVisible="false"
+                                                xct:IconTintColorEffect.TintColor="Orange" />
+                                            <Label Text="{Binding Text}" MaxLines="5" LineBreakMode="TailTruncation" Padding="15" FontSize="12" />
+                                        </AbsoluteLayout>
+                                    </Frame>
+                                    <Label Text="{Binding Title}" MaxLines="1"  WidthRequest="95" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                                    <Label Text="{Binding Date}" MaxLines="1" WidthRequest="80" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
+                                </FlexLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </Grid>
+            </StackLayout>
+        </ScrollView>
+
+        <fab:FloatingActionButtonView
+            Command="{Binding OpenNewNoteScreenCommand}"
+            Margin="10"
+            ImageName="newNoteMini.png"
+            Size="Normal"
+            ColorNormal="White"
+            ColorRipple="Gray"
+            IsVisible="{Binding ShowFab}"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" />
+
+        <FlexLayout
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+            Direction="Row"
+            HeightRequest="60"
+            AlignItems="Center"
+            JustifyContent="Center"
+            IsVisible="{Binding MultiSelectEnabled}">
+
+            <FlexLayout
+                HeightRequest="60"
+                WidthRequest="60"
+                Direction="Column"
+                JustifyContent="Center"
+                AlignItems="Center"
+                AlignContent="Center"
+                xct:CornerRadiusEffect.CornerRadius="20"
+                xct:TouchEffect.NativeAnimation="True"
+                xct:TouchEffect.Command="{Binding DeleteNotesCommand}">
+                <Image
+                    Source="trash.png"
+                    HeightRequest="20"
+                    WidthRequest="20"
+                    BackgroundColor="Transparent" />
+                <Label Text="Delete" FontSize="10" HorizontalTextAlignment="Center" />
+            </FlexLayout>
+        </FlexLayout>
+    </AbsoluteLayout>
+</ContentPage>

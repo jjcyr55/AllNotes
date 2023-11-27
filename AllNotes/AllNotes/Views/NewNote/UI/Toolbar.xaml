@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<FlexLayout xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AllNotes.Views.NewNote.UI.Toolbar"
+             xmlns:ui="clr-namespace:AllNotes.Views.NewNote.UI"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             JustifyContent="Center"
+             Direction="Row"
+             BackgroundColor="White"
+             HeightRequest="50">
+    <ui:ToolbarButton xct:TouchEffect.Command="{Binding OpenJustifyTextPopupCommand}">
+        <ui:ToolbarButton.Resources>
+            <Style TargetType="Label">
+                <Setter TargetName="Icon" Property="Text" Value="{StaticResource Justify}" />
+            </Style>
+        </ui:ToolbarButton.Resources>
+    </ui:ToolbarButton>
+    <ui:ToolbarButton xct:TouchEffect.Command="{Binding BoldTextCommand}">
+        <ui:ToolbarButton.Resources>
+            <Style TargetType="Label">
+                <Setter TargetName="Icon" Property="Text" Value="{StaticResource Bold}" />
+            </Style>
+        </ui:ToolbarButton.Resources>
+    </ui:ToolbarButton>
+    <ui:ToolbarButton xct:TouchEffect.Command="{Binding ItalicizeTextCommand}">
+        <ui:ToolbarButton.Resources>
+            <Style TargetType="Label">
+                <Setter TargetName="Icon" Property="Text" Value="{StaticResource Italic}" />
+            </Style>
+        </ui:ToolbarButton.Resources>
+    </ui:ToolbarButton>
+    <ui:ToolbarButton>
+        <ui:ToolbarButton.Resources>
+            <Style TargetType="Label">
+                <Setter TargetName="Icon" Property="Text" Value="{StaticResource Underline}" />
+            </Style>
+        </ui:ToolbarButton.Resources>
+    </ui:ToolbarButton>
+    <ui:ToolbarFontSizeItem xct:TouchEffect.Command="{Binding OpenFontSizePopupCommand}" />
+</FlexLayout>

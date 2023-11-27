@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AllNotes.App"
+             xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
+             android:Application.WindowSoftInputModeAdjust="Resize">
+    <Application.Resources>
+        <ResourceDictionary>
+            <x:String x:Key="AlignLeft">&#xf036;</x:String>
+            <x:String x:Key="AlignCenter">&#xf037;</x:String>
+            <x:String x:Key="AlignRight">&#xf038;</x:String>
+            <x:String x:Key="Justify">&#xf039;</x:String>
+            <x:String x:Key="Underline">&#xf0cd;</x:String>
+            <x:String x:Key="Italic">&#xf033;</x:String>
+            <x:String x:Key="Bold">&#xf032;</x:String>
+            <x:String x:Key="CaretDown">&#xf0d7;</x:String>
+            <x:String x:Key="Check">&#xf00c;</x:String>
+            <Color x:Key="LightGray">#f7f7f7</Color>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:ui="clr-namespace:AllNotes.Views.NewNote.UI"
+             x:Class="AllNotes.Views.NewNote.Popups.JustifyTextSelectionPopup"
+             x:Name="Popup"
+             Size="200,150"
+             Color="Transparent"
+             BackgroundColor="Transparent"
+             xct:ShadowEffect.Color="Transparent">
+
+    <Frame CornerRadius="15"
+           HasShadow="True"
+           IsClippedToBounds="True"
+           Padding="1"
+           Margin="1">
+
+        <FlexLayout Direction="Column" JustifyContent="Center" AlignItems="Center">
+            <Label Text="Align Text" FontAttributes="Bold" Margin="0,10" />
+            <FlexLayout Direction="Row"
+                        JustifyContent="Center"
+                        AlignItems="Center"
+                        BackgroundColor="{StaticResource LightGray}"
+                        HeightRequest="55"
+                        WidthRequest="155"
+                        xct:CornerRadiusEffect.CornerRadius="15">
+                <ui:ToolbarButton xct:TouchEffect.Command="{Binding AlignTextLeftCommand}">
+                    <ui:ToolbarButton.Resources>
+                        <Style TargetType="Label">
+                            <Setter TargetName="Icon" Property="Text" Value="{StaticResource AlignLeft}" />
+                        </Style>
+                    </ui:ToolbarButton.Resources>
+                </ui:ToolbarButton>
+                <ui:ToolbarButton xct:TouchEffect.Command="{Binding AlignTextCenterCommand}">
+                    <ui:ToolbarButton.Resources>
+                        <Style TargetType="Label">
+                            <Setter TargetName="Icon" Property="Text" Value="{StaticResource AlignCenter}" />
+                        </Style>
+                    </ui:ToolbarButton.Resources>
+                </ui:ToolbarButton>
+                <ui:ToolbarButton xct:TouchEffect.Command="{Binding AlignTextRightCommand}">
+                    <ui:ToolbarButton.Resources>
+                        <Style TargetType="Label">
+                            <Setter TargetName="Icon" Property="Text" Value="{StaticResource AlignRight}" />
+                        </Style>
+                    </ui:ToolbarButton.Resources>
+                </ui:ToolbarButton>
+            </FlexLayout>
+        </FlexLayout>
+    </Frame>
+</xct:Popup>

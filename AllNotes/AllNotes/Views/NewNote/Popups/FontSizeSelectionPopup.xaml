@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="AllNotes.Views.NewNote.Popups.FontSizeSelectionPopup"
+             x:Name="Popup"
+             Size="100,300"
+             Color="Transparent"
+             BackgroundColor="Transparent"
+             xct:ShadowEffect.Color="Transparent">
+
+    <Frame CornerRadius="15"
+           HasShadow="True"
+           IsClippedToBounds="True"
+           Padding="20"
+           Margin="20"
+           x:Name="FontSizePopup">
+        <CollectionView SelectionMode="Single"
+                        SelectedItem="{Binding FontSize}"
+                        ItemsSource="{Binding FontSizes}">
+            <CollectionView.EmptyView>
+                <Label Text="Error" />
+            </CollectionView.EmptyView>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <FlexLayout Direction="Row"
+                                HeightRequest="30"
+                                WidthRequest="50"
+                                xct:TouchEffect.NativeAnimation="true"
+                                xct:TouchEffect.Command="{Binding Source={x:Reference FontSizePopup}, Path=BindingContext.ChangeFontSizeCommand}"
+                                xct:TouchEffect.CommandParameter="{Binding .}">
+                        <VisualStateManager.VisualStateGroups>
+                            <VisualStateGroup>
+                                <VisualState Name="Normal">
+                                    <VisualState.Setters>
+                                    </VisualState.Setters>
+                                </VisualState>
+                                <VisualState Name="Selected">
+                                    <VisualState.Setters>
+                                        <Setter TargetName="SelectedCheckMark" Property="IsVisible" Value="True" />
+                                    </VisualState.Setters>
+                                </VisualState>
+                            </VisualStateGroup>
+                        </VisualStateManager.VisualStateGroups>
+                        <Label x:Name="FontItem"
+                               Text="{Binding .}"
+                               TextColor="Black"
+                               HeightRequest="30"
+                               WidthRequest="50"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Start">
+                        </Label>
+                        <Label x:Name="SelectedCheckMark"
+                               Text="{StaticResource Check}"
+                               FontFamily="FAS"
+                               FontSize="Medium"
+                               HeightRequest="30"
+                               WidthRequest="50"
+                               TextColor="Orange"
+                               IsVisible="False"
+                               VerticalTextAlignment="Center"
+                               HorizontalTextAlignment="Center" />
+                    </FlexLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Frame>
+</xct:Popup>

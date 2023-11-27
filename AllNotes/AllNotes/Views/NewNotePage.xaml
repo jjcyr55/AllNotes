@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:converters="clr-namespace:AllNotes.Converters"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:ui="clr-namespace:AllNotes.Views.NewNote.UI"
+             xmlns:local="clr-namespace:AllNotes.CustomRenderers"
+             x:Class="AllNotes.Views.NewNote.NewNotePage">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ColorConverter x:Key="colorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <ContentPage.Content>
+        <FlexLayout Direction="Column" BackgroundColor="{Binding NewNoteColor, Converter={StaticResource colorConverter}}">
+            <FlexLayout Direction="Row" HeightRequest="60" Margin="10, 0" AlignItems="Center">
+                <ImageButton
+                    Command="{Binding SaveNoteCommand}"
+                    Source="back.png"
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    BackgroundColor="Transparent"
+                    Padding="15"
+                    CornerRadius="30"
+                    xct:TouchEffect.NativeAnimation="True" />
+                <local:EntryNoUnderline Placeholder="Title" Text="{Binding NewNoteTitle}" FlexLayout.Grow="1" />
+                <ImageButton
+                    Command="{Binding OpenMenuCommand}"
+                    Source="menuDots.png"
+                    HeightRequest="50"
+                    WidthRequest="50"
+                    BackgroundColor="Transparent"
+                    Padding="15"
+                    CornerRadius="30"
+                    xct:TouchEffect.NativeAnimation="True" />
+            </FlexLayout>
+            <local:EditorNoUnderline
+                x:Name="editor"
+                Keyboard="Chat"
+                Margin="20, 0"
+                Placeholder="Type here..."
+                Text="{Binding NewNoteText}"
+                FontSize="{Binding FontSize}"
+                FontAttributes="{Binding FontAttribute}"
+                FlexLayout.Grow="1" />
+            <ui:Toolbar />
+        </FlexLayout>
+    </ContentPage.Content>
+</ContentPage>
