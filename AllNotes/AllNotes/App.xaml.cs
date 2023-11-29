@@ -1,18 +1,21 @@
 ﻿using System;
 using SQLite;
-using System;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 //using AllNotes.Data;
 //using AllNotes.ViewModels;
 using SQLite;
 using AllNotes.Data;
+using AllNotes.Services;
 
 namespace AllNotes
 {
     public partial class App : Application
     {
         private static SQLiteAsyncConnection database;
+        public static object INoteRepository { get; internal set; }
+
 
         public static SQLiteAsyncConnection Database
         {
@@ -26,6 +29,8 @@ namespace AllNotes
                 return database;
             }
         }
+
+       // public static object INoteRepository { get; set; }
 
         public App()
         {

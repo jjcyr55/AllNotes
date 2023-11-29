@@ -9,9 +9,14 @@ namespace AllNotes.Interfaces
     public interface INoteRepository
     {
         Task<IEnumerable<Note>> GetNotes();
+
         Task<Note> GetNoteById(int id);
-        Task CreateNote(string title, string text, string data, int color);
+
+        Task CreateNote(string title, string text, string date, int color);
+
         Task DeleteNote(Note note);
-        Task EditNote(int id, string title, string text, string data, int color);
+
+        Task EditNote(int id, string title, string text, string date, int color);
+        Task<IEnumerable<Note>> SearchNotesAsync(string searchKeyword);
     }
 }

@@ -14,7 +14,9 @@ namespace AllNotes.Models
         public string Description { get; set; } = "";
         public string Date {  get; set; }
 
-     //   public DateTime Date { get; set; }
+        //   public DateTime Date { get; set; }
+        public string NoteBody { get; set; } = ""; // Add this line
+
 
         public bool IsChecked { get; set; }
 
@@ -24,6 +26,8 @@ namespace AllNotes.Models
         public string Text { get; set; }
 
         public int Color { get; set; }
-
+        public string Content { get; set; }
+        public DateTime CreatedAt { get; set; }
+       
     }
 }

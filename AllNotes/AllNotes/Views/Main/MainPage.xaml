@@ -24,6 +24,32 @@
                     <Label Text="All Notes" FontSize='30' FontAttributes="Bold" />
                 </FlexLayout>
 
+                <Frame x:Name="frameTop" BackgroundColor="Transparent"  Margin="20,0,20,0" Padding="0,10,0,0" IsVisible="true">
+                    <ImageButton Clicked="BtnOption_Clicked" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Source="dotsBlack.png" WidthRequest="30" 
+  HeightRequest="30" BackgroundColor="#f3f2f3" />
+                </Frame>
+
+
+                <StackLayout x:Name="stackTop" Margin="20,0,20,0" IsVisible="true">
+                    <Label Text="All notes" FontAttributes="Bold" FontSize="30" TextColor="Black"/>
+                    <Label x:Name="LblNbNotes" Text="76 notes" FontSize="Small"/>
+                </StackLayout>
+
+
+                <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
+                    <SearchBar x:Name="searchBarElement"
+                               Text="{Binding SearchQuery}"
+               Placeholder="Search a note"
+               TextChanged="SearchBar_TextChanged"
+               FontSize="Small"
+               TextColor="Black"
+               HorizontalOptions="FillAndExpand">
+                        <SearchBar.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="SearchBar_Tapped" />
+                        </SearchBar.GestureRecognizers>
+                    </SearchBar>
+                </Frame>
+
                 <Grid x:Name="NotesGrid" RowDefinitions="Auto" Padding="0" Margin="20,0" RowSpacing="0">
                     <CollectionView x:Name="NotesCV" SelectionMode="{Binding SelectionMode}" SelectedItems="{Binding SelectedNotes}" ItemsSource="{Binding Notes}">
                         <CollectionView.ItemsLayout>

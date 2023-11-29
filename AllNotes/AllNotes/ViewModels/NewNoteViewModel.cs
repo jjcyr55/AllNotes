@@ -8,8 +8,7 @@ using System.Collections.ObjectModel;
 using Xamarin.CommunityToolkit.Extensions;
 using AllNotes.Views.NewNote.Popups;
 using System.ComponentModel;
-using AllNotes.Repositories;
-using AllNotes.Views.NewNote.Popups;
+using AllNotes.Services;
 
 namespace AllNotes.ViewModels
 {

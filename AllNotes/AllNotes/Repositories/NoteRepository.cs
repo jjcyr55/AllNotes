@@ -5,8 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using SQLite;
 using AllNotes.Models;
+using System.Linq;
 
-namespace AllNotes.Repositories
+namespace AllNotes.Services
 {
     public class NoteRepository : INoteRepository
     {
@@ -50,8 +51,42 @@ namespace AllNotes.Repositories
 
         public async Task<IEnumerable<Note>> GetNotes()
         {
-            var results = await _database.Table<Note>().ToListAsync();
-            return results;
+            try
+            {
+                // Use await to asynchronously execute the query
+                var results = await _database.Table<Note>().ToListAsync();
+
+                // Return the results
+                return results;
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here, log or rethrow if necessary
+                return new List<Note>(); // Return an empty list in case of an error
+            }
+        }
+        /// <summary>
+        /// Search Note
+        /// </summary>
+        /// <param name="a"></param>
+        /// <returns></returns>
+        public async Task<IEnumerable<Note>> SearchNotesAsync(string searchKeyword)
+        {
+            try
+            {
+                string searchNoSpaces = searchKeyword.Replace(" ", "%");
+
+                // Use await to asynchronously execute the query
+                var result = await _database.QueryAsync<Note>("SELECT * FROM Notes WHERE Title LIKE ?", "%" + searchNoSpaces + "%");
+
+                // Convert the result to a List<Note> and return it
+                return result.ToList();
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions here, log, or rethrow if necessary
+                return new List<Note>(); // Return an empty list in case of an error
+            }
         }
     }
 }

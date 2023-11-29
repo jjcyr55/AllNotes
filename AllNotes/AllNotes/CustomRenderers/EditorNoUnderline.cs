@@ -7,7 +7,7 @@ namespace AllNotes.CustomRenderers
 {
     public class EditorNoUnderline : Editor
     {
-        public static readonly BindableProperty AlignProperty =
+        public static readonly BindableProperty AlignmentProperty =
             BindableProperty.Create(nameof(Alignment),
                 typeof(int),
                 typeof(EditorNoUnderline),
@@ -18,16 +18,16 @@ namespace AllNotes.CustomRenderers
         {
             var editor = bindable as EditorNoUnderline;
             editor.Alignment = (int)newValue;
-
         }
+
         public int Alignment
         {
-            get { return (int)GetValue(AlignProperty); }
-            set { SetValue(AlignProperty, value); }
+            get { return (int)GetValue(AlignmentProperty); }
+            set { SetValue(AlignmentProperty, value); }
         }
+
         public EditorNoUnderline()
         {
-
         }
     }
 }

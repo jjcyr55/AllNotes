@@ -4,23 +4,123 @@ using System.ComponentModel;
 using System.Windows.Input;
 using Xamarin.Forms;
 using AllNotes.Models;
-//using AllNotes.Services;
+using AllNotes.Services;
 using AllNotes.Views.NewNote;
-using AllNotes.Repositories;
+//using AllNotes.Repositories;
 using AllNotes.ViewModels;
+using System.Linq;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Collections.Generic;
+using SQLite;
+using AllNotes.Data;
+using System.Threading.Tasks;
+using AllNotes.Interfaces;
 
 public class MainPageViewModel : INotifyPropertyChanged
 {
-    public ObservableCollection<Note> Notes { get; set; }
+ 
+    private MainPageViewModel _mainPageViewModel;
+    private readonly SQLiteAsyncConnection _database;
+
+    private readonly INoteRepository _noteRepository;
+
+ 
     private ObservableCollection<object> _selectedNotes;
-    private NoteRepository _noteRepository;
     private SelectionMode _selectionMode = SelectionMode.None;
 
     private bool _multiSelectEnabled = false;
     private bool _showFab = true;
 
-    public bool ShowFab
+  
+    protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "", Action onChanged = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(backingStore, value))
+            return false;
 
+        backingStore = value;
+        onChanged?.Invoke();
+        OnPropertyChanged(propertyName);
+
+        return true;
+    }
+
+    private ObservableCollection<Note> _notes;
+    private ObservableCollection<Note> _originalNotes; // Add this line
+
+    public ObservableCollection<Note> Notes
+    {
+        get => _notes;
+        set
+        {
+            _notes = value;
+            OnPropertyChanged(nameof(Notes));
+        }
+    }
+
+    private string _searchQuery;
+
+    public string SearchQuery
+    {
+        get => _searchQuery;
+        set
+        {
+            _searchQuery = value;
+            OnPropertyChanged(nameof(SearchQuery));
+            FilterNotes();
+        }
+    }
+
+    private void FilterNotes()
+    {
+        if (_originalNotes == null)
+        {
+            _originalNotes = new ObservableCollection<Note>(Notes);
+        }
+
+        // If the search query is empty, show all notes
+        if (string.IsNullOrWhiteSpace(SearchQuery))
+        {
+            Notes = new ObservableCollection<Note>(_originalNotes);
+        }
+        else
+        {
+            // Convert the search query to lowercase for case-insensitive comparison
+            string query = SearchQuery.ToLowerInvariant();
+
+            // Filter notes based on whether the title OR note body contains the search query
+            Notes = new ObservableCollection<Note>(_originalNotes.Where(n => n.Title.ToLowerInvariant().Contains(query) || n.Text.ToLowerInvariant().Contains(query)));
+        }
+    }
+   //  THE SEARCH FINALLY WORKS!!!!!!!!!!!!!!!!!!!
+
+
+    /* private void FilterNotes()
+     {
+         if (_originalNotes == null)
+         {
+             _originalNotes = new ObservableCollection<Note>(Notes);
+         }
+
+         // If the search query is empty, show all notes
+         if (string.IsNullOrWhiteSpace(SearchQuery))
+         {
+             Notes = new ObservableCollection<Note>(_originalNotes);
+         }
+         else
+         {
+             // Convert the search query to lowercase for case-insensitive comparison
+             string query = SearchQuery.ToLowerInvariant();
+
+             // Filter notes based on whether the title contains the search query
+             Notes = new ObservableCollection<Note>(_originalNotes.Where(n => n.Title.ToLowerInvariant().Contains(query)));
+         }
+     }
+    */
+
+
+
+    public bool ShowFab
     {
         get => _showFab;
         set
@@ -30,8 +130,17 @@ public class MainPageViewModel : INotifyPropertyChanged
         }
     }
 
-    public bool MultiSelectEnabled
+  
 
+    private ObservableCollection<Note> _filteredNotes;
+    private object resultCount;
+
+    public ObservableCollection<Note> FilteredNotes
+    {
+        get => _filteredNotes;
+        set => SetProperty(ref _filteredNotes, value);
+    }
+    public bool MultiSelectEnabled
     {
         get => _multiSelectEnabled;
         set
@@ -65,7 +174,7 @@ public class MainPageViewModel : INotifyPropertyChanged
 
     public event PropertyChangedEventHandler PropertyChanged;
 
-    public void OnPropertyChanged(string propertyName)
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
@@ -73,12 +182,61 @@ public class MainPageViewModel : INotifyPropertyChanged
     public MainPageViewModel()
     {
         _noteRepository = new NoteRepository();
-        Notes = new ObservableCollection<Note>();
+        _notes = new ObservableCollection<Note>();
         _selectedNotes = new ObservableCollection<object>();
         TapNoteCommand = new Command<Note>(TapNote);
         LongPressNoteCommand = new Command<Note>(LongPressNote);
         GetNotesFromDb();
+
+        _filteredNotes = new ObservableCollection<Note>();
+        FilteredNotes = new ObservableCollection<Note>(_notes);
     }
+
+    
+    public async Task SearchNotes(string searchKeyword)
+    {
+        Debug.WriteLine($"Searching notes for: {searchKeyword}");
+
+        try
+        {
+            var searchResults = await _noteRepository.SearchNotesAsync(searchKeyword);
+
+            if (searchResults != null)
+            {
+                SelectedNotes = new ObservableCollection<object>(_selectedNotes.Cast<object>().ToList());
+                Debug.WriteLine($"Found {resultCount} notes matching the search.");
+
+                // Assuming you have a property named FilteredNotes, update it
+                FilteredNotes = new ObservableCollection<Note>(searchResults);
+            }
+            else
+            {
+                Debug.WriteLine("Search results are null.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"An error occurred during search: {ex.Message}");
+            // Handle the exception as needed
+        }
+    }
+
+
+
+
+    private void LogException(Exception ex)
+    {
+        // You can implement logging logic here, for example, using a logging framework.
+        // Example: Serilog.Logger.Error(ex, "An error occurred in SearchNotes");
+    }
+
+    private void ShowErrorMessage(string message)
+    {
+        // You can implement a method to show the error message to the user.
+        // This might involve displaying a dialog or updating a status bar.
+        // Example: MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+
 
     public ICommand OpenNewNoteScreenCommand => new Command(OpenNewNoteScreen);
 
@@ -130,7 +288,6 @@ public class MainPageViewModel : INotifyPropertyChanged
             }
         }
     }
-
     public void ShowOrHideToolbar()
     {
         MultiSelectEnabled = !MultiSelectEnabled;
@@ -153,5 +310,6 @@ public class MainPageViewModel : INotifyPropertyChanged
         SelectionMode = SelectionMode.None;
         GetNotesFromDb();
     }
+
 }
 
