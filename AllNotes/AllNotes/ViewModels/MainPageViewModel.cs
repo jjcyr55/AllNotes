@@ -92,7 +92,7 @@ public class MainPageViewModel : INotifyPropertyChanged
             Notes = new ObservableCollection<Note>(_originalNotes.Where(n => n.Title.ToLowerInvariant().Contains(query) || n.Text.ToLowerInvariant().Contains(query)));
         }
     }
-   //  THE SEARCH FINALLY WORKS!!!!!!!!!!!!!!!!!!!
+   //  THE SEARCH FINALLY WORKS!!!!!!!!!!!!!!!!!!! if only it will update in github
 
 
     /* private void FilterNotes()
