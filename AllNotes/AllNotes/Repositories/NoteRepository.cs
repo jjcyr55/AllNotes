@@ -1,6 +1,9 @@
 ﻿using AllNotes.Interfaces;
 using System;
 using System.Collections.Generic;
+using AllNotes.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using SQLite;
@@ -12,7 +15,7 @@ namespace AllNotes.Services
     public class NoteRepository : INoteRepository
     {
         private readonly SQLiteAsyncConnection _database = App.Database;
-    
+
         public async Task CreateNote(string title, string text, string date, int color)
         {
             var note = new Note
@@ -45,7 +48,7 @@ namespace AllNotes.Services
 
         public async Task<Note> GetNoteById(int id)
         {
-           var note = await _database.FindAsync<Note>(id);
+            var note = await _database.FindAsync<Note>(id);
             return note;
         }
 

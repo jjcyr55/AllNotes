@@ -8,37 +8,42 @@ using Xamarin.Forms.Xaml;
 using SQLite;
 using AllNotes.Data;
 using AllNotes.Services;
+using AllNotes.Views;
 
 namespace AllNotes
 {
-    public partial class App : Application
-    {
-        private static SQLiteAsyncConnection database;
-        public static object INoteRepository { get; internal set; }
-
-
-        public static SQLiteAsyncConnection Database
+   
+        public partial class App : Application
         {
-            get
+            private static SQLiteAsyncConnection database;
+            public static object INoteRepository { get; internal set; }
+
+
+            public static SQLiteAsyncConnection Database
             {
-                if (database == null)
+                get
                 {
-                    database = new Database()._database;
+                    if (database == null)
+                    {
+                        database = new IDatabase()._database;
+                    }
+
+                    return database;
                 }
-
-                return database;
             }
-        }
 
-       // public static object INoteRepository { get; set; }
+            // public static object INoteRepository { get; set; }
 
-        public App()
+            public App()
         {
             InitializeComponent();
-            var mainPageViewModel = new MainPageViewModel();
-            MainPage = new NavigationPage(new MainPage(mainPageViewModel));
-            MainPage.BindingContext = mainPageViewModel;
+
+            //DependencyService.Register<Database>();
+              
+            MainPage = new NavigationPage(new FlyoutPage1());
+           
         }
+      
 
         protected override void OnStart()
         {

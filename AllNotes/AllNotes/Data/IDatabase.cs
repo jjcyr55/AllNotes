@@ -10,11 +10,11 @@ using Xamarin.Essentials;
 namespace AllNotes.Data
 {
 
-    public class Database
+    public class IDatabase
     {
         public readonly SQLiteAsyncConnection _database;
 
-        public Database()
+        public IDatabase()
         {
             var dbPath = Path.Combine(FileSystem.AppDataDirectory, "MyData.db");
             _database = new SQLiteAsyncConnection(dbPath);

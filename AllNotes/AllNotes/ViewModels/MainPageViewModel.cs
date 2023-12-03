@@ -16,23 +16,25 @@ using SQLite;
 using AllNotes.Data;
 using System.Threading.Tasks;
 using AllNotes.Interfaces;
+using AllNotes.Views;
+using AllNotes.Database;
 
 public class MainPageViewModel : INotifyPropertyChanged
 {
- 
+
     private MainPageViewModel _mainPageViewModel;
     private readonly SQLiteAsyncConnection _database;
 
     private readonly INoteRepository _noteRepository;
+    public List<AppNote> noteList { get; set; }
 
- 
     private ObservableCollection<object> _selectedNotes;
     private SelectionMode _selectionMode = SelectionMode.None;
 
     private bool _multiSelectEnabled = false;
     private bool _showFab = true;
 
-  
+
     protected bool SetProperty<T>(ref T backingStore, T value, [CallerMemberName] string propertyName = "", Action onChanged = null)
     {
         if (EqualityComparer<T>.Default.Equals(backingStore, value))
@@ -92,35 +94,13 @@ public class MainPageViewModel : INotifyPropertyChanged
             Notes = new ObservableCollection<Note>(_originalNotes.Where(n => n.Title.ToLowerInvariant().Contains(query) || n.Text.ToLowerInvariant().Contains(query)));
         }
     }
-   //  THE SEARCH FINALLY WORKS!!!!!!!!!!!!!!!!!!! if only it will update in github, third try
+    //  THE SEARCH FINALLY WORKS!!!!!!!!!!!!!!!!!!! if only it will update in github, third try
 
-
-    /* private void FilterNotes()
-     {
-         if (_originalNotes == null)
-         {
-             _originalNotes = new ObservableCollection<Note>(Notes);
-         }
-
-         // If the search query is empty, show all notes
-         if (string.IsNullOrWhiteSpace(SearchQuery))
-         {
-             Notes = new ObservableCollection<Note>(_originalNotes);
-         }
-         else
-         {
-             // Convert the search query to lowercase for case-insensitive comparison
-             string query = SearchQuery.ToLowerInvariant();
-
-             // Filter notes based on whether the title contains the search query
-             Notes = new ObservableCollection<Note>(_originalNotes.Where(n => n.Title.ToLowerInvariant().Contains(query)));
-         }
-     }
-    */
+   
 
 
 
-    public bool ShowFab
+public bool ShowFab
     {
         get => _showFab;
         set
@@ -130,10 +110,11 @@ public class MainPageViewModel : INotifyPropertyChanged
         }
     }
 
-  
+
 
     private ObservableCollection<Note> _filteredNotes;
     private object resultCount;
+    private NewNoteViewModel note;
 
     public ObservableCollection<Note> FilteredNotes
     {
@@ -190,9 +171,20 @@ public class MainPageViewModel : INotifyPropertyChanged
 
         _filteredNotes = new ObservableCollection<Note>();
         FilteredNotes = new ObservableCollection<Note>(_notes);
+
+
+        /*AppFolder folder = AppDatabase.Instance().GetFirstFolder();
+        if (folder != null)
+        {
+            noteList = AppDatabase.Instance().GetNoteList(folder.id);
+        }*/
+
+        //BindingContext = this;
+
+
     }
 
-    
+
     public async Task SearchNotes(string searchKeyword)
     {
         Debug.WriteLine($"Searching notes for: {searchKeyword}");
@@ -242,10 +234,12 @@ public class MainPageViewModel : INotifyPropertyChanged
 
     private async void OpenNewNoteScreen()
     {
+
         var newNoteVM = new NewNoteViewModel(this, null);
         var newNotePage = new NewNotePage(newNoteVM);
         newNotePage.BindingContext = newNoteVM;
-        await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
+         await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
+        
     }
 
     public async void GetNotesFromDb()
@@ -269,7 +263,8 @@ public class MainPageViewModel : INotifyPropertyChanged
                 var newNoteVM = new NewNoteViewModel(this, selectedNote);
                 var newNotePage = new NewNotePage(newNoteVM);
                 newNotePage.BindingContext = newNoteVM;
-                await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
+                 await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
+               // await Navigation.PushModalAsync(new NavigationPage(new FlyoutPage1Detail(new NewNotePage(note))));
             }
         }
     }
@@ -300,6 +295,8 @@ public class MainPageViewModel : INotifyPropertyChanged
 
     public ICommand DeleteNotesCommand => new Command(DeleteNotes);
 
+   // public MainPageViewModel BindingContext { get; }
+
     private async void DeleteNotes()
     {
         foreach (Note note in SelectedNotes)
@@ -312,4 +309,3 @@ public class MainPageViewModel : INotifyPropertyChanged
     }
 
 }
-

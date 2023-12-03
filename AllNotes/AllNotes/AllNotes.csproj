@@ -19,6 +19,11 @@
 
 	<ItemGroup>
 		<None Remove="Resources\Fonts\fa-solid-900.otf" />
+		<None Remove="Resources\Images\menu.png" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Include="Resources\Images\menu.png" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,7 +31,11 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.0" />
+    <PackageReference Include="sqlite-net" Version="1.6.292" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.7" />
+    <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.7" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2622" />  
     <PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
 	  <PackageReference Include="Refractored.FloatingActionButtonForms" Version="2.1.0" />
@@ -34,12 +43,33 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Views\FlyoutPage1Detail.xaml.cs">
+		  <DependentUpon>FlyoutPage1Detail.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\MenuPage.xaml.cs">
+		  <DependentUpon>MenuPage.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ItemsPage.xaml.cs">
+		  <DependentUpon>ItemsPage.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\NewNote\UI\ToolbarButton.xaml.cs">
 			<DependentUpon>ToolbarButton.xaml</DependentUpon>
 		</Compile>
 	</ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Views\FlyoutPage1.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\FlyoutPage1Detail.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\MenuPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ItemsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\NewNotePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
@@ -61,5 +91,9 @@
 	<EmbeddedResource Update="Views\NewNote\UI\ToolbarButton.xaml">
 		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Views\Main\" />
   </ItemGroup>
 </Project>

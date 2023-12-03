@@ -27,7 +27,9 @@ namespace AllNotes.Models
 
         public int Color { get; set; }
         public string Content { get; set; }
+        public string IconPath { get; set; }
         public DateTime CreatedAt { get; set; }
+
        
     }
 }

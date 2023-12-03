@@ -4,9 +4,11 @@
              xmlns:converters="clr-namespace:AllNotes.Converters"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:ui="clr-namespace:AllNotes.Views.NewNote.UI"
-             xmlns:local="clr-namespace:AllNotes.CustomRenderers"
+             xmlns:local="clr-namespace:AllNotes.CustomRenderers" 
+             xmlns:viewmodels="clr-namespace:AllNotes.ViewModels" 
+             x:DataType="viewmodels:NewNoteViewModel"
              x:Class="AllNotes.Views.NewNote.NewNotePage">
-
+    
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorConverter x:Key="colorConverter" />

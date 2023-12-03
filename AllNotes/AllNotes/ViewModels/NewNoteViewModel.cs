@@ -9,6 +9,8 @@ using Xamarin.CommunityToolkit.Extensions;
 using AllNotes.Views.NewNote.Popups;
 using System.ComponentModel;
 using AllNotes.Services;
+using AllNotes.Views.NewNote;
+using AllNotes.Views;
 
 namespace AllNotes.ViewModels
 {
@@ -140,6 +142,9 @@ namespace AllNotes.ViewModels
             }
 
             await Application.Current.MainPage.Navigation.PopAsync();
+
+
+           // await Application.Current.MainPage.Navigation.PushAsync(new NavigationPage(new FlyoutPage1Detail()));
         }
 
         private void OpenMenu()
