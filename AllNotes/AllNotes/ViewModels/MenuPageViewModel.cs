@@ -32,7 +32,7 @@ namespace AllNotes.ViewModels
             //  var newFolderViewModel = new NewFolderViewModel();
             // var newFolderPage = new NewFolderPage { BindingContext = newFolderViewModel };
             //  await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
-            // Show the new folder page using XCT Popup
+           
             await Application.Current.MainPage.Navigation.PushAsync(newFolderPage);
         }
     }
