@@ -34,9 +34,20 @@ namespace AllNotes
             InitializeComponent();
         }
 
-        private void Button_Clicked(object sender, EventArgs e)
+        private async void Button_Clicked(object sender, EventArgs e)
         {
+            // Display an input prompt to get the new folder name
+            string newFolderName = await DisplayPromptAsync("New Folder", "Enter a name for the new folder:", "Create", "Cancel");
 
+            if (!string.IsNullOrWhiteSpace(newFolderName))
+            {
+                // Create a new folder and add it to the view model or database
+                // Example: newFolderViewModel.AddNewFolder(newFolderName);
+                // Make sure to implement the necessary logic in your NewFolderViewModel
+
+                // Close the page or navigate back
+                await Navigation.PopAsync();
+            }
         }
 
         private void Button_Clicked_1(object sender, EventArgs e)

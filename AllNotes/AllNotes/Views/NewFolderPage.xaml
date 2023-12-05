@@ -5,7 +5,7 @@
              x:Class="AllNotes.NewFolderPage">
 
     <StackLayout>
-        <Button BackgroundColor="Transparent" FontSize="24" Text="Rename" TextColor="Black" WidthRequest="200" Margin="5" Clicked="Button_Clicked"/>
+        <Button BackgroundColor="Transparent" FontSize="24" Text="Add New Folder" TextColor="Black" WidthRequest="200" Margin="5" Clicked="Button_Clicked"/>
         <Button BackgroundColor="Transparent" FontSize="24" Text="Delete" TextColor="Black" WidthRequest="200" Margin="5" Clicked="Button_Clicked_1"/>
         <Button BackgroundColor="Transparent" FontSize="24" Text="Cancel" TextColor="Blue" WidthRequest="200" Margin="5" Clicked="Button_Clicked_2"/>
     </StackLayout>
