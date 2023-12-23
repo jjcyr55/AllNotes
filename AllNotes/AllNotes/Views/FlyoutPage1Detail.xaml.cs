@@ -9,13 +9,23 @@ using System.Threading.Tasks;
 using AllNotes.Database;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
+using System.Collections.ObjectModel;
+using AllNotes.Repositories;
+using SQLite;
+using AllNotes.Services;
 
 namespace AllNotes.Views
 {
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class FlyoutPage1Detail : ContentPage
     {
-        public static FlyoutPage1Detail instance = null;
+
+
+       // private NoteRepository _noteRepository;
+        private readonly SQLiteAsyncConnection _database;
+
+
+       // public static FlyoutPage1Detail instance = null;
 
         private List<Note> listNotes;
 
@@ -24,58 +34,174 @@ namespace AllNotes.Views
 
         private MainPageViewModel _mainPageViewModel;
         private object notes;
-        public List<AppNote> noteList { get; set; }
-
-
-       // AppFolder selectedFolder;
-      
+        public List<Note> noteList { get; set; }
+        private AppFolder _currentFolder;
+        private AppFolder selectedFolder;
+        private AppFolder _selectedFolder;
+        private FlyoutPage1Detail _flyoutPage1Detail;
+        private ObservableCollection<Note> _notes = new ObservableCollection<Note>();
+        private NoteRepository _noteRepository = new NoteRepository();
+        private FolderRepository _folderRepository = new FolderRepository();
 
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-           
-
-            listNotes.Reverse();
 
 
-            //NotesCV.ItemsSource = null;
+            // listNotes.Reverse();
+            if (listNotes != null)
+            {
+                listNotes.Reverse();
+            }
 
+            // NotesCV.ItemsSource = null;
 
-            //NotesCV.ItemsSource = noteList;
-
+            if (selectedFolder != null)
+            {
+                var notes = await _noteRepository.GetNotesInFolder(selectedFolder.Id);
+                NotesCV.ItemsSource = notes;
+                this.Title = selectedFolder.Name;
+            }
+            /*  else
+             {
+                 selectedFolder = await FolderRepository.Instance.GetFirstFolder();
+                 if (selectedFolder != null)
+                 {
+                     var notes = await _noteRepository.GetNotesInFolder(selectedFolder.Id);
+                     NotesCV.ItemsSource = notes;
+                     this.Title = selectedFolder.Name;
+                 }
+             }
+         }*/
         }
-        
+
+        public async Task Reset(AppFolder folder)
+        {
+            selectedFolder = folder ?? await NoteRepository.Instance.GetFirstFolder();
+
+            if (selectedFolder != null)
+            {
+                var notes = await _noteRepository.GetNotesInFolder(selectedFolder.Id);
+                NotesCV.ItemsSource = notes;
+                this.Title = selectedFolder.Name;
+            }
+        }
+
+
+        public AppFolder CurrentFolder
+        {
+            get => _currentFolder;
+            set
+            {
+                _currentFolder = value;
+                // Add logic here if you need to update the UI based on the new folder
+            }
+        }
+
+       
+        public NavigationPage Detail { get; internal set; }
+
+
+        /* public FlyoutPage1Detail(AppFolder folder)
+         {
+             _currentFolder = folder;
+             // Initialize the page with _currentFolder
+         }
+ */
+
+
+
+
+        private async void LoadNotesForFolder()
+        {
+            if (_selectedFolder != null)
+            {
+                var notes = await _noteRepository.GetNotesInFolder(_selectedFolder.Id);
+                _notes.Clear();
+                foreach (var note in notes)
+                {
+                    _notes.Add(note);
+                }
+
+                NotesCV.ItemsSource = _notes;
+            }
+        }
+
+
         public FlyoutPage1Detail()
         {
+
+            // Set the flyout menu
+           // this.Flyout = new MenuPage(); // Replace with your menu page
+
+            // Set the detail page
+           // this.Detail = new NavigationPage(new FlyoutPage1Detail()); // Replace with your initial detail page
+
+
             // This is supposed to go in the parameter:MainPageViewModel mainPageViewModel
             //instance = this;
-
-
-            InitializeComponent();
-
-           // NavigationPage.SetHasNavigationBar(this, false);
             _mainPageViewModel = new MainPageViewModel();
             listNotes = new List<Note>();
             BindingContext = _mainPageViewModel;
+            _selectedFolder = selectedFolder;
+          
+            // Additional initialization
+            _notes = new ObservableCollection<Note>();
 
-           
+            InitializeComponent();
+            this.BindingContext = new MainPageViewModel();
+            // NavigationPage.SetHasNavigationBar(this, false);
+            _mainPageViewModel = new MainPageViewModel();
+           // listNotes = new List<Note>();
+            BindingContext = _mainPageViewModel;
+            _currentFolder = selectedFolder;
+
 
         }
 
+        
+
+        //MAY NEED TO REMOVE POSSIBLY CONFLICTING CODE: _notes = new ObservableCollection<AppNote>(); AND private ObservableCollection<AppNote> _notes;
+        //  private ObservableCollection<AppNote> _notes;
+        public FlyoutPage1Detail(AppFolder selectedFolder)
+        {
+
+            if (selectedFolder == null)
+            {
+                throw new ArgumentNullException(nameof(selectedFolder));
+            }
+
+            _selectedFolder = selectedFolder;
+            InitializeComponent();
+            this.BindingContext = new MainPageViewModel();
+
+            LoadNotesForFolder();
+            //  _currentFolder = folder;
+
+        }
+
+       
 
         protected override bool OnBackButtonPressed()
         {
-            if (_mainPageViewModel.MultiSelectEnabled)
+            if (this.Detail.Navigation.NavigationStack.Count > 1)
+            {
+                this.Detail.Navigation.PopAsync(); // Go back to the previous page in the stack
+                return true; // Prevent default back button behavior
+            }
+
+            return base.OnBackButtonPressed();
+            /*if (_mainPageViewModel.MultiSelectEnabled)
                 _mainPageViewModel.ShowOrHideToolbar();
 
-            return true;
+            return true;*/
         }
 
         private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
             var searchKeyword = e.NewTextValue;
             Debug.WriteLine($"Search keyword entered: {searchKeyword}");
-            _mainPageViewModel.SearchNotes(searchKeyword);
+          //  _mainPageViewModel.SearchNotes(searchKeyword);
            
         }
     

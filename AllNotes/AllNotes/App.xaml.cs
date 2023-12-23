@@ -9,6 +9,8 @@ using SQLite;
 using AllNotes.Data;
 using AllNotes.Services;
 using AllNotes.Views;
+using AllNotes.Repositories;
+using AllNotes.Interfaces;
 
 namespace AllNotes
 {
@@ -41,12 +43,17 @@ namespace AllNotes
             //DependencyService.Register<Database>();
               
             MainPage = new NavigationPage(new FlyoutPage1());
-           
+            // MainPage = new FlyoutPage1Detail();
+          //  MainPage = new FlyoutPage1Detail();
         }
-      
 
-        protected override void OnStart()
+
+        protected override async void OnStart()
         {
+            base.OnStart();
+            INoteRepository noteRepository = new NoteRepository();
+            await noteRepository.InitializeDefaultFolder();
+            // Other startup code...
         }
 
         protected override void OnSleep()

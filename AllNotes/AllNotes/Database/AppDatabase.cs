@@ -12,7 +12,7 @@ using System.Data.Common;
 
 namespace AllNotes.Database
 {
-    public static class Constants
+    /*public static class Constants
     {
         public const string DatabaseFilename = "FastNoteApp.db3";
 
@@ -60,9 +60,9 @@ namespace AllNotes.Database
 
         //  readonly SQLiteConnection dbConnection = null;
 
-        /* public AppDatabase()
+        *//* public AppDatabase()
          {
-         }*/
+         }*//*
 
         public void Init()
         {
@@ -81,7 +81,7 @@ namespace AllNotes.Database
              //   InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
         }
 
-       /* public List<AppFolder> GetFolderList()
+       *//* public List<AppFolder> GetFolderList()
         {
             return dbConnection.Table<AppFolder>().ToList();
         }*/
@@ -108,7 +108,7 @@ namespace AllNotes.Database
         public int DeleteFolder(AppFolder folder)
         {
             return dbConnection.Delete(folder);
-        }*/
+        }*//*
 
         public List<AppNote> GetNoteList(int folderID)
         {
@@ -119,7 +119,7 @@ namespace AllNotes.Database
         {
             return dbConnection.Update(note);
         }
-
+*/
        /* public int InsertNote(AppNote note)
         {
          //   AppFolder folder = GetFolder(note.folderID);
@@ -145,7 +145,7 @@ namespace AllNotes.Database
             return dbConnection.Delete(note);
         }*/
         //ATTENTION!!! CHANGED noteList to listNotes to match the rest of code. keep an eye on this!!!!!!!!!!!!!!!! Then changed it back
-        public void DeleteAllNotes(int folderID)
+      /*  public void DeleteAllNotes(int folderID)
         {
             List<AppNote> noteList = GetNoteList(folderID);
 
@@ -153,6 +153,7 @@ namespace AllNotes.Database
             {
                 dbConnection.Delete(note);
             }
-        }
-    }
+        }*/
+   // }
+
 }

@@ -16,5 +16,11 @@ namespace AllNotes.Views
         public string Title { get; set; }
 
         public Type TargetType { get; set; }
+        public string IconSource { get; set; }
+        public Type TargetPage { get; set; }
+        public string TargetSource
+        {
+            get; set;
+        }
     }
 }

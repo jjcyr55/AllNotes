@@ -5,8 +5,11 @@ namespace AllNotes.Models
 {
     public class Note
     {
+        internal int folderId;
+
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
+        public int FolderId { get; set; }
 
         [MaxLength(50)]
         public string Title { get; set; }

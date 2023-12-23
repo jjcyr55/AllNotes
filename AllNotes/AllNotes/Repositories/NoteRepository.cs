@@ -9,21 +9,34 @@ using System.Threading.Tasks;
 using SQLite;
 using AllNotes.Models;
 using System.Linq;
+using AllNotes.Repositories;
 
 namespace AllNotes.Services
 {
     public class NoteRepository : INoteRepository
     {
+        private static NoteRepository _instance;
         private readonly SQLiteAsyncConnection _database = App.Database;
-
-        public async Task CreateNote(string title, string text, string date, int color)
+        public static NoteRepository Instance
+        {
+            get
+            {
+                if (_instance == null)
+                {
+                    _instance = new NoteRepository();
+                }
+                return _instance;
+            }
+        }
+        public async Task CreateNote(string title, string text, string date, int _selectedFolderId)
         {
             var note = new Note
             {
                 Title = title,
                 Text = text,
                 Date = date,
-                Color = color
+                FolderId = _selectedFolderId,
+               
             };
             await _database.InsertAsync(note);
         }
@@ -33,7 +46,7 @@ namespace AllNotes.Services
             await _database.DeleteAsync(note);
         }
 
-        public async Task EditNote(int id, string title, string text, string date, int color)
+        public async Task EditNote(int id, string title, string text, string date, int _selectedFolderId)
         {
             var note = new Note
             {
@@ -41,7 +54,8 @@ namespace AllNotes.Services
                 Title = title,
                 Text = text,
                 Date = date,
-                Color = color
+                FolderId = _selectedFolderId,
+                
             };
             await _database.UpdateAsync(note);
         }
@@ -52,22 +66,26 @@ namespace AllNotes.Services
             return note;
         }
 
-        public async Task<IEnumerable<Note>> GetNotes()
+       
+        public async Task<IEnumerable<Note>> GetNotes(int folderId)
         {
             try
             {
-                // Use await to asynchronously execute the query
-                var results = await _database.Table<Note>().ToListAsync();
-
-                // Return the results
+                var results = await _database.Table<Note>().Where(note => note.FolderId == folderId).ToListAsync();
                 return results;
             }
             catch (Exception ex)
             {
-                // Handle exceptions here, log or rethrow if necessary
-                return new List<Note>(); // Return an empty list in case of an error
+                // Handle exceptions
+                return new List<Note>();
             }
         }
+
+        public async Task<IEnumerable<Note>> GetNotesInFolder(int folderId)//Get Note List
+        {
+            return await _database.Table<Note>().Where(n => n.FolderId == folderId).ToListAsync();
+        }
+
         /// <summary>
         /// Search Note
         /// </summary>
@@ -90,6 +108,68 @@ namespace AllNotes.Services
                 // Handle exceptions here, log, or rethrow if necessary
                 return new List<Note>(); // Return an empty list in case of an error
             }
+
         }
-    }
+
+
+        /*public async Task InitializeDefaultFolder()
+        {
+            var firstFolder = await GetFirstFolder();
+            if (firstFolder == null)
+            {
+                var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" *//* other properties *//* };
+                await InsertFolder(defaultFolder);
+            }
+        }*/
+        public async Task InitializeDefaultFolder()
+        {
+            var firstFolder = await GetFirstFolder();
+
+            if (firstFolder == null)
+            {
+                var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" /* other properties */ };
+                await InsertFolder(defaultFolder);
+
+                // After inserting the default folder, get it back from the database
+                firstFolder = await GetFirstFolder();
+                if (firstFolder == null)
+                {
+                    // Handle the error if the default folder still cannot be retrieved
+                    // This might involve logging the error or notifying the user
+                    return;
+                }
+            }
+
+            // Now you can safely use firstFolder, knowing it's not null
+        }
+
+
+        public async Task<IEnumerable<AppFolder>> GetFolderList()
+        {
+            return await _database.Table<AppFolder>().ToListAsync();
+        }
+        public async Task<AppFolder> GetFirstFolder()
+        {
+            return await _database.Table<AppFolder>().FirstOrDefaultAsync();
+        }
+        public async Task<AppFolder> GetFolder(int id)
+        {
+            return await _database.FindAsync<AppFolder>(id);
+        }
+        public async Task UpdateFolder(AppFolder folder)
+        {
+            await _database.UpdateAsync(folder);
+        }
+        public async Task InsertFolder(AppFolder folder)
+        {
+            await _database.InsertAsync(folder);
+        }
+        public async Task DeleteFolder(AppFolder folder)
+        {
+            await _database.DeleteAsync(folder);
+        }
+
+
+    
+}
 }

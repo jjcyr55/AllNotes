@@ -19,41 +19,40 @@ namespace AllNotes.Models
         public event PropertyChangedEventHandler PropertyChanged;
         [AutoIncrement, PrimaryKey]
         public int Id { get; set; }
-        public string name { get; set; }
-        public string iconPath { get; set; }
-        public string noteCount { get; set; }
+        
         public string Title { get; set; }
         public string IconSource { get; set; }
+        [Ignore]
         public Type TargetPage { get; set; }
-        public string Folder { get; set; }
-        public string Name { get; set; }
-        public string IconPath { get; set; }
-        public string NoteCount { get; set; }
+        public string Name { get; set; } = "";
 
+        public string IconPath { get; set; } = "";
+
+        public string NoteCount { get; set; } = "0";
+        
+
+        public AppFolder(string FolderName)
+        {
+            Name = FolderName;
+        }
+        public AppFolder(string FolderName, string Path)
+        {
+            Name = FolderName;
+            IconPath = Path;
+        }
+        public AppFolder(string FolderName, string Path, string Count)
+        {
+            Name = FolderName;
+            IconPath = Path;
+            NoteCount = Count;
+        }
         public AppFolder()
         {
-            // Set default values or leave properties as null/empty
         }
 
-        // Constructor with required parameters
-        public AppFolder(string folderName)
+        protected virtual void OnPropertyChanged(string propertyName)
         {
-            Name = folderName;
-            // Set default values for other properties or leave them as null/empty
-        }
-
-        public AppFolder(string folderName, string path)
-        {
-            Name = folderName;
-            IconPath = path;
-            // Set default values for other properties or leave them as null/empty
-        }
-
-        public AppFolder(string folderName, string path, string count)
-        {
-            Name = folderName;
-            IconPath = path;
-            NoteCount = count;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

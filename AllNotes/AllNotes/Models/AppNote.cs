@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace AllNotes.Models
 {
-    public class AppNote
+   /* public class AppNote
     {
         [AutoIncrement, PrimaryKey]
         public int id { get; set; }
@@ -27,5 +27,5 @@ namespace AllNotes.Models
         {
             this.description = text;
         }
-    }
+    }*/
 }
