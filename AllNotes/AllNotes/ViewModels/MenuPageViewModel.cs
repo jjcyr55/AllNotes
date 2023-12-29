@@ -29,20 +29,17 @@ namespace AllNotes.ViewModels
     {
         public static MenuPage Instance { get; private set; }
 
-        // private NoteRepository noteRepository;
+        
         private INoteRepository _noteRepository;
         private ObservableCollection<AppFolder> _folderList;
-        /*private readonly SQLiteAsyncConnection _database;
-        private ObservableCollection<AppFolder> _folders;
-        private FolderRepository folderRepository;
-        private MainPageViewModel _mainPageViewModel;*/
+       
         private AppFolder _selectedFolder;
         public List<AppFolder> folderList { get; set; }
         AppFolder selectedfolder = null;
         int controlMenuCount = 0;
         private int folderID;
         int selectedFolderID = 0;
-
+     
         public ICommand AddFolderCommand { get; private set; }
         public ICommand FolderSelectedCommand => new Command<AppFolder>(NavigateToFlyoutPage1Detail);
 
@@ -82,10 +79,12 @@ namespace AllNotes.ViewModels
 
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
-            FolderList = new ObservableCollection<AppFolder>();
+           
             selectedFolderID = folderID;
             _noteRepository = new NoteRepository(); // Initialize the repository
             FolderList = new ObservableCollection<AppFolder>();
+
+              
             Reset();
             //  LoadFoldersAsync();
             // _folderRepository = new FolderRepository();
@@ -94,15 +93,16 @@ namespace AllNotes.ViewModels
             // EditFolderCommand = new Command(ShowEditFolderPopup);
             InitializeViewModel();
 
-
-
             AddFolderCommand = new Command(async () => await AddFolderAsync());
+
+           
 
         }
         private async void InitializeViewModel()
         {
             await Reset();
             //   await InitializeDefaultFolder();
+            AddSpecialFolders();
         }
 
         public MenuPageViewModel()
@@ -110,30 +110,20 @@ namespace AllNotes.ViewModels
         }
 
 
+       
         private async Task Reset()
         {
-            if (folderList != null) folderList.Clear();
+            FolderList.Clear(); // Clear the observable collection
 
             var foldersFromDb = await _noteRepository.GetFolderList();
             foreach (var folder in foldersFromDb)
             {
-                FolderList.Add(folder);
+                FolderList.Add(folder); // Add folders from the database
             }
-            FolderList.Add(new AppFolder("Default Folder", "folder_account_outline.png", ""));
-            FolderList.Add(new AppFolder("Edit Folder", "folder_account_outline.png", ""));
-            //  if (selectedfolder is null) selectedfolder = folderList[0];
         }
-        /*private async Task Reset()
+
+        private void AddSpecialFolders()
         {
-            FolderList.Clear();  // Clear the observable collection
-
-            var foldersFromDb = await _noteRepository.GetFolderList();
-            foreach (var folder in foldersFromDb)
-            {
-                FolderList.Add(folder);  // Add folders from the database
-            }
-
-            // Add special folders only if they are not already in the list
             AddSpecialFolder("Default Folder", "folder_account_outline.png", "");
             AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
         }
@@ -144,17 +134,7 @@ namespace AllNotes.ViewModels
             {
                 FolderList.Add(new AppFolder(name, iconPath, noteCount));
             }
-        }*/
-
-        /*private async Task InitializeDefaultFolder()
-        {
-            var firstFolder = await _folderRepository.GetFirstFolder();
-            if (firstFolder == null)
-            {
-                var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" };
-                await _folderRepository.InsertFolder(defaultFolder);
-            }
-        }*/
+        }
 
         private async Task AddFolderAsync()
         {
@@ -238,46 +218,7 @@ namespace AllNotes.ViewModels
         }
 
 
-        /* private async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
-         {
-             if (selectedFolder != null)
-             {
-                 MainPageViewModel mainPageViewModel = Application.Current.MainPage.BindingContext as MainPageViewModel;
-                 if (mainPageViewModel != null)
-                 {
-                     // Update the selected folder in MainPageViewModel
-                     mainPageViewModel.SelectedFolder = selectedFolder;
-
-                     // Reset notes based on the selected folder
-                     await mainPageViewModel.Reset(selectedFolder);
-                 }
-
-                 else
-                 {
-
-
-
-                 }
-
-                     var flyoutPage1Detail = new FlyoutPage1Detail(selectedFolder);
-
-                     if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-                     {
-                         mainFlyoutPage.Detail = new NavigationPage(flyoutPage1Detail);
-                         mainFlyoutPage.IsPresented = false;
-                     }
-                     else
-                     {
-                         Application.Current.MainPage = new FlyoutPage
-                         {
-                             Detail = new NavigationPage(flyoutPage1Detail),
-                             Flyout = new MenuPage()
-                         };
-                     }
-
-
-             }
-         }*/
+       
 
 
         private void ShowEditFolderPopup()
