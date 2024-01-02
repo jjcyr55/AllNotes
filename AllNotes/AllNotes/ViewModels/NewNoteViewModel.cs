@@ -157,51 +157,7 @@ namespace AllNotes.ViewModels
             _menuPageViewModel = menuPageViewModel;
         }
 
-        /* public NewNoteViewModel(int folderID)
-         {
-             this.folderID = folderID;
-         }*/
-
-        /*private async void SaveNote()
-        {
-            if (NewNoteText != null && _note == null)
-            {
-                var db = AppDatabase.Instance();
-                 db.InsertNote(FolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-               // _menuPageViewModel.Reset();
-            }
-
-            if (_note != null)
-            {
-                var db = AppDatabase.Instance();
-                db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                _menuPageViewModel.Reset();
-            }
-
-            await Application.Current.MainPage.Navigation.PopAsync();
-        }*/
-        /*private async void SaveNote()
-        {
-            if (NewNoteText != null && _note == null)
-            {
-                var db = AppDatabase.Instance();
-                db.InsertNote(FolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor); // No await
-                //_menuPageViewModel.Reset();
-            }
-            else
-            {
-
-                if (_note != null)
-                {
-                    var db = AppDatabase.Instance();
-                    db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor); // No await
-                                                                                            //  _menuPageViewModel.Reset();
-                }
-            }
-
-            await Application.Current.MainPage.Navigation.PopAsync();
-
-        }*/
+       
 
 
         private async void SaveNote()
@@ -226,10 +182,8 @@ namespace AllNotes.ViewModels
                 };
                 db = AppDatabase.Instance();
                 await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                //  db.InsertNote(FolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                // await db.InsertNote(note);
-                // Assuming _menuPageViewModel is an instance of MenuPageViewModel
-                //_menuPageViewModel.Reset();
+                MessagingCenter.Send(this, "RefreshNotes");
+                // _menuPageViewModel.Reset();
                 if (_menuPageViewModel != null)
                 {
                     _menuPageViewModel.Reset();
@@ -242,21 +196,14 @@ namespace AllNotes.ViewModels
                 _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 // Update other properties if needed
                 db = AppDatabase.Instance();
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor); // Await added
-                                                                                              // db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                                                                                              // _menuPageViewModel.Reset();
+                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor); 
             }
             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
             }
-            // await Application.Current.MainPage.Navigation.PopAsync();
-            // Get the current page instance
-            /* var currentPage = (NewNotePage)this.BindingContext;
-
-             // Navigate back using the page's Navigation property
-             await currentPage.Navigation.PopAsync();*/
+           
         }
         private void OpenMenu()
         {

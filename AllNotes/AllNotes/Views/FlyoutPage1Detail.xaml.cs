@@ -144,21 +144,7 @@ namespace AllNotes.Views
         public FlyoutPage1Detail()
         {
 
-            // Set the flyout menu
-            // this.Flyout = new MenuPage(); // Replace with your menu page
-
-            // Set the detail page
-            // this.Detail = new NavigationPage(new FlyoutPage1Detail()); // Replace with your initial detail page
-
-
-            // This is supposed to go in the parameter:MainPageViewModel mainPageViewModel
-            //instance = this;
-           /* _mainPageViewModel = new MainPageViewModel();
-            listNotes = new List<Note>();
-            BindingContext = _mainPageViewModel;
-            _selectedFolder = selectedFolder;*/
-          
-            // Additional initialization
+           
             _notes = new ObservableCollection<AppNote>();
 
             InitializeComponent();

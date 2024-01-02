@@ -50,7 +50,7 @@ namespace AllNotes.Database
         {
         }
 
-        public void Init()
+        /*public void Init()
         {
             if (dbConnection is not null)
                 return;
@@ -64,14 +64,37 @@ namespace AllNotes.Database
             dbConnection.CreateTable<AppNote>();
 
             if (GetFolderList().Count == 0)
-                InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
+              InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
+           
+        }*/
+
+        public void Init()
+        {
+            if (dbConnection is not null)
+                return;
+
+            dbConnection = new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
+            dbConnection.CreateTable<AppFolder>();
+            dbConnection.CreateTable<AppNote>();
+
+            // Ensure "Default Folder" exists
+            var defaultFolder = dbConnection.Table<AppFolder>().FirstOrDefault(f => f.Name == "Default Folder");
+            if (defaultFolder == null)
+            {
+                InsertFolder(new AppFolder("Default Folder", "default_icon.png"));
+            }
         }
+
 
         public List<AppFolder> GetFolderList()
         {
             return dbConnection.Table<AppFolder>().ToList();
         }
-        public AppFolder GetFirstFolder()
+        /*public AppFolder GetFirstFolder()
+        {
+            return dbConnection.Table<AppFolder>().FirstOrDefault();
+        }*/
+        public async Task<AppFolder> GetFirstFolder()
         {
             return dbConnection.Table<AppFolder>().FirstOrDefault();
         }
