@@ -13,7 +13,7 @@
         <local:MenuPageViewModel />
     </ContentPage.BindingContext>
 
-    
+
     <StackLayout>
         <CollectionView x:Name="menuContent"
                         x:FieldModifier="public"
@@ -23,19 +23,19 @@
 
 
             <CollectionView.ItemTemplate>
-               
+
                 <DataTemplate>
-                <Grid Padding="5,10" >
+                    <Grid Padding="5,10" >
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="20" />
                         </Grid.ColumnDefinitions>
-                      <!--  <x:Array Type="{x:Type views:FlyoutPage1FlyoutMenuItem}">>
-                            <views:FlyoutPage1FlyoutMenuItem Title="Detail" TargetPage="{x:Type views:FlyoutPage1Detail}"/>
+                        <!--  <x:Array Type="{x:Type views:FlyoutPage1FlyoutMenuItem}">>
+                            
                         </x:Array>-->
-
-                            <Image Source="{Binding IconPath}" Grid.Column="0"/>
+                        <views:FlyoutPage1FlyoutMenuItem Title="Detail" TargetPage="{x:Type views:FlyoutPage1Detail}"/>
+                        <Image Source="{Binding IconPath}" Grid.Column="0"/>
 
                         <Label Grid.Column="1"
                                Margin="20,0"

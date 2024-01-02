@@ -14,22 +14,22 @@ namespace AllNotes.Models
 {
     public class AppFolder : INotifyPropertyChanged
     {
-        internal int id;
+        //internal int id;
 
         public event PropertyChangedEventHandler PropertyChanged;
         [AutoIncrement, PrimaryKey]
         public int Id { get; set; }
-        
-        public string Title { get; set; }
-        public string IconSource { get; set; }
-        [Ignore]
-        public Type TargetPage { get; set; }
+
+        //public string Title { get; set; }
+       // public string IconSource { get; set; }
+        //[Ignore]
+        //public Type TargetPage { get; set; }
         public string Name { get; set; } = "";
 
         public string IconPath { get; set; } = "";
 
-        public string NoteCount { get; set; } = "0";
-        
+        public string noteCount { get; set; } = "0";
+
 
         public AppFolder(string FolderName)
         {
@@ -44,7 +44,7 @@ namespace AllNotes.Models
         {
             Name = FolderName;
             IconPath = Path;
-            NoteCount = Count;
+            noteCount = Count;
         }
         public AppFolder()
         {

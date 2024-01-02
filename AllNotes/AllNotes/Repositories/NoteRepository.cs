@@ -13,7 +13,7 @@ using AllNotes.Repositories;
 
 namespace AllNotes.Services
 {
-    public class NoteRepository : INoteRepository
+   /* public class NoteRepository : INoteRepository
     {
         private static NoteRepository _instance;
         private readonly SQLiteAsyncConnection _database = App.Database;
@@ -28,18 +28,7 @@ namespace AllNotes.Services
                 return _instance;
             }
         }
-        public async Task CreateNote(string title, string text, string date, int _selectedFolderId)
-        {
-            var note = new Note
-            {
-                Title = title,
-                Text = text,
-                Date = date,
-                FolderId = _selectedFolderId,
-               
-            };
-            await _database.InsertAsync(note);
-        }
+      
 
         public async Task DeleteNote(Note note)
         {
@@ -65,8 +54,42 @@ namespace AllNotes.Services
             var note = await _database.FindAsync<Note>(id);
             return note;
         }
+        public async Task CreateNote(string title, string text, string date, int folderId)
+        {
+            // Retrieve the folder using the FolderId
+            AppFolder folder = await _database.FindAsync<AppFolder>(folderId);
+            if (folder != null)
+            {
+                // Update the note count of the folder
+                int count = Convert.ToInt32(folder.NoteCount) + 1;
+                folder.NoteCount = count.ToString();
+                await _database.UpdateAsync(folder);
+            }
 
-       
+            // Create and insert the note
+            var note = new Note
+            {
+                Title = title,
+                Text = text,
+                Date = date,
+                FolderId = folderId // Assuming your Note class has a FolderId property
+            };
+            await _database.InsertAsync(note);
+        }
+
+        *//* public async Task CreateNote(string title, string text, string date, int FolderId)
+         {
+
+             var note = new Note
+             {
+                 Title = title,
+                 Text = text,
+                 Date = date,
+                 //  FolderId = FolderId,
+
+             };
+             await _database.InsertAsync(note);
+         }*//*
         public async Task<IEnumerable<Note>> GetNotes(int folderId)
         {
             try
@@ -112,7 +135,7 @@ namespace AllNotes.Services
         }
 
 
-        /*public async Task InitializeDefaultFolder()
+        *//*public async Task InitializeDefaultFolder()
         {
             var firstFolder = await GetFirstFolder();
             if (firstFolder == null)
@@ -120,14 +143,14 @@ namespace AllNotes.Services
                 var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" *//* other properties *//* };
                 await InsertFolder(defaultFolder);
             }
-        }*/
+        }*//*
         public async Task InitializeDefaultFolder()
         {
             var firstFolder = await GetFirstFolder();
 
             if (firstFolder == null)
             {
-                var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" /* other properties */ };
+                var defaultFolder = new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" *//* other properties *//* };
                 await InsertFolder(defaultFolder);
 
                 // After inserting the default folder, get it back from the database
@@ -171,5 +194,5 @@ namespace AllNotes.Services
 
 
     
-}
+}*/
 }

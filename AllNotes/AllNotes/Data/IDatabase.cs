@@ -16,10 +16,10 @@ namespace AllNotes.Data
 
         public IDatabase()
         {
-            var dbPath = Path.Combine(FileSystem.AppDataDirectory, "MyData.db");
+           /* var dbPath = Path.Combine(FileSystem.AppDataDirectory, "MyData.db");
             _database = new SQLiteAsyncConnection(dbPath);
-            _database.CreateTableAsync<Note>();
-            _database.CreateTableAsync<AppFolder>().Wait();
+            _database.CreateTableAsync<AppNote>();
+            _database.CreateTableAsync<AppFolder>().Wait();*/
         }
     }
 }

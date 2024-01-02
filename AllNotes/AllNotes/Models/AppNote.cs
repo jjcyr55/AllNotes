@@ -7,16 +7,19 @@ using System.Threading.Tasks;
 
 namespace AllNotes.Models
 {
-   /* public class AppNote
+    public class AppNote
     {
         [AutoIncrement, PrimaryKey]
         public int id { get; set; }
 
         public int folderID { get; set; }
 
-        public string description { get; set; } = "";
+        public string Title { get; set; }
 
-        public string dateTime { get; set; } = "";
+        public string Text { get; set; }
+        public string Date { get; set; }
+        public int Color { get; set; }
+        //  public Type TargetPage { get; set; }
 
         public AppNote()
         {
@@ -25,7 +28,8 @@ namespace AllNotes.Models
 
         public AppNote(string text)
         {
-            this.description = text;
+            this.Text = text;
+            this.Title = text;
         }
-    }*/
+    }
 }

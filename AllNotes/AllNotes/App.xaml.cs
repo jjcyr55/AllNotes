@@ -11,13 +11,14 @@ using AllNotes.Services;
 using AllNotes.Views;
 using AllNotes.Repositories;
 using AllNotes.Interfaces;
+using AllNotes.Database;
 
 namespace AllNotes
 {
    
         public partial class App : Application
         {
-            private static SQLiteAsyncConnection database;
+          /*  private static SQLiteAsyncConnection database;
             public static object INoteRepository { get; internal set; }
 
 
@@ -33,7 +34,7 @@ namespace AllNotes
                     return database;
                 }
             }
-
+*/
             // public static object INoteRepository { get; set; }
 
             public App()
@@ -41,7 +42,8 @@ namespace AllNotes
             InitializeComponent();
 
             //DependencyService.Register<Database>();
-              
+            AppDatabase.Instance().Init();
+            DependencyService.Register<INavigationService, NavigationService>();
             MainPage = new NavigationPage(new FlyoutPage1());
             // MainPage = new FlyoutPage1Detail();
           //  MainPage = new FlyoutPage1Detail();
@@ -51,8 +53,8 @@ namespace AllNotes
         protected override async void OnStart()
         {
             base.OnStart();
-            INoteRepository noteRepository = new NoteRepository();
-            await noteRepository.InitializeDefaultFolder();
+           // INoteRepository noteRepository = new NoteRepository();
+        //    await noteRepository.InitializeDefaultFolder();
             // Other startup code...
         }
 

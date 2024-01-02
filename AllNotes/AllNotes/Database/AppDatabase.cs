@@ -8,18 +8,17 @@ using System.Linq;
 using Xamarin.Essentials;
 using Xamarin.CommunityToolkit.Core;
 using System.Data.Common;
+using AllNotes.ViewModels;
+using AllNotes.Views.NewNote;
+using System.Xml.Linq;
+using System.Threading.Tasks;
 
 
 namespace AllNotes.Database
 {
-    /*public static class Constants
+    public static class Constants
     {
         public const string DatabaseFilename = "FastNoteApp.db3";
-
-      //  public static string DatabasePath =>
-        //    Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
-
-      //  public static SQLiteAsyncConnection dbConnection = new SQLiteAsyncConnection(DatabasePath, Flags);
 
         public const SQLite.SQLiteOpenFlags Flags =
             // open the database in read/write mode
@@ -28,22 +27,15 @@ namespace AllNotes.Database
             SQLite.SQLiteOpenFlags.Create |
             // enable multi-threaded database access
             SQLite.SQLiteOpenFlags.SharedCache;
-        // private static string databasePath;
 
         public static string DatabasePath =>
-           Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
-
-
+            Path.Combine(FileSystem.AppDataDirectory, DatabaseFilename);
     }
 
 
     public class AppDatabase
     {
         public static AppDatabase m_instance = null;
-        //   private SQLiteConnection dbConnection;
-
-
-
         public static AppDatabase Instance()
         {
             if (m_instance == null) m_instance = new AppDatabase();
@@ -51,18 +43,12 @@ namespace AllNotes.Database
             return m_instance;
         }
 
-
-        //BELOW WAS THE ORIGINAL CODE SO KEEP AN EYE ON THIS
-
         //SQLite database = null;
-         SQLiteConnection dbConnection = null;
+        SQLiteConnection dbConnection = null;
 
-
-        //  readonly SQLiteConnection dbConnection = null;
-
-        *//* public AppDatabase()
-         {
-         }*//*
+        public AppDatabase()
+        {
+        }
 
         public void Init()
         {
@@ -77,23 +63,23 @@ namespace AllNotes.Database
             dbConnection.CreateTable<AppFolder>();
             dbConnection.CreateTable<AppNote>();
 
-           // if (GetFolderList().Count == 0)
-             //   InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
+            if (GetFolderList().Count == 0)
+                InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
         }
 
-       *//* public List<AppFolder> GetFolderList()
+        public List<AppFolder> GetFolderList()
         {
             return dbConnection.Table<AppFolder>().ToList();
-        }*/
-      /*  public AppFolder GetFirstFolder()
-        {
-           // return dbConnection.Table<AppFolder>().FirstOrDefault();
-        }*/
-
-       /* public AppFolder GetFolder(int id)
-        {
-            return dbConnection.Table<AppFolder>().Where(folder => folder.id == id).FirstOrDefault();
         }
+        public AppFolder GetFirstFolder()
+        {
+            return dbConnection.Table<AppFolder>().FirstOrDefault();
+        }
+
+        public AppFolder GetFolder(int id)
+        {
+            return dbConnection.Table<AppFolder>().Where(folder => folder.Id == id).FirstOrDefault();
+        }   
 
         public int UpdateFolder(AppFolder folder)
         {
@@ -108,33 +94,126 @@ namespace AllNotes.Database
         public int DeleteFolder(AppFolder folder)
         {
             return dbConnection.Delete(folder);
-        }*//*
+        }
 
         public List<AppNote> GetNoteList(int folderID)
         {
             return dbConnection.Table<AppNote>().Where(note => note.folderID == folderID).ToList();
         }
 
-        public int UpdateNote(AppNote note)
-        {
-            return dbConnection.Update(note);
-        }
-*/
-       /* public int InsertNote(AppNote note)
-        {
-         //   AppFolder folder = GetFolder(note.folderID);
+        /* public async Task<int> UpdateNote(int noteId, string title, string text, string date, int color)
+         {
+             var note = dbConnection.Find<AppNote>(noteId);
+             if (note != null)
+             {
+                 note.Title = title;
+                 note.Text = text;
+                 note.Date = date;
+                 note.Color = color;
 
-            int count = Convert.ToInt32(folder.noteCount) + 1;
-            folder.noteCount = count.ToString();
+                 return  dbConnection.Update(note);
+             }
+             return 0;
+         }*/
+        /*public int UpdateNote(int noteId, string title, string text, string date, int color)
+        {
+            var note = dbConnection.Find<AppNote>(noteId);
+            if (note != null)
+            {
+                note.Title = title;
+                note.Text = text;
+                note.Date = date;
+                note.Color = color;
+
+                return dbConnection.Update(note);
+            }
+            return 0;
+        }*/
+        public async Task<int> UpdateNote(int noteId, string title, string text, string date, int color)
+        {
+            var note = dbConnection.Find<AppNote>(noteId); // Use FindAsync
+            if (note != null)
+            {
+                note.Title = title;
+                note.Text = text;
+                note.Date = date;
+                note.Color = color;
+
+                return dbConnection.Update(note); // Use UpdateAsync
+            }
+            return 0;
+        }
+
+        /* public int InsertNote(AppNote note)
+         {
+             AppFolder folder = GetFolder(note.folderID);
+
+             int count = Convert.ToInt32(folder.NoteCount) + 1;
+             folder.NoteCount = count.ToString();
+
+             dbConnection.Update(folder);
+
+             return dbConnection.Insert(note);
+         }*/
+        public async Task<int> InsertNote(int folderId, string title, string text, string date, int color)
+        {
+            var note = new AppNote
+            {
+                folderID = folderId,
+                Title = title,
+                Text = text,
+                Date = date,
+                Color = color
+            };
+
+            var folder = GetFolder(note.folderID);
+          //  int count = Convert.ToInt32(folder.noteCount) + 1;
+          //  folder.noteCount = count.ToString();
 
             dbConnection.Update(folder);
-
             return dbConnection.Insert(note);
-        }*/
-
-       /* public int DeleteNote(AppNote note)
+        }
+        /*public int InsertNote(int folderId, string title, string text, string date, int color)
         {
-         //   AppFolder folder = GetFolder(note.folderID);
+
+            var note = new AppNote
+            {
+                FolderID = folderId,
+                Title = title,
+                Text = text,
+                Date = date,
+                Color = color
+            };
+
+            var folder = GetFolder(note.FolderID);
+            if (folder != null)
+            {
+                int count = Convert.ToInt32(folder.NoteCount) + 1;
+                folder.NoteCount = count.ToString();
+
+                dbConnection.Update(folder); // Consider using UpdateAsync if available
+
+            }
+            return dbConnection.Insert(note); // Consider using InsertAsync if available
+
+        }*/
+        /* public int InsertNote(AppNote note)
+         {
+
+             AppFolder folder = GetFolder(note.FolderID);
+
+             int count = Convert.ToInt32(folder.NoteCount) + 1;
+             folder.NoteCount = count.ToString();
+
+             dbConnection.Update(folder);
+
+             return dbConnection.Insert(note);
+         }*/
+
+
+        public int DeleteNote(AppNote note)
+        {
+            AppFolder folder = GetFolder(note.folderID);
 
             int count = Convert.ToInt32(folder.noteCount) - 1;
             if (count < 0) count = 0;
@@ -143,9 +222,9 @@ namespace AllNotes.Database
             dbConnection.Update(folder);
 
             return dbConnection.Delete(note);
-        }*/
-        //ATTENTION!!! CHANGED noteList to listNotes to match the rest of code. keep an eye on this!!!!!!!!!!!!!!!! Then changed it back
-      /*  public void DeleteAllNotes(int folderID)
+        }
+
+        public void DeleteAllNotes(int folderID)
         {
             List<AppNote> noteList = GetNoteList(folderID);
 
@@ -153,7 +232,6 @@ namespace AllNotes.Database
             {
                 dbConnection.Delete(note);
             }
-        }*/
-   // }
-
+        }
+    }
 }

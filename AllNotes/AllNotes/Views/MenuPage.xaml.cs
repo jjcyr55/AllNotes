@@ -16,7 +16,7 @@ namespace AllNotes.Views
         private MenuPageViewModel viewModel;
 
 
-        public MenuPageViewModel MenuPageViewModel { get; set; }
+          public MenuPageViewModel MenuPageViewModel { get; set; }
 
 
         public MenuPage()
@@ -28,9 +28,8 @@ namespace AllNotes.Views
             BindingContext = _viewModel;
             UpdateMenu();
 
+
         }
-
-
 
         public void UpdateMenu()
         {
@@ -40,6 +39,17 @@ namespace AllNotes.Views
             menuContent.ItemsSource = _viewModel.FolderList;
 
         }
+
+        private void OnFolderSelected(object sender, SelectionChangedEventArgs e)
+        {
+            var folder = e.CurrentSelection.FirstOrDefault() as AppFolder;
+            if (folder != null)
+            {
+                // Handle folder selection
+                // e.g., Navigate to a detail page or open the folder
+            }
+        }
+
         private async void OnGoToFlyoutPage1DetailClicked(object sender, EventArgs e)
         {
 
@@ -48,50 +58,5 @@ namespace AllNotes.Views
             // var flyoutPage1Detail = new FlyoutPage1Detail();
             // await Navigation.PushAsync(flyoutPage1Detail);
         }
-        /*private async void menuItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (e.CurrentSelection.Count != 0)
-            {
-                // Get the note model
-                var folder = (AppFolder)e.CurrentSelection[0];
-
-                // Your existing logic...
-            }*/
-        // }
-
     }
 }
-/*private MenuPageViewModel _viewModel;
-private FlyoutPage2Flyout _menuPage;
-private MenuPageViewModel viewModel;
-public MenuPageViewModel MenuPageViewModel { get; set; }
-public FlyoutPage2Flyout()
-{
-    InitializeComponent();
-    _viewModel = new MenuPageViewModel(this);
-    BindingContext = _viewModel;
-    UpdateMenu();
-   
-}
-
-
-public void UpdateMenu()
-{
-    // Update the menu UI as needed
-    // For example, you can reassign the ItemsSource of the CollectionView
-    // to reflect the updated FolderList from the ViewModel.
-    menuContent.ItemsSource = _viewModel.FolderList;
-}
-private async void menuItem_SelectionChanged(object sender, SelectionChangedEventArgs e)
-{
-    if (e.CurrentSelection.Count != 0)
-    {
-        // Get the note model
-        var folder = (AppFolder)e.CurrentSelection[0];
-
-        // Your existing logic...
-    }
-}
-
-    }
-}*/

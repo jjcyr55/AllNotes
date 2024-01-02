@@ -9,11 +9,11 @@ namespace AllNotes.Interfaces
     public interface INoteRepository
     {
         //Task<IEnumerable<Note>> GetNotes(int folderId);
-        Task<IEnumerable<Note>> GetNotes(int selectedFolder);
+       /* Task<IEnumerable<Note>> GetNotes(int selectedFolder);
 
         Task<Note> GetNoteById(int id);
 
-        Task CreateNote(string title, string text, string date, int _selectedFolderId);
+        Task CreateNote(string title, string text, string date, int FolderId);
 
         Task DeleteNote(Note note);
 
@@ -28,6 +28,6 @@ namespace AllNotes.Interfaces
         Task InsertFolder(AppFolder folder);
         Task DeleteFolder(AppFolder folder);
 
-        Task InitializeDefaultFolder();
+        Task InitializeDefaultFolder();*/
     }
 }

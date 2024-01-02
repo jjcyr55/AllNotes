@@ -6,8 +6,8 @@
              xmlns:fab="clr-namespace:Refractored.FabControl;assembly=Refractored.FabControl"
              xmlns:converters="clr-namespace:AllNotes.Converters"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             Title="Detail">
-
+             BindingContext="{StaticResource mainPageViewModel}"
+              Title="{Binding SelectedFolder.Name}">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorConverter x:Key="colorConverter" />
@@ -112,8 +112,8 @@
             </StackLayout>
         </ScrollView>
 
-        <fab:FloatingActionButtonView
-            Command="{Binding OpenNewNoteScreenCommand}"
+        <!--<fab:FloatingActionButtonView
+             Command="{Binding OpenNewNoteScreenCommand}"
             Margin="10"
             ImageName="newNoteMini.png"
             Size="Normal"
@@ -121,7 +121,29 @@
             ColorRipple="Gray"
             IsVisible="{Binding ShowFab}"
             AbsoluteLayout.LayoutFlags="PositionProportional"
-			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" />
+			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" />-->
+        
+        <Button Grid.Row="0"
+        BackgroundColor="Blue"
+        Command="{Binding OpenNewNoteScreenCommand}"
+        HeightRequest="60"
+        WidthRequest="60"
+        VerticalOptions="End"
+        HorizontalOptions="End"
+        CornerRadius="30"
+        FontSize="30"
+        Text="+"
+        Margin="0,0,20,22"
+                            AbsoluteLayout.LayoutFlags="PositionProportional"
+AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" >
+
+            <!-- <Button.Shadow>
+        <Shadow Brush="Black"
+                Offset="5,5"
+                Radius="10"
+                Opacity="0.5"/>
+    </Button.Shadow>-->
+        </Button>
 
         <FlexLayout
             AbsoluteLayout.LayoutFlags="PositionProportional"
@@ -142,12 +164,14 @@
                 xct:CornerRadiusEffect.CornerRadius="20"
                 xct:TouchEffect.NativeAnimation="True"
                 xct:TouchEffect.Command="{Binding DeleteNotesCommand}">
+                
                 <Image
                     Source="trash.png"
                     HeightRequest="20"
                     WidthRequest="20"
                     BackgroundColor="Transparent" />
                 <Label Text="Delete" FontSize="10" HorizontalTextAlignment="Center" />
+                
             </FlexLayout>
         </FlexLayout>
     </AbsoluteLayout>

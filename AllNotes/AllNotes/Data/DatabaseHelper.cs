@@ -8,7 +8,7 @@ namespace AllNotes.Data
 {
     public class DatabaseHelper
     {
-        SQLiteConnection database;
+       /* SQLiteConnection database;
 
         public DatabaseHelper(string dbPath)
         {
@@ -20,7 +20,7 @@ namespace AllNotes.Data
         {
             return database.Table<Note>().Where(n => n.Title.Contains(keyword) || n.Content.Contains(keyword)).ToList();
         }
-
+*/
         // Add other CRUD operations as needed
     }
 }

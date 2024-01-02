@@ -20,6 +20,17 @@ namespace AllNotes.Views.NewNote
             NavigationPage.SetHasNavigationBar(this, false);
             _newNoteViewModel = newNoteViewModel;
             editor.SetBinding(EditorNoUnderline.AlignmentProperty, "TextAlignment");
+            BindingContext = newNoteViewModel;
         }
+        public NewNotePage()
+        {
+            InitializeComponent();
+        }
+        /*public async Task NavigateToNewNotePage(int folderID)
+        {
+            var newNoteVM = new NewNoteViewModel(folderID);
+            var newNotePage = new NewNotePage { BindingContext = newNoteVM };
+            // Navigation logic as before...
+        }*/
     }
 }
