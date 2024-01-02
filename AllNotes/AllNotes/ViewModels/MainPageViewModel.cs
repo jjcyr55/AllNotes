@@ -19,6 +19,7 @@ using AllNotes.Interfaces;
 using AllNotes.Views;
 using AllNotes.Database;
 using AllNotes.Repositories;
+using Xamarin.Essentials;
 
 namespace AllNotes.ViewModels
 {
@@ -54,7 +55,7 @@ namespace AllNotes.ViewModels
             }
         }
 
-        public AppFolder SelectedFolder
+        /*public AppFolder SelectedFolder
         {
             get => selectedFolder;
             set
@@ -68,6 +69,25 @@ namespace AllNotes.ViewModels
                    // SetDefaultFolder();
 
 
+                }
+            }
+        }*/
+        public AppFolder SelectedFolder
+        {
+            get => selectedFolder;
+            set
+            {
+                if (selectedFolder != value)
+                {
+                    selectedFolder = value;
+                    OnPropertyChanged(nameof(SelectedFolder));
+                    RefreshNotes(); // Refresh notes when selected folder changes
+
+                    // Save the last used folder ID
+                    if (selectedFolder != null)
+                    {
+                        SetLastUsedFolderId(selectedFolder.Id);
+                    }
                 }
             }
         }
@@ -117,30 +137,83 @@ namespace AllNotes.ViewModels
            // SetDefaultFolder();
             OpenNewNoteScreenCommand = new Command(OpenNewNoteScreen);
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RefreshNotes", (sender) => RefreshNotes());
+            // First, set the default folder
+            //  SelectedFolder = new AppFolder { Id = 0, Name = "Default" }; // Set default values
+            // InitializeViewModelAsync();
+            // Then refresh notes based on the selected folder
+           
             RefreshNotes();
-           // InitializeAsync();
-         //   InitializeWithDefaultFolder();
+            _navigationService = DependencyService.Get<INavigationService>();
+           // InitializeViewModelAsync();
         }
 
+       
+
+        private int GetDefaultFolderId()
+        {
+            // Use a synchronous method to avoid Task-related issues
+            var defaultFolder = AppDatabase.Instance().GetFirstFolder();
+            return defaultFolder?.Id ?? 0; // Default to 0 if no folders exist
+        }
+        /* private async Task InitializeViewModelAsync()
+         {
+             // Load the default folder asynchronously
+             var defaultFolder = await AppDatabase.Instance().GetFirstFolder();
+             if (defaultFolder != null)
+             {
+                 SelectedFolder = defaultFolder; // Set default folder
+             }
+             else
+             {
+                 // Handle the case if there is no default folder
+                 // e.g., create a default folder or take appropriate action
+             }
+             RefreshNotes(); // Load notes for the selected folder
+         }*/
+
+
+        /*private async Task InitializeViewModelAsync()
+        {
+            var defaultFolder = await AppDatabase.Instance().GetFirstFolder();
+            if (defaultFolder != null)
+            {
+                Device.BeginInvokeOnMainThread(() => {
+                    SelectedFolder = defaultFolder; // Update on UI thread
+                    RefreshNotes();
+                });
+            }
+        }*/
+
+        private int GetLastUsedFolderId()
+        {
+            // Retrieve the last used folder ID from preferences
+            return Preferences.Get("LastUsedFolderId", 0); // Default to 0 if not set
+        }
+
+        private void SetLastUsedFolderId(int folderId)
+        {
+            // Save the last used folder ID to preferences
+            Preferences.Set("LastUsedFolderId", folderId);
+        }
+
+        
         /* private async Task InitializeAsync()
          {
              await SetDefaultFolderAsync();
          }*/
 
-
-        private async void InitializeWithDefaultFolder()
+        private int GetLastSelectedFolderId()
         {
-            var defaultFolder = await AppDatabase.Instance().GetFirstFolder();
-            if (defaultFolder != null)
-            {
-                SelectedFolder = defaultFolder;
-            }
-            else
-            {
-                // Handle the case if there is no default folder
-                // You might want to create a default folder here if it's mandatory
-            }
+            // Retrieve the last selected folder ID from local settings
+            // Example: return Preferences.Get("LastFolderId", 0);
+            // Implement this method based on how you store local settings
+            return 0; // Default value if no folder ID is stored
         }
+        /*private int GetDefaultFolderId()
+        {
+            var defaultFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault();
+            return defaultFolder?.Id ?? 0; // Returns the ID of the first folder or 0 if no folders exist
+        }*/
 
 
         /*private async Task SetDefaultFolderAsync()
@@ -226,7 +299,7 @@ namespace AllNotes.ViewModels
             }
             else
             {
-              var  SelectedFolder = AppDatabase.Instance().GetFirstFolder();
+                var SelectedFolder = AppDatabase.Instance().GetFirstFolder();
                 if (SelectedFolder != null)
                 {
                     Notes.Clear();
@@ -238,15 +311,10 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-        /*public async void GetNotesFromDb(AppFolder folder)
-        {
-            Notes.Clear();
-            var notes = AppDatabase.Instance().GetNoteList(folder.Id);
-            foreach (AppNote note in notes)
-            {
-                Notes.Add(note);
-            }
-        }*/
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!  ABOVE METHOD WORKS MAY NEED TO BE UNCOMMENTED
+
+
+        
 
 
         public Command<AppNote> TapNoteCommand { get; set; }
@@ -297,13 +365,24 @@ namespace AllNotes.ViewModels
             // Navigate to NewNotePage, passing the folder ID
             await _navigationService.NavigateToNewNotePage(_folderId);
         }*/
+        /* private async void OpenNewNoteScreen()
+         {
+             // Pass the current folder ID if available, otherwise pass null
+             int folderId = SelectedFolder?.Id ?? 0; // 0 or any default value you consider appropriate
+             await _navigationService.NavigateToNewNotePage(folderId);
+         }*/
+        
         private async void OpenNewNoteScreen()
         {
-            // Pass the current folder ID if available, otherwise pass null
-            int folderId = SelectedFolder?.Id ?? 0; // 0 or any default value you consider appropriate
+            int folderId = SelectedFolder?.Id ?? GetDefaultFolderId(); // Use default folder if none selected
             await _navigationService.NavigateToNewNotePage(folderId);
         }
 
+       /* private int GetDefaultFolderId()
+        {
+            var defaultFolder = AppDatabase.Instance().GetFirstFolder();
+            return defaultFolder?.Id ?? 0; // Default to 0 if no folders exist
+        }*/
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));

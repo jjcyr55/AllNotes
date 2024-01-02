@@ -119,7 +119,7 @@ namespace AllNotes.ViewModels
 
 
 
-        public async Task Reset()
+        /*public async Task Reset()
         {
            // if (folderList != null) //NOTICE THIS LINE IS BUGGY AND DOUBLES FOLDERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                 FolderList.Clear();  // Clear the observable collection
@@ -135,14 +135,269 @@ namespace AllNotes.ViewModels
             AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
 
             //if (selectedfolder is null) selectedfolder = folderList[0];
+        }*/
+
+        private const string DefaultFolderName = "Default Folder";
+
+        /* public async Task Reset()
+         {
+             FolderList.Clear();
+             var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+             // Add Default Folder at the beginning
+             var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == DefaultFolderName);
+             if (defaultFolder != null)
+             {
+                 FolderList.Add(defaultFolder);
+                 foldersFromDb.Remove(defaultFolder);
+             }
+
+             foreach (var folder in foldersFromDb)
+             {
+                 FolderList.Add(folder);
+             }
+
+             AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
+         }*/
+        /*public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // Prioritize adding the "Default Folder" and "Edit Folder" first
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Default Folder");
+            var editFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Edit Folder");
+
+            // Ensure "Default Folder" is always first, even if retrieved after "Edit Folder"
+            if (defaultFolder != null)
+            {
+                defaultFolder.IconPath = "folder_account_outline.png";
+                FolderList.Insert(0, defaultFolder); // Insert at index 0 for guaranteed top position
+                foldersFromDb.Remove(defaultFolder); // Remove it from the subsequent loop
+            }
+
+            if (editFolder != null)
+            {
+                FolderList.Add(editFolder); // Add "Edit Folder" after "Default Folder"
+                foldersFromDb.Remove(editFolder); // Remove it from the subsequent loop
+            }
+
+            // Add the remaining folders from the database
+            foreach (var folder in foldersFromDb)
+            {
+                FolderList.Add(folder);
+            }
+
+            // Add any remaining special folders that weren't already added
+         //   AddSpecialFolderIfMissing("New Folder", "folder_plus1.png");
+
+            // ... rest of the code remains unchanged
+        }*/
+
+
+        /*public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // Prioritize adding the "Default Folder" and "Edit Folder" first, with icons
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Default Folder");
+            var editFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Edit Folder");
+
+            // Ensure "Default Folder" is always first, with the desired icon
+            if (defaultFolder != null)
+            {
+                // Set the icon for "Default Folder"
+                defaultFolder.IconPath = "folder_account_outline.png"; // Replace with the correct icon path
+
+                FolderList.Insert(0, defaultFolder); // Insert at index 0 for guaranteed top position
+                foldersFromDb.Remove(defaultFolder); // Remove it from the subsequent loop
+            }
+
+            if (editFolder != null)
+            {
+                FolderList.Add(editFolder); // Add "Edit Folder" after "Default Folder"
+                foldersFromDb.Remove(editFolder); // Remove it from the subsequent loop
+            }
+
+            // Add the remaining folders from the database
+            foreach (var folder in foldersFromDb)
+            {
+                FolderList.Add(folder);
+            }
+
+            // Remove the "New Folder" special folder
+            //  FolderList.RemoveAll(f => f.Name == "New Folder");
+
+            // ... rest of the code remains unchanged
         }
+*/
+        /*public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // Prioritize adding the "Default Folder" and "Edit Folder" first, with icons
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Default Folder");
+            var editFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Edit Folder");
+
+            // Ensure "Default Folder" is always first, with the desired icon
+            if (defaultFolder != null)
+            {
+                // Set the icon for "Default Folder"
+                defaultFolder.IconPath = "folder_account_outline.png"; // Replace with the correct icon path
+
+                FolderList.Insert(0, defaultFolder); // Insert at index 0 for guaranteed top position
+                foldersFromDb.Remove(defaultFolder); // Remove it from the subsequent loop
+            }
+
+            if (editFolder != null)
+            {
+                FolderList.Add(editFolder); // Add "Edit Folder" after "Default Folder"
+                foldersFromDb.Remove(editFolder); // Remove it from the subsequent loop
+            }
+
+            // Add the remaining folders from the database
+            foreach (var folder in foldersFromDb)
+            {
+                FolderList.Add(folder);
+            }
+
+            // Remove the "New Folder" special folder
+          //  FolderList.RemoveAll(f => f.Name == "New Folder");
+
+            // ... rest of the code remains unchanged
+        }*/
+        /*public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // Prioritize adding the "Default Folder" and "Edit Folder" first, with icons
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Default Folder");
+            var editFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Edit Folder");
+
+            // Ensure "Default Folder" is always first, with the desired icon
+            if (defaultFolder != null)
+            {
+                // Set the icon for "Default Folder"
+                defaultFolder.IconPath = "path/to/folder_account_outline.png"; // Replace with the correct icon path
+                FolderList.Insert(0, defaultFolder); // Insert at index 0 for guaranteed top position
+            }
+
+            // Add "Edit Folder" after "Default Folder"
+            if (editFolder != null)
+            {
+                FolderList.Add(editFolder);
+            }
+
+            // Add the remaining folders from the database
+            foreach (var folder in foldersFromDb)
+            {
+                // Avoid duplicates of "Default Folder" and "Edit Folder"
+                if (folder.Name != "Default Folder" && folder.Name != "Edit Folder")
+                {
+                    FolderList.Add(folder);
+                }
+            }
+
+            // ... rest of the code remains unchanged
+        }*/
+        /*public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // First, add the "Default Folder" if it exists
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == "Default Folder");
+            if (defaultFolder != null)
+            {
+                FolderList.Add(defaultFolder);
+            }
+
+            // Then add the rest of the folders, excluding the "Default Folder"
+            foreach (var folder in foldersFromDb)
+            {
+                if (folder.Name != "Default Folder")
+                {
+                    FolderList.Add(folder);
+                }
+            }
+
+            // Add special folders if needed, like "New Folder", "Edit Folder"
+            // Ensure they are not already present in the list
+            AddSpecialFolderIfNeeded("New Folder", "folder_plus1.png");
+            AddSpecialFolderIfNeeded("Edit Folder", "folder_account_outline.png");
+        }*/
+        public async Task Reset()
+        {
+            FolderList.Clear(); // Clear the observable collection
+
+            // Get all folders from the database
+            var foldersFromDb = AppDatabase.Instance().GetFolderList();
+
+            // Define the default folder details
+            string defaultFolderName = "Default Folder";
+            string defaultFolderIcon = "default_folder_icon.png"; // Replace with the actual icon file name
+
+            // Check if the "Default Folder" exists in the database
+            var defaultFolder = foldersFromDb.FirstOrDefault(f => f.Name == defaultFolderName);
+            if (defaultFolder == null)
+            {
+                // Create and add the "Default Folder" if it doesn't exist
+                defaultFolder = new AppFolder(defaultFolderName, defaultFolderIcon, "0");
+                AppDatabase.Instance().InsertFolder(defaultFolder);
+            }
+
+            // Add the "Default Folder" to the list first
+            FolderList.Add(defaultFolder);
+
+            // Then add the rest of the folders, excluding the "Default Folder"
+            foreach (var folder in foldersFromDb)
+            {
+                if (folder.Name != defaultFolderName)
+                {
+                    FolderList.Add(folder);
+                }
+            }
+
+            // "Edit Folder" functionality is managed separately through your UI components
+        }
+
+        private void AddSpecialFolderIfNeeded(string name, string iconPath)
+        {
+            if (!FolderList.Any(f => f.Name == name))
+            {
+                FolderList.Add(new AppFolder(name, iconPath, ""));
+            }
+        }
+
+
+        private void AddSpecialFolderIfMissing(string name, string iconPath)
+        {
+            if (!FolderList.Any(f => f.Name == name))
+            {
+                FolderList.Add(new AppFolder(name, iconPath, ""));
+            }
+        }
+
 
 
 
         private void AddSpecialFolders()
         {
             AddSpecialFolder("Default Folder", "folder_account_outline.png", "");
-            AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
+            //AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
         }
 
         private void AddSpecialFolder(string name, string iconPath, string noteCount)
@@ -159,6 +414,8 @@ namespace AllNotes.ViewModels
         {
             await LoadFoldersFromDatabase();
             AddSpecialFolders();
+            // AddSpecialFolderIfNeeded("New Folder", "folder_plus1.png");
+            // AddSpecialFolderIfNeeded("Edit Folder", "folder_account_outline.png");
         }
         private async Task LoadFoldersFromDatabase()
         {
@@ -301,18 +558,31 @@ namespace AllNotes.ViewModels
         }*/
         public ICommand FolderSelectedCommand => new Command<AppFolder>(NavigateToFlyoutPage1Detail);
 
-        public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
-        {
-            if (selectedFolder.Name == "Edit Folder")
-            {
-                // Your existing logic for "Edit Folder"...
+        /* public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
+         {
+             if (selectedFolder.Name == "Edit Folder")
+             {
+                 // Your existing logic for "Edit Folder"...
+             }
+             else
+             {
+                 // Use the navigation service for other folders
+                 await _navigationService.NavigateToMainPage(selectedFolder);
+             }
+         }*/
+         public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
+         {
+             if (selectedFolder.Name == "Edit Folder")
+             {
+                 // Your existing logic for "Edit Folder"...
+             }
+             else
+             {
+                // If no folder is selected, use the default folder
+                var folderToNavigate = selectedFolder ?? FolderList.FirstOrDefault(f => f.Name == DefaultFolderName);
+                await _navigationService.NavigateToMainPage(folderToNavigate);
             }
-            else
-            {
-                // Use the navigation service for other folders
-                await _navigationService.NavigateToMainPage(selectedFolder);
-            }
-        }
+         }
 
 
 
