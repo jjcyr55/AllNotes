@@ -12,47 +12,39 @@ using AllNotes.Views;
 using AllNotes.Repositories;
 using AllNotes.Interfaces;
 using AllNotes.Database;
+using AllNotes.ViewModels;
 
 namespace AllNotes
 {
    
         public partial class App : Application
         {
-          /*  private static SQLiteAsyncConnection database;
-            public static object INoteRepository { get; internal set; }
-
-
-            public static SQLiteAsyncConnection Database
-            {
-                get
-                {
-                    if (database == null)
-                    {
-                        database = new IDatabase()._database;
-                    }
-
-                    return database;
-                }
-            }
-*/
-            // public static object INoteRepository { get; set; }
-
+         
             public App()
         {
             InitializeComponent();
 
-            //DependencyService.Register<Database>();
+
             AppDatabase.Instance().Init();
             DependencyService.Register<INavigationService, NavigationService>();
-            MainPage = new NavigationPage(new FlyoutPage1());
-            // MainPage = new FlyoutPage1Detail();
-          //  MainPage = new FlyoutPage1Detail();
+
+            var mainPageViewModel = new MainPageViewModel();
+            mainPageViewModel.InitializeWithDefaultFolder(); // Ensure this method is public and synchronous if possible
+
+            var detailPage = new FlyoutPage1Detail
+            {
+                BindingContext = mainPageViewModel
+            };
+
+            MainPage = new FlyoutPage
+            {
+                Detail = new NavigationPage(detailPage),
+                Flyout = new MenuPage()
+            };
         }
-
-
         protected override async void OnStart()
         {
-            base.OnStart();
+          //  base.OnStart();
            // INoteRepository noteRepository = new NoteRepository();
         //    await noteRepository.InitializeDefaultFolder();
             // Other startup code...

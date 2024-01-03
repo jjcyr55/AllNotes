@@ -13,7 +13,7 @@
             <converters:ColorConverter x:Key="colorConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
-
+   
 
 
     <AbsoluteLayout>
@@ -126,6 +126,7 @@
         <Button Grid.Row="0"
         BackgroundColor="Blue"
         Command="{Binding OpenNewNoteScreenCommand}"
+               
         HeightRequest="60"
         WidthRequest="60"
         VerticalOptions="End"

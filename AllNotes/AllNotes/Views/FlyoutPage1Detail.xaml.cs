@@ -15,6 +15,7 @@ using SQLite;
 using AllNotes.Services;
 using AllNotes.Interfaces;
 using AllNotes.ViewModels;
+using AllNotes.Views.NewNote;
 
 namespace AllNotes.Views
 {
@@ -158,7 +159,20 @@ namespace AllNotes.Views
 
         }
 
+        /*private async void OnNewNoteButtonClicked(object sender, EventArgs e)
+        {
+            // Create an instance of NewNoteViewModel
+            var newNoteViewModel = new NewNoteViewModel(); // Adjust this line based on your ViewModel's constructor
 
+            // Create an instance of NewNotePage and set its BindingContext to the ViewModel
+            var newNotePage = new NewNotePage
+            {
+                BindingContext = newNoteViewModel
+            };
+
+            // Navigate to the NewNotePage
+            await Navigation.PushAsync(newNotePage);
+        }*/
 
         //MAY NEED TO REMOVE POSSIBLY CONFLICTING CODE: _notes = new ObservableCollection<AppNote>(); AND private ObservableCollection<AppNote> _notes;
         //  private ObservableCollection<AppNote> _notes;

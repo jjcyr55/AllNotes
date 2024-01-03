@@ -26,11 +26,16 @@ namespace AllNotes.Views.NewNote
         {
             InitializeComponent();
         }
-        /*public async Task NavigateToNewNotePage(int folderID)
+        /*public NewNotePage(int folderId)
         {
-            var newNoteVM = new NewNoteViewModel(folderID);
-            var newNotePage = new NewNotePage { BindingContext = newNoteVM };
-            // Navigation logic as before...
+            InitializeComponent();
+
+            if (folderId == 0)
+            {
+                folderId = GetDefaultFolderId(); // Implement GetDefaultFolderId to retrieve a valid default ID
+            }
+
+            BindingContext = new NewNoteViewModel(folderId);
         }*/
     }
 }

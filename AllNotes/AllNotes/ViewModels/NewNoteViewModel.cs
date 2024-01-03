@@ -157,8 +157,9 @@ namespace AllNotes.ViewModels
             _menuPageViewModel = menuPageViewModel;
         }
 
-       
-
+        public NewNoteViewModel()
+        {
+        }
 
         private async void SaveNote()
         {
