@@ -161,7 +161,7 @@ namespace AllNotes.ViewModels
         {
         }
 
-        private async void SaveNote()
+        /*private async void SaveNote()
         {
             // Assuming NewNoteText is the equivalent of textEditor.Text in your ViewModel
             if (string.IsNullOrEmpty(NewNoteText))
@@ -205,6 +205,54 @@ namespace AllNotes.ViewModels
                 await navigationPage?.PopAsync();
             }
            
+        }*/
+        private async void SaveNote()
+        {
+            if (string.IsNullOrEmpty(NewNoteText))
+                return; // Return if the note text is null or empty
+
+            var db = AppDatabase.Instance();
+
+            if (_note == null) // If creating a new note
+            {
+                // Handle the case where no specific folder is selected
+                if (selectedFolderID == 0)
+                    selectedFolderID = GetDefaultFolderId();
+
+                var note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = NewNoteText,
+                    Title = NewNoteTitle,
+                    Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    // Set other properties like Color if needed
+                };
+
+                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
+                MessagingCenter.Send(this, "RefreshNotes");
+                if (_menuPageViewModel != null)
+                    _menuPageViewModel.Reset();
+            }
+            else // If updating an existing note
+            {
+                _note.Text = NewNoteText;
+                _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                // Update other properties if needed
+                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
+            }
+
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+            }
+        }
+
+        // Method to get the default folder ID
+        private int GetDefaultFolderId()
+        {
+            var defaultFolder = AppDatabase.Instance().GetFirstFolder(); // Or other logic to determine default
+            return defaultFolder?.Id ?? 0; // 0 or another appropriate default
         }
         private void OpenMenu()
         {

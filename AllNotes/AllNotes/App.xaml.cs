@@ -19,8 +19,8 @@ namespace AllNotes
    
         public partial class App : Application
         {
-         
-            public App()
+
+        public App()
         {
             InitializeComponent();
 
@@ -29,8 +29,6 @@ namespace AllNotes
             DependencyService.Register<INavigationService, NavigationService>();
 
             var mainPageViewModel = new MainPageViewModel();
-            mainPageViewModel.InitializeWithDefaultFolder(); // Ensure this method is public and synchronous if possible
-
             var detailPage = new FlyoutPage1Detail
             {
                 BindingContext = mainPageViewModel

@@ -126,7 +126,7 @@
         <Button Grid.Row="0"
         BackgroundColor="Blue"
         Command="{Binding OpenNewNoteScreenCommand}"
-               
+               Clicked="Button_Clicked"
         HeightRequest="60"
         WidthRequest="60"
         VerticalOptions="End"
