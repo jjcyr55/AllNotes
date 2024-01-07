@@ -39,7 +39,8 @@ namespace AllNotes.Views
         private AppFolder _selectedFolder;
         private FlyoutPage1Detail _flyoutPage1Detail;
         private ObservableCollection<AppNote> _notes = new ObservableCollection<AppNote>();
-      
+        private MenuPageViewModel _menuPageViewModel;
+
         private FolderRepository _folderRepository = new FolderRepository();
 
         
@@ -51,26 +52,38 @@ namespace AllNotes.Views
 
        
 
-        public FlyoutPage1Detail()
+        public FlyoutPage1Detail(MainPageViewModel mainPageViewModel)
         {
 
 
             _notes = new ObservableCollection<AppNote>();
 
             InitializeComponent();
-            this.BindingContext = new MainPageViewModel();
+          //  this.BindingContext = new MainPageViewModel();
             // NavigationPage.SetHasNavigationBar(this, false);
             _mainPageViewModel = new MainPageViewModel();
            
             BindingContext = _mainPageViewModel;
             _currentFolder = selectedFolder;
-
+            _menuPageViewModel = new MenuPageViewModel();
+            BindingContext = _menuPageViewModel;
+            MessagingCenter.Subscribe<EditFolderPopupViewModel>(this, "FolderUpdated", (sender) => _menuPageViewModel.Reset());
 
         }
-       
-    
-   
-    public FlyoutPage1Detail(AppFolder selectedFolder)
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            MessagingCenter.Unsubscribe<EditFolderPopupViewModel>(this, "FolderUpdated");
+        }
+
+        public FlyoutPage1Detail()
+        {
+            InitializeComponent();
+            // Additional initialization code, if needed
+        }
+
+
+        public FlyoutPage1Detail(AppFolder selectedFolder)
         {
 
             if (selectedFolder == null)
@@ -84,7 +97,7 @@ namespace AllNotes.Views
 
 
         }
-        private async void GoToNewNotePage()
+        /*private async void GoToNewNotePage()
         {
             // Create an instance of NewNoteViewModel
             var newNoteViewModel = new NewNoteViewModel();
@@ -94,6 +107,86 @@ namespace AllNotes.Views
 
             // Use Xamarin.Forms navigation to push the new page
             await Navigation.PushAsync(newNotePage);
+        }*/
+        private async void GoToNewNotePage()
+        {
+            int folderId = GetSelectedFolderId();
+            if (folderId == 0)
+            {
+                // No folder is selected, prompt the user
+                PromptUserToSelectFolder();
+                if (folderId == 0)
+                {
+                    // User didn't select a folder, return without navigating
+                    return;
+                }
+            }
+            // Create an instance of NewNoteViewModel with the selected folder ID
+            var newNoteViewModel = new NewNoteViewModel(folderId);
+
+            // Pass the ViewModel to NewNotePage
+            var newNotePage = new NewNotePage(newNoteViewModel);
+
+            // Use Xamarin.Forms navigation to push the new page
+            await Navigation.PushAsync(newNotePage);
+        }
+
+
+        // Method to get the currently selected folder ID
+        private int GetSelectedFolderId()
+        {
+            var mainPageViewModel = BindingContext as MainPageViewModel;
+            if (mainPageViewModel != null && mainPageViewModel.SelectedFolder != null)
+            {
+                return mainPageViewModel.SelectedFolder.Id;
+            }
+            return 0;
+        }
+
+        // Method to prompt the user to select a folder
+        /* private async Task<int> PromptUserToSelectFolder()
+         {
+             // Get the list of folders
+             var folders = AppDatabase.Instance().GetFolderList();
+             var folderNames = folders.Select(f => f.Name).ToArray();
+
+             // Display an action sheet to allow the user to select a folder
+             var selectedFolderName = await DisplayActionSheet("Select Folder", "Cancel", null, folderNames);
+
+             // Find the folder with the selected name and return its ID
+             if (selectedFolderName != null && selectedFolderName != "Cancel")
+             {
+                 var selectedFolder = folders.FirstOrDefault(f => f.Name == selectedFolderName);
+                 if (selectedFolder != null)
+                 {
+                     return selectedFolder.Id;
+                 }
+             }
+
+             return 0; // Return 0 if no folder is selected or the user cancels
+
+     }*/
+        private async void PromptUserToSelectFolder()
+        {
+            var userResponse = await Application.Current.MainPage.DisplayAlert(
+                "Select Folder",
+                "Please select a folder to continue.",
+                "Go to Menu",
+                "Cancel");
+
+            if (userResponse)
+            {
+                OpenMenu();
+            }
+        }
+
+
+        private void OpenMenu()
+        {
+            if (Application.Current.MainPage is FlyoutPage mainPage)
+            {
+                mainPage.IsPresented = true; // This will open the flyout menu
+            }
         }
 
         // Event handler for a UI action, like a button click
@@ -101,12 +194,12 @@ namespace AllNotes.Views
         {
             GoToNewNotePage();
         }
-    
-   
 
 
 
-    protected override bool OnBackButtonPressed()
+
+
+        protected override bool OnBackButtonPressed()
         {
             if (this.Detail.Navigation.NavigationStack.Count > 1)
             {

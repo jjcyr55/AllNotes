@@ -9,10 +9,14 @@ using SQLite;
 using AllNotes.Data;
 using AllNotes.Services;
 using AllNotes.Views;
+using AllNotes.ViewModels;
 using AllNotes.Repositories;
 using AllNotes.Interfaces;
 using AllNotes.Database;
-using AllNotes.ViewModels;
+
+using System.Threading.Tasks;
+using AllNotes.Models;
+using Xamarin.Essentials;
 
 namespace AllNotes
 {
@@ -23,11 +27,19 @@ namespace AllNotes
         public App()
         {
             InitializeComponent();
-
+           // MainPage = new NavigationPage(new FlyoutPage1());
 
             AppDatabase.Instance().Init();
             DependencyService.Register<INavigationService, NavigationService>();
 
+
+            /* var mainPage = new FlyoutPage1
+             {
+                 Flyout = new MenuPage(), // Replace with your actual menu page
+                 Detail = new NavigationPage(new MenuPage()) // Replace with your actual detail page
+             };
+
+             MainPage = mainPage;*/
             var mainPageViewModel = new MainPageViewModel();
             var detailPage = new FlyoutPage1Detail
             {
@@ -42,10 +54,50 @@ namespace AllNotes
         }
         protected override async void OnStart()
         {
-          //  base.OnStart();
-           // INoteRepository noteRepository = new NoteRepository();
-        //    await noteRepository.InitializeDefaultFolder();
-            // Other startup code...
+            
+        }
+        private async void PromptUserToOpenMenu()
+        {
+            var userResponse = await Application.Current.MainPage.DisplayAlert(
+                "Select Folder",
+                "Please select a folder to continue.",
+                "Go to Menu",
+                "Cancel");
+
+            if (userResponse)
+            {
+                OpenMenu();
+            }
+        }
+
+        private void OpenMenu()
+        {
+            if (Application.Current.MainPage is FlyoutPage mainPage)
+            {
+                mainPage.IsPresented = true; // This will open the flyout menu
+            }
+        }
+        private async Task InitializeApplicationAsync()
+        {
+            int defaultFolderId = await GetDefaultFolderId();
+
+            AppFolder defaultFolder = AppDatabase.Instance().GetFolder(defaultFolderId);
+            if (defaultFolder != null)
+            {
+                MainPageViewModel mainPageViewModel = new MainPageViewModel();
+                mainPageViewModel.LoadNotesForFolder(defaultFolder);
+                MainPage = new FlyoutPage1Detail(mainPageViewModel);
+            }
+            else
+            {
+                // Handle the case where the default folder is not found
+            }
+        }
+
+        private async Task<int> GetDefaultFolderId()
+        {
+            var defaultFolder = await AppDatabase.Instance().GetFirstFolder();
+            return defaultFolder?.Id ?? 0; // Assuming 0 is a safe default ID
         }
 
         protected override void OnSleep()

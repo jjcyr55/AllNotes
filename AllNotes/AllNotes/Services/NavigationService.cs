@@ -61,30 +61,30 @@ namespace AllNotes.Services
              }
          }*/
 
-        public async Task NavigateToNewNotePage(int folderID)
-        {
-            int folderIdToUse = (folderID != 0) ? folderID : AppDatabase.Instance().GetFirstFolder().Id;
-            var newNoteVM = new NewNoteViewModel(folderIdToUse);
-            var newNotePage = new NewNotePage(newNoteVM);
+        /* public async Task NavigateToNewNotePage(int folderID)
+         {
+             int folderIdToUse = (folderID != 0) ? folderID : AppDatabase.Instance().GetFirstFolder().Id;
+             var newNoteVM = new NewNoteViewModel(folderIdToUse);
+             var newNotePage = new NewNotePage(newNoteVM);
 
 
-            var flyoutPage = Application.Current.MainPage as FlyoutPage;
-            if (flyoutPage != null)
-            {
-                var navigationPage = flyoutPage.Detail as NavigationPage;
-                if (navigationPage != null)
-                {
-                    await navigationPage.PushAsync(newNotePage);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Detail of FlyoutPage is not a NavigationPage");
-                }
-            }
-            else
-            {
-                throw new InvalidOperationException("MainPage is not a FlyoutPage");
-            }
-        }
+             var flyoutPage = Application.Current.MainPage as FlyoutPage;
+             if (flyoutPage != null)
+             {
+                 var navigationPage = flyoutPage.Detail as NavigationPage;
+                 if (navigationPage != null)
+                 {
+                     await navigationPage.PushAsync(newNotePage);
+                 }
+                 else
+                 {
+                     throw new InvalidOperationException("Detail of FlyoutPage is not a NavigationPage");
+                 }
+             }
+             else
+             {
+                 throw new InvalidOperationException("MainPage is not a FlyoutPage");
+             }
+         }*/
     }
 }

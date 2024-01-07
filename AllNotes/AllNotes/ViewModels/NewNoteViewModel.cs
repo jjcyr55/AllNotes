@@ -92,6 +92,7 @@ namespace AllNotes.ViewModels
 
         private int _newNoteColor;
         private bool FlyoutPage1Detail;
+        private bool _firstNoteCreated;
 
         public int NewNoteColor
         {
@@ -247,6 +248,68 @@ namespace AllNotes.ViewModels
                 await navigationPage?.PopAsync();
             }
         }
+        /*private async void SaveNote()
+        {
+
+            if (string.IsNullOrEmpty(NewNoteText))
+                return; // Return if the note text is null or empty
+
+
+            var db = AppDatabase.Instance();
+
+            bool isDefaultFolderUsed = false; // Flag to track if we're using the default folder
+
+
+            if (_note == null) // If creating a new note
+            {
+                // Handle the case where no specific folder is selected
+                if (selectedFolderID == 0)
+                {
+                    selectedFolderID = GetDefaultFolderId();
+                    isDefaultFolderUsed = true; // We're using the default folder
+                }
+
+
+                var note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = NewNoteText,
+                    Title = NewNoteTitle,
+                    Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+                    // Set other properties like Color if needed
+                };
+
+                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, note.Date, NewNoteColor);
+            }
+            else // If updating an existing note
+            {
+                _note.Text = NewNoteText;
+                _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+                // Update other properties if needed
+                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, _note.Date, NewNoteColor);
+            }
+
+            // Notify to refresh notes if the default folder was used
+            if (isDefaultFolderUsed)
+            {
+                MessagingCenter.Send(this, "RefreshMainPage", selectedFolderID);
+            }
+
+
+
+            // Existing logic to handle navigation
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+            }
+
+            // Existing logic to reset the menu
+            if (_menuPageViewModel != null)
+                _menuPageViewModel.Reset();
+        }*/
+
+
 
         // Method to get the default folder ID
         private int GetDefaultFolderId()

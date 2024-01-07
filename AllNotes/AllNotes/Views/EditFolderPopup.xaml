@@ -15,6 +15,12 @@
            Padding="20"
            Margin="20"
            x:Name="EditFolderPopupControl">
-        <Button Text="Edit Folder" Command="{Binding EditFolderCommand}" />
+        <StackLayout VerticalOptions="Center" HorizontalOptions="FillAndExpand">
+            
+                <Button BackgroundColor="Transparent" FontSize="24" Text="Rename" TextColor="Black" WidthRequest="200" Margin="5" Clicked="OnRenameClicked"/>
+                <Button BackgroundColor="Transparent" FontSize="24" Text="Delete" TextColor="Black" WidthRequest="200" Margin="5" Clicked="OnDeleteClicked"/>
+                <Button BackgroundColor="Transparent" FontSize="24" Text="Cancel" TextColor="Blue" WidthRequest="200" Margin="5" Clicked="OnCancelClicked"/>
+            
+        </StackLayout>
     </Frame>
 </xct:Popup>

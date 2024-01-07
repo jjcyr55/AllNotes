@@ -62,9 +62,6 @@
     <EmbeddedResource Update="Views\EditFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\NewFolderPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
     <EmbeddedResource Update="Views\FlyoutPage1.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -76,9 +73,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Views\ItemsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Views\NewFolderPopup.xaml">
-      <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewNotePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

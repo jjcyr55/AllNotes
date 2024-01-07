@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AllNotes.Models;
+using AllNotes.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,20 +15,22 @@ namespace AllNotes.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class EditFolderPopup : Popup
     {
-        public EditFolderPopup()
+
+
+        public EditFolderPopup(MenuPageViewModel viewModel)
         {
             InitializeComponent();
+            BindingContext = viewModel;
         }
 
-      //  void OnRenameClicked(object sender, EventArgs e) => Close("rename");
-
-      //  void OnDeleteClicked(object sender, EventArgs e) => Close("delete");
-
-        void OnCancelClicked(object sender, EventArgs e) => Close("cancel");
-
-        private void Close(string v)
+        public EditFolderPopup()
         {
-            throw new NotImplementedException();
         }
+
+        void OnRenameClicked(object sender, EventArgs e) => Dismiss("rename");
+
+        void OnDeleteClicked(object sender, EventArgs e) => Dismiss("delete");
+
+        void OnCancelClicked(object sender, EventArgs e) => Dismiss("cancel");
     }
 }

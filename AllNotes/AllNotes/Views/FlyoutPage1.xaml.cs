@@ -15,6 +15,10 @@ namespace AllNotes.Views
     {
         public FlyoutPage1()
         {
+        }
+
+        public FlyoutPage1(MainPageViewModel mainPageViewModel)
+        {
             InitializeComponent();
             /*MainPageViewModel viewModel = new MainPageViewModel();
             MenuPageViewModel menuPageViewModel = new MenuPageViewModel();
@@ -31,6 +35,7 @@ namespace AllNotes.Views
             // FlyoutPage.ListView.ItemSelected += ListView_ItemSelected;
             this.Flyout = new MenuPage(); // Your menu page
             this.Detail = new NavigationPage(new FlyoutPage1Detail());
+
         }
 
        /* private void ListView_ItemSelected(object sender, SelectedItemChangedEventArgs e)

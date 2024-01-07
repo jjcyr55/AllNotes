@@ -19,6 +19,7 @@
                         x:FieldModifier="public"
                         SelectionMode="Single"
                         ItemsSource="{Binding FolderList}"
+                        SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
                         >
 
 
@@ -66,6 +67,7 @@
         <Button Text="Go to FlyoutPage1Detail"
                 Clicked="OnGoToFlyoutPage1DetailClicked"/>
         <Button Text="Add New Folder" Command="{Binding AddFolderCommand}" />
-        <Button Text="Edit Folder" Command="{Binding EditFolderCommand}" />
+        <Button Text="Edit Folder" 
+                 Command="{Binding EditFolderCommand}"/>
     </StackLayout>
 </ContentPage>

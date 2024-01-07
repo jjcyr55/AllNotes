@@ -9,7 +9,7 @@ namespace AllNotes.Interfaces
     public interface INavigationService
     {
         Task NavigateToMainPage(AppFolder selectedFolder);
-        Task NavigateToNewNotePage(int folderID);
+       // Task NavigateToNewNotePage(int folderID);
         
         // You can add other navigation methods as needed
     }
