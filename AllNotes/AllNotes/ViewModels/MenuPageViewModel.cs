@@ -24,6 +24,8 @@ using AllNotes.ViewModels;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
+
+
 namespace AllNotes.ViewModels
 {
 
@@ -36,11 +38,13 @@ namespace AllNotes.ViewModels
         {
             _navigationService = DependencyService.Get<INavigationService>();
         }
+        public ICommand NavigateToManageFoldersCommand { get; private set; }
+
         public ICommand EditFolderCommand { get; private set; }
         public static MenuPage Instance { get; private set; }
         public ICommand RenameFolderCommand { get; private set; }
 
-        public ICommand DeleteFolderCommand { get; private set; }
+       // public ICommand DeleteFolderCommand { get; private set; }
         public ICommand CancelEditFolderCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
 
@@ -88,11 +92,8 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
-
-
-
-
+        //  private AppFolder _selectedFolder;
+       
 
 
 
@@ -100,8 +101,9 @@ namespace AllNotes.ViewModels
         {
            // EditFolderCommand = new Command<AppFolder>((folder) => HandleEditFolder(folder));
             FolderList = new ObservableCollection<AppFolder>(AppDatabase.Instance().GetFolderList());
-        //    DeleteFolderCommand = new Command(async () => await DeleteFolderAsync());
-
+            //    DeleteFolderCommand = new Command(async () => await DeleteFolderAsync());
+            // NavigateToManageFoldersCommand = new Command(NavigateToManageFolders);
+            NavigateToManageFoldersCommand = new Command(async () => await NavigateToManageFolders());
 
             selectedFolderID = folderID;
             _appDatabase = new AppDatabase(); // Initialize the repository
@@ -109,32 +111,68 @@ namespace AllNotes.ViewModels
             _navigationService = DependencyService.Get<INavigationService>();
 
             Reset();
-
+            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FoldersUpdated", (sender) =>
+            {
+                RefreshFolderList();
+            });
             _folderList = new ObservableCollection<AppFolder>();
 
             InitializeViewModel();
             AddFolderCommand = new Command(async () => await AddFolderAsync());
             SelectedFolder = _selectedFolder; // Assuming 'folder' is the selected folder object
 
-
+            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FoldersUpdated", (sender) => {
+                RefreshFolderList();
+            });
             MessagingCenter.Subscribe<NewNoteViewModel, AppNote>(this, "NoteSaved", (sender, note) =>
             {
                 Reset(); // Refresh the list
             });
             //  RenameFolderCommand = new Command(async () => await RenameFolderAsync(selectedfolder));
-          //  DeleteFolderCommand = new Command(async () => await DeleteFolderAsync());
+           // DeleteFolderCommand = new Command<AppFolder>(async (folder) => await DeleteFolderAsync(folder));
+
             CancelCommand = new Command(CancelOperation);
         }
 
+        private async Task NavigateToManageFolders()
+        {
+            // Create an instance of ManageFoldersViewModel
+            var manageFoldersViewModel = new ManageFoldersViewModel();
+
+            // Create a new instance of ManageFolders page
+            var manageFoldersPage = new ManageFolders(manageFoldersViewModel);
+
+            // Navigate using Xamarin.Forms built-in navigation
+            if (Application.Current.MainPage is NavigationPage navigationPage)
+            {
+                await navigationPage.PushAsync(manageFoldersPage);
+            }
+            else if (Application.Current.MainPage is FlyoutPage flyoutPage && flyoutPage.Detail is NavigationPage)
+            {
+                await ((NavigationPage)flyoutPage.Detail).PushAsync(manageFoldersPage);
+                flyoutPage.IsPresented = false;
+            }
+            else
+            {
+                // Handle other cases or throw an exception
+            }
+        }
+
+
+        private bool _isDeleteModeEnabled;
+        public bool IsDeleteModeEnabled
+        {
+            get => _isDeleteModeEnabled;
+            set
+            {
+                _isDeleteModeEnabled = value;
+                // Update UI elements (buttons, selection visuals) based on the mode
+            }
+        }
+       // public ICommand DeleteMultipleFoldersCommand => new Command(async () => await DeleteMultipleFoldersAsync());
 
 
 
-      
-
-       
-
-       
-       
 
         /*private void RefreshFolderList()
         {
@@ -223,7 +261,7 @@ namespace AllNotes.ViewModels
             }
 
             // Add "Edit Folder" as a special item
-            AddSpecialFolder("Edit Folder", "edit_folder_icon.png");
+         //   AddSpecialFolder("Edit Folder", "edit_folder_icon.png");
         }
 
         /*public async Task Reset()
@@ -250,7 +288,7 @@ namespace AllNotes.ViewModels
 
 
 
-        private void AddSpecialFolder(string name, string iconPath)
+       /* private void AddSpecialFolder(string name, string iconPath)
         {
             if (!FolderList.Any(f => f.Name == name))
             {
@@ -273,12 +311,12 @@ namespace AllNotes.ViewModels
             {
                 FolderList.Add(new AppFolder(name, iconPath, ""));
             }
-        }
+        }*/
 
 
 
 
-        private void AddSpecialFolders()
+       /* private void AddSpecialFolders()
         {
            // AddSpecialFolder("Default Folder", "folder_account_outline.png", "");
             AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
@@ -290,14 +328,14 @@ namespace AllNotes.ViewModels
             {
                 FolderList.Add(new AppFolder(name, iconPath, noteCount));
             }
-        }
+        }*/
 
 
 
         private async void InitializeViewModel()
         {
             await LoadFoldersFromDatabase();
-            AddSpecialFolders();
+         //   AddSpecialFolders();
             // AddSpecialFolderIfNeeded("New Folder", "folder_plus1.png");
             // AddSpecialFolderIfNeeded("Edit Folder", "folder_account_outline.png");
         }

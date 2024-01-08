@@ -35,56 +35,15 @@ namespace AllNotes.Services
                 Application.Current.MainPage = newFlyoutPage;
             }
         }
+        public async Task NavigateTo(ManageFolders manageFoldersPage)
+        {
+            if (!(Application.Current.MainPage is NavigationPage))
+            {
+                Application.Current.MainPage = new NavigationPage(Application.Current.MainPage);
+            }
 
-        /* public async Task NavigateToNewNotePage(int folderID)
-         {
-             int folderIdToUse = folderID != 0 ? folderID : AppDatabase.Instance().GetFirstFolder().Id;
-             var newNoteVM = new NewNoteViewModel(folderIdToUse);
-             var newNotePage = new NewNotePage(newNoteVM);
+            await Application.Current.MainPage.Navigation.PushAsync(manageFoldersPage);
+        }
 
-             var flyoutPage = Application.Current.MainPage as FlyoutPage;
-             if (flyoutPage != null)
-             {
-                 var navigationPage = flyoutPage.Detail as NavigationPage;
-                 if (navigationPage != null)
-                 {
-                     await navigationPage.PushAsync(newNotePage);
-                 }
-                 else
-                 {
-                     throw new InvalidOperationException("Detail of FlyoutPage is not a NavigationPage");
-                 }
-             }
-             else
-             {
-                 throw new InvalidOperationException("MainPage is not a FlyoutPage");
-             }
-         }*/
-
-        /* public async Task NavigateToNewNotePage(int folderID)
-         {
-             int folderIdToUse = (folderID != 0) ? folderID : AppDatabase.Instance().GetFirstFolder().Id;
-             var newNoteVM = new NewNoteViewModel(folderIdToUse);
-             var newNotePage = new NewNotePage(newNoteVM);
-
-
-             var flyoutPage = Application.Current.MainPage as FlyoutPage;
-             if (flyoutPage != null)
-             {
-                 var navigationPage = flyoutPage.Detail as NavigationPage;
-                 if (navigationPage != null)
-                 {
-                     await navigationPage.PushAsync(newNotePage);
-                 }
-                 else
-                 {
-                     throw new InvalidOperationException("Detail of FlyoutPage is not a NavigationPage");
-                 }
-             }
-             else
-             {
-                 throw new InvalidOperationException("MainPage is not a FlyoutPage");
-             }
-         }*/
     }
 }

@@ -44,6 +44,9 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Views\ManageFolders.xaml.cs">
+		  <DependentUpon>ManageFolders.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\FlyoutPage1Detail.xaml.cs">
 		  <DependentUpon>FlyoutPage1Detail.xaml</DependentUpon>
 		</Compile>
@@ -61,6 +64,9 @@
   <ItemGroup>
     <EmbeddedResource Update="Views\EditFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\ManageFolders.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\FlyoutPage1.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

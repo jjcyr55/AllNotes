@@ -198,16 +198,63 @@ namespace AllNotes.ViewModels
                 _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
                 // Update other properties if needed
                 db = AppDatabase.Instance();
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor); 
+                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
             }
             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
             }
-           
+
         }*/
         private async void SaveNote()
+        {
+            if (string.IsNullOrEmpty(NewNoteText))
+            {
+                return; // Return if the note text is null or empty
+            }
+
+            var db = AppDatabase.Instance();
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (_note == null) // If creating a new note
+            {
+                AppNote note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = NewNoteText,
+                    Title = NewNoteTitle,
+                    Date = currentDateTime,
+                    // Set other properties like Color if needed
+                };
+
+                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+                MessagingCenter.Send(this, "RefreshNotes");
+
+                if (_menuPageViewModel != null)
+                {
+                    _menuPageViewModel.Reset();
+                }
+            }
+            else // If updating an existing note
+            {
+                _note.Text = NewNoteText;
+                _note.Title = NewNoteTitle; // Update the title
+                _note.Date = currentDateTime;
+
+                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+
+                // Inform any relevant part of your app that the note has been updated
+                MessagingCenter.Send(this, "NoteUpdated", _note);
+            }
+
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+            }
+        }
+        /*private async void SaveNote()
         {
             if (string.IsNullOrEmpty(NewNoteText))
                 return; // Return if the note text is null or empty
@@ -247,7 +294,7 @@ namespace AllNotes.ViewModels
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
             }
-        }
+        }*/
         /*private async void SaveNote()
         {
 

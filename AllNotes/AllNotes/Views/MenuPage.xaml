@@ -5,6 +5,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:local="clr-namespace:AllNotes.ViewModels"
              xmlns:views="clr-namespace:AllNotes.Views"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              mc:Ignorable="d"
              x:Name="ParentPage"
              x:Class="AllNotes.Views.MenuPage"
@@ -35,7 +36,7 @@
                         <!--  <x:Array Type="{x:Type views:FlyoutPage1FlyoutMenuItem}">>
                             
                         </x:Array>-->
-                        <views:FlyoutPage1FlyoutMenuItem Title="Detail" TargetPage="{x:Type views:FlyoutPage1Detail}"/>
+                     
                         <Image Source="{Binding IconPath}" Grid.Column="0"/>
 
                         <Label Grid.Column="1"
@@ -45,10 +46,8 @@
                                FontAttributes="Bold"
                                VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer 
-                                    Command="{Binding Path=BindingContext.FolderSelectedCommand, 
-                                                      Source={x:Reference ParentPage}}" 
-                                    CommandParameter="{Binding .}" />
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.FolderSelectedCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}" />
+                                <xct:LongPressGestureRecognizer Command="{Binding Path=BindingContext.EnterDeleteModeCommand, Source={x:Reference ParentPage}}" />
                             </Label.GestureRecognizers>
                         </Label>
 
@@ -64,10 +63,8 @@
         </CollectionView>
 
         <!-- Buttons -->
-        <Button Text="Go to FlyoutPage1Detail"
-                Clicked="OnGoToFlyoutPage1DetailClicked"/>
+       
         <Button Text="Add New Folder" Command="{Binding AddFolderCommand}" />
-        <Button Text="Edit Folder" 
-                 Command="{Binding EditFolderCommand}"/>
+        <Button Text="Manage Folders" Command="{Binding  NavigateToManageFoldersCommand}" />
     </StackLayout>
 </ContentPage>

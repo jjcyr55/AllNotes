@@ -12,6 +12,7 @@ using AllNotes.ViewModels;
 using AllNotes.Views.NewNote;
 using System.Xml.Linq;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 
 namespace AllNotes.Database
@@ -256,5 +257,7 @@ namespace AllNotes.Database
                 dbConnection.Delete(note);
             }
         }
+
+       
     }
 }
