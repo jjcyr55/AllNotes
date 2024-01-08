@@ -51,23 +51,7 @@ namespace AllNotes.Database
         {
         }
 
-        /*public void Init()
-        {
-            if (dbConnection is not null)
-                return;
-
-            dbConnection = new SQLiteConnection(Constants.DatabasePath, Constants.Flags);
-
-            //string dbPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "FastNoteApp.sqlite");
-            //db = new SQLiteConnection(dbPath);
-
-            dbConnection.CreateTable<AppFolder>();
-            dbConnection.CreateTable<AppNote>();
-
-            if (GetFolderList().Count == 0)
-              InsertFolder(new AppFolder("My Note", "ic_folder_special_black.png"));
-           
-        }*/
+       
 
         public void Init()
         {
@@ -91,10 +75,7 @@ namespace AllNotes.Database
         {
             return dbConnection.Table<AppFolder>().ToList();
         }
-        /*public AppFolder GetFirstFolder()
-        {
-            return dbConnection.Table<AppFolder>().FirstOrDefault();
-        }*/
+      
         public async Task<AppFolder> GetFirstFolder()
         {
             return dbConnection.Table<AppFolder>().FirstOrDefault();
@@ -125,35 +106,8 @@ namespace AllNotes.Database
             return dbConnection.Table<AppNote>().Where(note => note.folderID == folderID).ToList();
         }
 
-        /* public async Task<int> UpdateNote(int noteId, string title, string text, string date, int color)
-         {
-             var note = dbConnection.Find<AppNote>(noteId);
-             if (note != null)
-             {
-                 note.Title = title;
-                 note.Text = text;
-                 note.Date = date;
-                 note.Color = color;
 
-                 return  dbConnection.Update(note);
-             }
-             return 0;
-         }*/
-        /*public int UpdateNote(int noteId, string title, string text, string date, int color)
-        {
-            var note = dbConnection.Find<AppNote>(noteId);
-            if (note != null)
-            {
-                note.Title = title;
-                note.Text = text;
-                note.Date = date;
-                note.Color = color;
-
-                return dbConnection.Update(note);
-            }
-            return 0;
-        }*/
-        public async Task<int> UpdateNote(int noteId, string title, string text, string date, int color)
+        /*public async Task<int> UpdateNote(int noteId, string title, string text, string date, int color)
         {
             var note = dbConnection.Find<AppNote>(noteId); // Use FindAsync
             if (note != null)
@@ -166,20 +120,14 @@ namespace AllNotes.Database
                 return dbConnection.Update(note); // Use UpdateAsync
             }
             return 0;
+        }*/
+        public async Task<int> UpdateNote(AppNote note)
+        {
+            // Assuming note is an instance of AppNote with all the updated properties
+            return dbConnection.Update(note); // Use UpdateAsync if using async
         }
 
-        /* public int InsertNote(AppNote note)
-         {
-             AppFolder folder = GetFolder(note.folderID);
-
-             int count = Convert.ToInt32(folder.NoteCount) + 1;
-             folder.NoteCount = count.ToString();
-
-             dbConnection.Update(folder);
-
-             return dbConnection.Insert(note);
-         }*/
-        public async Task<int> InsertNote(int folderId, string title, string text, string date, int color)
+        /*public async Task<int> InsertNote(int folderId, string title, string text, string date, int color)
         {
             var note = new AppNote
             {
@@ -191,48 +139,17 @@ namespace AllNotes.Database
             };
 
             var folder = GetFolder(note.folderID);
-          //  int count = Convert.ToInt32(folder.noteCount) + 1;
-          //  folder.noteCount = count.ToString();
+            int count = Convert.ToInt32(folder.noteCount) + 1;
+            folder.noteCount = count.ToString();
 
             dbConnection.Update(folder);
             return dbConnection.Insert(note);
-        }
-        /*public int InsertNote(int folderId, string title, string text, string date, int color)
-        {
-
-            var note = new AppNote
-            {
-                FolderID = folderId,
-                Title = title,
-                Text = text,
-                Date = date,
-                Color = color
-            };
-
-            var folder = GetFolder(note.FolderID);
-            if (folder != null)
-            {
-                int count = Convert.ToInt32(folder.NoteCount) + 1;
-                folder.NoteCount = count.ToString();
-
-                dbConnection.Update(folder); // Consider using UpdateAsync if available
-
-            }
-            return dbConnection.Insert(note); // Consider using InsertAsync if available
-
         }*/
-        /* public int InsertNote(AppNote note)
-         {
-
-             AppFolder folder = GetFolder(note.FolderID);
-
-             int count = Convert.ToInt32(folder.NoteCount) + 1;
-             folder.NoteCount = count.ToString();
-
-             dbConnection.Update(folder);
-
-             return dbConnection.Insert(note);
-         }*/
+        public async Task<int> InsertNote(AppNote note)
+        {
+            // Assuming note is an instance of AppNote with all the properties set
+            return dbConnection.Insert(note); // Use InsertAsync if using async
+        }
 
 
         public int DeleteNote(AppNote note)

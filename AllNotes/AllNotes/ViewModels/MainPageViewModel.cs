@@ -27,9 +27,9 @@ namespace AllNotes.ViewModels
     {
         private ObservableCollection<object> _selectedNotes;
         public ObservableCollection<AppNote> Notes { get; set; }
-       
+
         private INavigationService _navigationService;
-        private int _folderId; 
+        private int _folderId;
         private bool _showFab = true;
         private SelectionMode _selectionMode = SelectionMode.None;
         private AppDatabase _database;
@@ -48,7 +48,7 @@ namespace AllNotes.ViewModels
                 OnPropertyChanged(nameof(SelectedNotes));
             }
         }
-       
+
         public AppFolder SelectedFolder
         {
             get => selectedFolder;
@@ -100,19 +100,67 @@ namespace AllNotes.ViewModels
                 OnPropertyChanged(nameof(MultiSelectEnabled));
             }
         }
-       
+        private bool _isInMultiSelectMode;
+
+        public bool IsInMultiSelectMode
+        {
+            get => _isInMultiSelectMode;
+            set
+            {
+                if (_isInMultiSelectMode != value)
+                {
+                    _isInMultiSelectMode = value;
+                    OnPropertyChanged(nameof(IsInMultiSelectMode));
+                }
+            }
+        }
+
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                PerformSearch(); // Call the search method when the query changes
+            }
+        }
+        public void PerformSearch()
+        {
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                // If the search query is empty, show all notes
+                RefreshNotes();
+            }
+            else
+            {
+                // Filter the notes based on the query
+                var filteredNotes = AppDatabase.Instance().GetNoteList(selectedFolder.Id)
+    .Where(note => note.Title.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   note.Text.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0)
+    .ToList();
+
+                // Update the Notes collection with the search results
+                Notes.Clear();
+                foreach (var note in filteredNotes)
+                {
+                    Notes.Add(note);
+                }
+            }
+        }
         public MainPageViewModel(AppFolder selectedFolder)
         {
             selectedFolder = selectedFolder;
             _selectedNotes = new ObservableCollection<object>();
             Notes = new ObservableCollection<AppNote>();
-           
-             TapNoteCommand = new Command<AppNote>(TapNote);
+
+            TapNoteCommand = new Command<AppNote>(TapNote);
             LongPressNoteCommand = new Command<AppNote>(LongPressNote);
             _folderId = selectedFolder.Id;
             _navigationService = DependencyService.Get<INavigationService>();
-           
-           
+
+
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RefreshNotes", (sender) => RefreshNotes());
             MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "RefreshMainPage", (sender, folderId) =>
             {
@@ -122,9 +170,9 @@ namespace AllNotes.ViewModels
             {
                 LoadNotesForFolder(arg);
             });
-           
+
             _navigationService = DependencyService.Get<INavigationService>();
-           
+
             RefreshNotes();
             InitializeWithDefaultFolder();
             LoadNotesForFolder(selectedFolder);
@@ -136,7 +184,7 @@ namespace AllNotes.ViewModels
 
             // Update your UI elements to display the retrieved notes
         }
-        
+
         private async Task GetDefaultFolder()
         {
             await AppDatabase.Instance().GetFirstFolder();
@@ -185,7 +233,7 @@ namespace AllNotes.ViewModels
             return defaultFolder?.Id ?? 0; // Assuming 0 is a safe default ID
         }
 
-        
+
 
 
         private int GetLastUsedFolderId()
@@ -200,8 +248,8 @@ namespace AllNotes.ViewModels
             Preferences.Set("LastUsedFolderId", folderId);
         }
 
-        
-       
+
+
 
         private int GetLastSelectedFolderId()
         {
@@ -210,11 +258,11 @@ namespace AllNotes.ViewModels
             // Implement this method based on how you store local settings
             return 0; // Default value if no folder ID is stored
         }
-        
-       
+
+
         public MainPageViewModel()
         {
-            
+
             //  _selectedNotes = new ObservableCollection<AppNote>();
 
             // Subscribe to the FolderSelected message
@@ -226,7 +274,7 @@ namespace AllNotes.ViewModels
         }
 
 
-       
+
         public void LoadNotesForFolder(AppFolder folder)
         {
             selectedFolder = folder;
@@ -246,16 +294,44 @@ namespace AllNotes.ViewModels
             }
         }
 
-        public void RefreshNotes()
+        /* public void RefreshNotes()
+         {
+             if (SelectedFolder != null)
+             {
+                 Notes.Clear();
+                 var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
+                 foreach (var note in notesFromDb)
+                 {
+                     Notes.Add(note);
+                 }
+             }
+             else
+             {
+                 var SelectedFolder = AppDatabase.Instance().GetFirstFolder();
+                 if (SelectedFolder != null)
+                 {
+                     Notes.Clear();
+                     var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
+                     foreach (var note in notesFromDb)
+                     {
+                         Notes.Add(note);
+                     }
+                 }
+             }
+         }*/
+
+
+        private void RefreshNotes()
         {
             if (SelectedFolder != null)
             {
                 Notes.Clear();
-                var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
+                var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id); // Use AppDatabase.Instance() to access your database
                 foreach (var note in notesFromDb)
                 {
                     Notes.Add(note);
                 }
+               
             }
             else
             {
@@ -272,9 +348,6 @@ namespace AllNotes.ViewModels
             }
         }
 
-
-
-      
 
 
         public Command<AppNote> TapNoteCommand { get; set; }
@@ -309,7 +382,7 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-        public void ShowOrHideToolbar()
+        /*public void ShowOrHideToolbar()
         {
             MultiSelectEnabled = !MultiSelectEnabled;
             ShowFab = !ShowFab;
@@ -317,10 +390,47 @@ namespace AllNotes.ViewModels
                 SelectionMode = SelectionMode.Multiple;
             else
                 SelectionMode = SelectionMode.None;
+        }*/
+        public void ShowOrHideToolbar()
+        {
+            MultiSelectEnabled = !MultiSelectEnabled;
+            ShowFab = !ShowFab;
+            IsInMultiSelectMode = MultiSelectEnabled;
+
+            // Rest of your method...
+        }
+       
+        public ICommand DeleteNotesCommand => new Command(DeleteNotes);
+       
+        private async void DeleteNotes()
+        {
+            try
+            {
+                var db = AppDatabase.Instance(); // Get a reference to the database
+
+                foreach (AppNote note in SelectedNotes)
+                {
+                    if (note is AppNote) // Ensure only AppNote objects are deleted
+                    {
+                         db.DeleteNote(note); // Use async version for database operations
+                    }
+                }
+
+                 RefreshNotes(); // Refresh the notes list after deletion
+                SelectedNotes.Clear(); // Clear the selection
+                ShowOrHideToolbar(); // Reset the UI state
+                SelectionMode = SelectionMode.None;
+            }
+            catch (Exception ex)
+            {
+                // Handle errors gracefully
+                await Application.Current.MainPage.DisplayAlert("Error Deleting Notes", "An error occurred while deleting notes. Please try again.", "OK");
+                Debug.WriteLine("Error deleting notes: " + ex.Message);
+            }
         }
 
 
-       
+
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

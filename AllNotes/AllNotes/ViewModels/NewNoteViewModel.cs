@@ -47,7 +47,7 @@ namespace AllNotes.ViewModels
         AppNote selectedNote = null;
         private FontAttributes _fontAttribute = FontAttributes.None;
 
-        public FontAttributes FontAttribute
+        /*public FontAttributes FontAttribute
         {
             get => _fontAttribute;
             set
@@ -63,6 +63,33 @@ namespace AllNotes.ViewModels
         private int _textAlignment = 0;
 
         public int TextAlignment
+        {
+            get => _textAlignment;
+            set
+            {
+                if (_textAlignment != value)
+                {
+                    _textAlignment = value;
+                    OnPropertyChanged(nameof(TextAlignment));
+                }
+            }
+        }*/
+       // private FontAttributes _fontAttribute; // Assuming FontAttributes is an enum
+        public FontAttributes FontAttribute
+        {
+            get => _fontAttribute;
+            set
+            {
+                if (_fontAttribute != value)
+                {
+                    _fontAttribute = value;
+                    OnPropertyChanged(nameof(FontAttribute));
+                }
+            }
+        }
+
+        private TextAlignment _textAlignment; // Assuming TextAlignment is an enum
+        public TextAlignment TextAlignment
         {
             get => _textAlignment;
             set
@@ -162,51 +189,64 @@ namespace AllNotes.ViewModels
         {
         }
 
-        /*private async void SaveNote()
-        {
-            // Assuming NewNoteText is the equivalent of textEditor.Text in your ViewModel
-            if (string.IsNullOrEmpty(NewNoteText))
-            {
-                return; // Return if the note text is null or empty
-            }
 
-            var db = AppDatabase.Instance();
+        /* private async void SaveNote()
+         {
+             if (string.IsNullOrEmpty(NewNoteText))
+             {
+                 return; // Return if the note text is null or empty
+             }
 
-            if (_note == null) // If creating a new note
-            {
-                AppNote note = new AppNote();
-                {
-                    note.folderID = selectedFolderID; // Assuming folderID is the selected folder ID
-                    note.Text = NewNoteText;
-                    note.Title = NewNoteTitle;// Assuming NewNoteText is the note's text
-                    note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                    // Set other properties like Title, Color if needed
-                };
-                db = AppDatabase.Instance();
-                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                MessagingCenter.Send(this, "RefreshNotes");
-                // _menuPageViewModel.Reset();
-                if (_menuPageViewModel != null)
-                {
-                    _menuPageViewModel.Reset();
-                }
-            }
-            else // If updating an existing note
-            {
-                // Assuming the existing note's text or other properties might have changed
-                _note.Text = NewNoteText;
-                _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                // Update other properties if needed
-                db = AppDatabase.Instance();
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-            }
-            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-            {
-                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                await navigationPage?.PopAsync();
-            }
+             var db = AppDatabase.Instance();
+             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+             string fontAttributesString = ConvertFontAttributesToString(FontAttribute);
+             string textAlignmentString = ConvertTextAlignmentToString(TextAlignment);
+             if (_note == null) // If creating a new note
+             {
+                 AppNote note = new AppNote
+                 {
+                     folderID = selectedFolderID,
+                     Text = NewNoteText,
+                     Title = NewNoteTitle,
+                     Date = currentDateTime,
+                     Color = NewNoteColor,
+                     FontSize = FontSize,
+                     FontAttributes = ConvertFontAttributesToString(FontAttribute),
+                     TextAlignment = ConvertTextAlignmentToString(TextAlignment)
+                     // Set other properties like Color if needed
+                 };
 
-        }*/
+                 await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+                 MessagingCenter.Send(this, "RefreshNotes");
+
+                 if (_menuPageViewModel != null)
+                 {
+                     _menuPageViewModel.Reset();
+                 }
+             }
+             else // If updating an existing note
+             {
+                 _note.Text = NewNoteText;
+                 _note.Title = NewNoteTitle;
+                 _note.Date = currentDateTime;
+                 _note.Color = NewNoteColor;
+                 _note.FontSize = FontSize;
+                 _note.FontAttributes = ConvertFontAttributesToString(FontAttribute);
+                 _note.TextAlignment = ConvertTextAlignmentToString(TextAlignment);
+
+
+                 await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+
+                 // Inform any relevant part of your app that the note has been updated
+                 MessagingCenter.Send(this, "NoteUpdated", _note);
+             }
+
+             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+             {
+                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                 await navigationPage?.PopAsync();
+             }
+         }*/
         private async void SaveNote()
         {
             if (string.IsNullOrEmpty(NewNoteText))
@@ -225,10 +265,13 @@ namespace AllNotes.ViewModels
                     Text = NewNoteText,
                     Title = NewNoteTitle,
                     Date = currentDateTime,
-                    // Set other properties like Color if needed
+                    Color = NewNoteColor,
+                    FontSize = FontSize,
+                    FontAttributes = ConvertFontAttributesToString(FontAttribute),
+                    TextAlignment = ConvertTextAlignmentToString(TextAlignment)
                 };
 
-                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+                await db.InsertNote(note); // Use 'note' here
                 MessagingCenter.Send(this, "RefreshNotes");
 
                 if (_menuPageViewModel != null)
@@ -239,10 +282,14 @@ namespace AllNotes.ViewModels
             else // If updating an existing note
             {
                 _note.Text = NewNoteText;
-                _note.Title = NewNoteTitle; // Update the title
+                _note.Title = NewNoteTitle;
                 _note.Date = currentDateTime;
+                _note.Color = NewNoteColor;
+                _note.FontSize = FontSize;
+                _note.FontAttributes = ConvertFontAttributesToString(FontAttribute);
+                _note.TextAlignment = ConvertTextAlignmentToString(TextAlignment);
 
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
+                await db.UpdateNote(_note); // Use '_note' here
 
                 // Inform any relevant part of your app that the note has been updated
                 MessagingCenter.Send(this, "NoteUpdated", _note);
@@ -254,110 +301,15 @@ namespace AllNotes.ViewModels
                 await navigationPage?.PopAsync();
             }
         }
-        /*private async void SaveNote()
+
+        private string ConvertFontAttributesToString(FontAttributes fontAttributes)
         {
-            if (string.IsNullOrEmpty(NewNoteText))
-                return; // Return if the note text is null or empty
-
-            var db = AppDatabase.Instance();
-
-            if (_note == null) // If creating a new note
-            {
-                // Handle the case where no specific folder is selected
-                if (selectedFolderID == 0)
-                    selectedFolderID = GetDefaultFolderId();
-
-                var note = new AppNote
-                {
-                    folderID = selectedFolderID,
-                    Text = NewNoteText,
-                    Title = NewNoteTitle,
-                    Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    // Set other properties like Color if needed
-                };
-
-                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-                MessagingCenter.Send(this, "RefreshNotes");
-                if (_menuPageViewModel != null)
-                    _menuPageViewModel.Reset();
-            }
-            else // If updating an existing note
-            {
-                _note.Text = NewNoteText;
-                _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                // Update other properties if needed
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, Date, NewNoteColor);
-            }
-
-            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-            {
-                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                await navigationPage?.PopAsync();
-            }
-        }*/
-        /*private async void SaveNote()
+            return fontAttributes.ToString(); // Modify this based on how you want to store the value
+        }
+        private string ConvertTextAlignmentToString(TextAlignment textAlignment)
         {
-
-            if (string.IsNullOrEmpty(NewNoteText))
-                return; // Return if the note text is null or empty
-
-
-            var db = AppDatabase.Instance();
-
-            bool isDefaultFolderUsed = false; // Flag to track if we're using the default folder
-
-
-            if (_note == null) // If creating a new note
-            {
-                // Handle the case where no specific folder is selected
-                if (selectedFolderID == 0)
-                {
-                    selectedFolderID = GetDefaultFolderId();
-                    isDefaultFolderUsed = true; // We're using the default folder
-                }
-
-
-                var note = new AppNote
-                {
-                    folderID = selectedFolderID,
-                    Text = NewNoteText,
-                    Title = NewNoteTitle,
-                    Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
-                    // Set other properties like Color if needed
-                };
-
-                await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, note.Date, NewNoteColor);
-            }
-            else // If updating an existing note
-            {
-                _note.Text = NewNoteText;
-                _note.Date = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-                // Update other properties if needed
-                await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, _note.Date, NewNoteColor);
-            }
-
-            // Notify to refresh notes if the default folder was used
-            if (isDefaultFolderUsed)
-            {
-                MessagingCenter.Send(this, "RefreshMainPage", selectedFolderID);
-            }
-
-
-
-            // Existing logic to handle navigation
-            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-            {
-                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                await navigationPage?.PopAsync();
-            }
-
-            // Existing logic to reset the menu
-            if (_menuPageViewModel != null)
-                _menuPageViewModel.Reset();
-        }*/
-
-
-
+            return textAlignment.ToString(); // Modify this based on how you want to store the value
+        }
         // Method to get the default folder ID
         private int GetDefaultFolderId()
         {
@@ -418,15 +370,15 @@ namespace AllNotes.ViewModels
             TextAlignment = 0;
         }
 
-        private void AlignTextCenter()
-        {
-            TextAlignment = 1;
-        }
+       private void AlignTextCenter()
+{
+    TextAlignment = TextAlignment.Center; // Using the enum value
+}
 
-        private void AlignTextRight()
-        {
-            TextAlignment = 2;
-        }
+private void AlignTextRight()
+{
+    TextAlignment = TextAlignment.End; // Using the enum value
+}
 
         public event PropertyChangedEventHandler PropertyChanged;
 

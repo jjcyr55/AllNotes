@@ -59,8 +59,7 @@ namespace AllNotes.Views
             _notes = new ObservableCollection<AppNote>();
 
             InitializeComponent();
-          //  this.BindingContext = new MainPageViewModel();
-            // NavigationPage.SetHasNavigationBar(this, false);
+         
             _mainPageViewModel = new MainPageViewModel();
            
             BindingContext = _mainPageViewModel;
@@ -97,17 +96,7 @@ namespace AllNotes.Views
 
 
         }
-        /*private async void GoToNewNotePage()
-        {
-            // Create an instance of NewNoteViewModel
-            var newNoteViewModel = new NewNoteViewModel();
-
-            // Pass the ViewModel to NewNotePage
-            var newNotePage = new NewNotePage(newNoteViewModel);
-
-            // Use Xamarin.Forms navigation to push the new page
-            await Navigation.PushAsync(newNotePage);
-        }*/
+       
         private async void GoToNewNotePage()
         {
             int folderId = GetSelectedFolderId();
@@ -143,29 +132,7 @@ namespace AllNotes.Views
             return 0;
         }
 
-        // Method to prompt the user to select a folder
-        /* private async Task<int> PromptUserToSelectFolder()
-         {
-             // Get the list of folders
-             var folders = AppDatabase.Instance().GetFolderList();
-             var folderNames = folders.Select(f => f.Name).ToArray();
-
-             // Display an action sheet to allow the user to select a folder
-             var selectedFolderName = await DisplayActionSheet("Select Folder", "Cancel", null, folderNames);
-
-             // Find the folder with the selected name and return its ID
-             if (selectedFolderName != null && selectedFolderName != "Cancel")
-             {
-                 var selectedFolder = folders.FirstOrDefault(f => f.Name == selectedFolderName);
-                 if (selectedFolder != null)
-                 {
-                     return selectedFolder.Id;
-                 }
-             }
-
-             return 0; // Return 0 if no folder is selected or the user cancels
-
-     }*/
+       
         private async void PromptUserToSelectFolder()
         {
             var userResponse = await Application.Current.MainPage.DisplayAlert(
@@ -199,8 +166,24 @@ namespace AllNotes.Views
 
 
 
-        protected override bool OnBackButtonPressed()
+        /* protected override bool OnBackButtonPressed()
+         {
+             if (this.Detail.Navigation.NavigationStack.Count > 1)
+             {
+                 this.Detail.Navigation.PopAsync(); // Go back to the previous page in the stack
+                 return true; // Prevent default back button behavior
+             }
+
+             return base.OnBackButtonPressed();
+             *//*if (_mainPageViewModel.MultiSelectEnabled)
+                 _mainPageViewModel.ShowOrHideToolbar();
+
+             return true;*//*
+         }*/
+        /*protected override bool OnBackButtonPressed()
         {
+            if (_mainPageViewModel.MultiSelectEnabled)
+                _mainPageViewModel.ShowOrHideToolbar();
             if (this.Detail.Navigation.NavigationStack.Count > 1)
             {
                 this.Detail.Navigation.PopAsync(); // Go back to the previous page in the stack
@@ -208,11 +191,50 @@ namespace AllNotes.Views
             }
 
             return base.OnBackButtonPressed();
-            /*if (_mainPageViewModel.MultiSelectEnabled)
+            
+
+           // return true; 
+         }*/
+        /* protected override bool OnBackButtonPressed()
+         {
+             // Check if multi-select mode is enabled
+             if (_mainPageViewModel != null && _mainPageViewModel.MultiSelectEnabled)
+             {
+                 // Disable multi-select mode and update UI accordingly
+                 _mainPageViewModel.MultiSelectEnabled = false;
+                 _mainPageViewModel.ShowOrHideToolbar();
+
+                 // Stay on the current page
+                 return true; // This intercepts the back button press, preventing the default behavior
+             }
+
+             // If not in multi-select mode, proceed with the default back button behavior
+             return base.OnBackButtonPressed();
+         }*/
+        //BACK CAUSING CRASH ON LONGPRESS!!!!!!!!!!!!!!!!!FIX!!!!!!!!!!!
+        protected override bool OnBackButtonPressed()
+        {
+            // Check if the app is in multi-select mode
+            if (_mainPageViewModel.IsInMultiSelectMode)
+            {
+                // Disable multi-select mode
                 _mainPageViewModel.ShowOrHideToolbar();
 
-            return true;*/
+                // Intercept the back button press to prevent app exit
+                return true;
+            }
+
+            // Allow default back button behavior
+            return base.OnBackButtonPressed();
         }
+        /* protected override bool OnBackButtonPressed()
+         {
+             if (_mainPageViewModel != null && _mainPageViewModel.MultiSelectEnabled)
+                 _mainPageViewModel.MultiSelectEnabled = false;
+           //  _mainPageViewModel.ShowOrHideToolbar();
+
+             return true;
+         }*/
 
         private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {

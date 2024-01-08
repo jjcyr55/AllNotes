@@ -11,6 +11,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorConverter x:Key="colorConverter" />
+            <converters:TextAlignmentConverter x:Key="textAlignmentConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
    
@@ -37,7 +38,7 @@
 
                 <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
                     <SearchBar x:Name="searchBarElement"
-                               Text="{Binding SearchQuery}"
+                               Text="{Binding SearchQuery, Mode=TwoWay}"
                Placeholder="Search a note"
                TextChanged="SearchBar_TextChanged"
                FontSize="Small"
@@ -81,6 +82,13 @@
                                    HasShadow="True"
                                    IsClippedToBounds="True"
                                    Padding="0">
+                                        <Label Text="{Binding Text}" 
+                                            MaxLines="5" 
+                                            LineBreakMode="TailTruncation" 
+                                            Padding="15" 
+                                            FontSize="{Binding FontSize}" 
+                                            HorizontalTextAlignment="{Binding TextAlignment, Converter={StaticResource textAlignmentConverter}}" /> 
+                                        <!-- Other labels and elements -->
 
                                         <AbsoluteLayout HeightRequest="100"
                                                     WidthRequest="100"
@@ -90,6 +98,7 @@
                                                     xct:TouchEffect.CommandParameter="{Binding .}"
                                                     xct:TouchEffect.LongPressCommand="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.LongPressNoteCommand}"
                                                     xct:TouchEffect.LongPressCommandParameter="{Binding .}">
+                                            
                                             <Image
                                                 x:Name="Check"
                                                 Source="check.png"
