@@ -1,6 +1,6 @@
 ﻿using Xamarin.Forms;
 
-namespace AllNotes.ViewModels
+namespace AllNotes.Animations
 {
     internal class PopupAnimation
     {

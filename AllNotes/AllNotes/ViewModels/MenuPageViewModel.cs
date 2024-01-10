@@ -93,8 +93,17 @@ namespace AllNotes.ViewModels
             }
         }
         //  private AppFolder _selectedFolder;
-       
 
+        public ICommand AddSecureFolderCommand => new Command(ShowAddSecureFolderPopup);
+
+        private void ShowAddSecureFolderPopup()
+        {
+
+            var secureFolderPopup = new SecureFolderPopup(this);
+            Application.Current.MainPage.Navigation.ShowPopup(secureFolderPopup);
+
+           
+        }
 
 
         public MenuPageViewModel(Views.MenuPage menuPage)
@@ -133,6 +142,47 @@ namespace AllNotes.ViewModels
 
             CancelCommand = new Command(CancelOperation);
         }
+
+
+
+
+        public void CreateSecureFolder(string folderName, string password)
+        {
+            if (string.IsNullOrWhiteSpace(folderName) || string.IsNullOrWhiteSpace(password))
+            {
+                // Handle validation error
+                return;
+            }
+
+            var encryptedPassword = EncryptPassword(password);
+
+            var newFolder = new AppFolder
+            {
+                Name = folderName,
+                IsSecure = true,
+                EncryptedPassword = encryptedPassword,
+                // other properties...
+            };
+
+            AppDatabase.Instance().InsertFolder(newFolder);
+            RefreshFolderList(); // Update your folder list
+        }
+
+        private string EncryptPassword(string password)
+        {
+            // This is a placeholder for actual encryption logic
+            // For demonstration purposes only
+            // In production, use a strong encryption method
+            byte[] data = System.Text.Encoding.UTF8.GetBytes(password);
+            string encryptedPassword = Convert.ToBase64String(data);
+            return encryptedPassword;
+        }
+
+
+
+
+
+
 
         private async Task NavigateToManageFolders()
         {
@@ -375,6 +425,21 @@ namespace AllNotes.ViewModels
            public ICommand FolderSelectedCommand => new Command<AppFolder>(NavigateToFlyoutPage1Detail);
 
 
+        /* public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
+         {
+             if (selectedFolder.Name == "Edit Folder")
+             {
+                 // Your existing logic for "Edit Folder"...
+             }
+             else
+             {
+                 // If no folder is selected, use the default folder
+                 //  var folderToNavigate = selectedFolder ?? FolderList.FirstOrDefault(f => f.Name == DefaultFolderName);
+                 //  await _navigationService.NavigateToMainPage(folderToNavigate);
+                 await _navigationService.NavigateToMainPage(selectedFolder);
+             }
+         }*/
+        //GET MORE ROBUST PASSWORD ENCRYPTION AND POSSIBLY SET UP USERNAME AND PASSWORD RETRIEVE METHODS. ALSO CREATE METHODS TO DENY FOLDER DELETION ON SECURE FOLDER WITHOUT PASSWORD. ALSO SHOW LOCK FOLDER ICON FOR SECURE FOLDERS
         public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
         {
             if (selectedFolder.Name == "Edit Folder")
@@ -383,16 +448,57 @@ namespace AllNotes.ViewModels
             }
             else
             {
-                // If no folder is selected, use the default folder
-              //  var folderToNavigate = selectedFolder ?? FolderList.FirstOrDefault(f => f.Name == DefaultFolderName);
-              //  await _navigationService.NavigateToMainPage(folderToNavigate);
-                await _navigationService.NavigateToMainPage(selectedFolder);
+                // Check if the folder is secure
+                if (selectedFolder.IsSecure)
+                {
+                    // Prompt for password
+                    string inputPassword = await Application.Current.MainPage.DisplayPromptAsync("Secure Folder", "Enter password:", "Ok", "Cancel", "Password", maxLength: 20, keyboard: Keyboard.Text);
+
+                    if (inputPassword != null && ValidatePassword(inputPassword, selectedFolder.EncryptedPassword))
+                    {
+                        // Password is correct, proceed to open the folder
+                        await OpenFolder(selectedFolder);
+                    }
+                    else
+                    {
+                        // Handle incorrect password
+                        await Application.Current.MainPage.DisplayAlert("Error", "Incorrect Password", "OK");
+                    }
+                }
+                else
+                {
+                    // For non-secure folders, just open them as usual
+                    await OpenFolder(selectedFolder);
+                }
             }
         }
+
+        private bool ValidatePassword(string inputPassword, string encryptedPassword)
+        {
+            // Decrypt the encryptedPassword and compare with inputPassword
+            // For demonstration, assuming simple base64 decryption
+            try
+            {
+                string decryptedPassword = Encoding.UTF8.GetString(Convert.FromBase64String(encryptedPassword));
+                return decryptedPassword == inputPassword;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private async Task OpenFolder(AppFolder folder)
+        {
+            // Your existing logic to open the folder
+            // Replace with your actual method to open the folder
+            await _navigationService.NavigateToMainPage(folder);
+        }
+
        
 
 
-       
+
 
         //  public ICommand EditFolderCommand => new Command(ShowEditFolderPopup);
         private void ShowEditFolderPopup()

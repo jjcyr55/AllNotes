@@ -10,33 +10,39 @@
              x:Name="ParentPage"
              x:Class="AllNotes.Views.MenuPage"
              Title="Menu">
+
     <ContentPage.BindingContext>
         <local:MenuPageViewModel />
     </ContentPage.BindingContext>
 
-
     <StackLayout>
+        <!-- Menu Options -->
+        <StackLayout>
+            <Button Text="Add Secure Folder" Command="{Binding AddSecureFolderCommand}" />
+            <Button Text="Add New Folder" Command="{Binding AddFolderCommand}" />
+            <Button Text="Manage Folders" Command="{Binding NavigateToManageFoldersCommand}" />
+        </StackLayout>
+
+        <BoxView HeightRequest="2" BackgroundColor="LightGray" Margin="5,10"/>
+        <!-- Divider -->
+
+        <!-- Folder Collection -->
         <CollectionView x:Name="menuContent"
                         x:FieldModifier="public"
                         SelectionMode="Single"
                         ItemsSource="{Binding FolderList}"
-                        SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
-                        >
-
-
+                        SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
             <CollectionView.ItemTemplate>
-
                 <DataTemplate>
-                    <Grid Padding="5,10" >
+                    <Grid Padding="5,10">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="30"/>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="20" />
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="20"/>
+                            <ColumnDefinition Width="30"/>
+                            <!-- For lock icon -->
                         </Grid.ColumnDefinitions>
-                        <!--  <x:Array Type="{x:Type views:FlyoutPage1FlyoutMenuItem}">>
-                            
-                        </x:Array>-->
-                     
+
                         <Image Source="{Binding IconPath}" Grid.Column="0"/>
 
                         <Label Grid.Column="1"
@@ -46,8 +52,8 @@
                                FontAttributes="Bold"
                                VerticalOptions="Center">
                             <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Path=BindingContext.FolderSelectedCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}" />
-                                <xct:LongPressGestureRecognizer Command="{Binding Path=BindingContext.EnterDeleteModeCommand, Source={x:Reference ParentPage}}" />
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.FolderSelectedCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}"/>
+                                <xct:LongPressGestureRecognizer Command="{Binding Path=BindingContext.EnterDeleteModeCommand, Source={x:Reference ParentPage}}"/>
                             </Label.GestureRecognizers>
                         </Label>
 
@@ -56,15 +62,13 @@
                                Text="{Binding NoteCount}"
                                FontSize="14"
                                TextColor="Gray"
-                               VerticalOptions="Center" />
+                               VerticalOptions="Center"/>
+
+                        <!-- Lock Icon for Secure Folders -->
+                        <Image Source="resources/images/lock.png" Grid.Column="3" IsVisible="{Binding IsSecure}" VerticalOptions="Center"/>
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-        <!-- Buttons -->
-       
-        <Button Text="Add New Folder" Command="{Binding AddFolderCommand}" />
-        <Button Text="Manage Folders" Command="{Binding  NavigateToManageFoldersCommand}" />
     </StackLayout>
 </ContentPage>

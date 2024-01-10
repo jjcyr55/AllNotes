@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+x:Class="AllNotes.Views.SecureFolderPopup"
+x:Name="Popup"
+Size="300,500"
+Color="Transparent"
+BackgroundColor="Transparent"
+xct:ShadowEffect.Color="Transparent">
+
+
+
+
+    <Frame CornerRadius="15"
+       HasShadow="True"
+       IsClippedToBounds="True"
+       Padding="20"
+       Margin="20"
+       x:Name="EditFolderPopupControl">
+
+
+        <StackLayout Padding="20" Spacing="15">
+            <Entry x:Name="folderNameEntry" Placeholder="Folder Name" />
+            <Entry x:Name="passwordEntry" Placeholder="Password" IsPassword="True" />
+            <Button Text="Save" Clicked="OnSaveClicked" />
+            <Button Text="Cancel" Clicked="OnCancelClicked" />
+        </StackLayout>
+    </Frame>
+</xct:Popup>

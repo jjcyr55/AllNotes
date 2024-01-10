@@ -1,4 +1,4 @@
-﻿namespace AllNotes.ViewModels
+﻿namespace AllNotes.Animations
 {
     internal class PopupOptions
     {

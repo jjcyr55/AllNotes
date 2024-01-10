@@ -15,15 +15,24 @@ using AllNotes.Interfaces;
 using System.Collections.Generic;
 using AllNotes.Database;
 using System.Threading.Tasks;
+using Xamarin.Essentials;
+using System.Diagnostics;
+using AllNotes.Data.Enum;
 
 namespace AllNotes.ViewModels
 {
     public class NewNoteViewModel : INotifyPropertyChanged
     {
+ 
+        public ICommand MenuItemSelectedCommand { get; }
         public ICommand SaveNoteCommand => new Command(SaveNote);
-        public ICommand OpenMenuCommand => new Command(OpenMenu);
+         public ICommand OpenMenuCommand => new Command(OpenMenu);
+     
         public ICommand OpenFontSizePopupCommand => new Command(OpenFontSizePopup);
         public ICommand OpenJustifyTextPopupCommand => new Command(OpenJustifyTextPopup);
+        // public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
+
+        // public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
         public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
         public ICommand BoldTextCommand => new Command(BoldText);
         public ICommand ItalicizeTextCommand => new Command(ItalicizeText);
@@ -32,8 +41,12 @@ namespace AllNotes.ViewModels
         public ICommand AlignTextCenterCommand => new Command(AlignTextCenter);
         public ICommand AlignTextRightCommand => new Command(AlignTextRight);
 
-        public string NewNoteTitle { get; set; }
-        public string NewNoteText { get; set; }
+
+
+
+
+        // public string NewNoteTitle { get; set; }
+        // public string NewNoteText { get; set; }
         public string Date { get; set; }
         public int folderID { get; set; }
         public ObservableCollection<int> NoteColors { get; set; }
@@ -42,39 +55,23 @@ namespace AllNotes.ViewModels
         private AppDatabase _database;
         private MainPageViewModel _mainPageViewModel;
         private MenuPageViewModel _menuPageViewModel;
+        
         private AppNote _note;
         int selectedFolderID = 0;
         AppNote selectedNote = null;
         private FontAttributes _fontAttribute = FontAttributes.None;
+        private MenuViewModel _menuViewModel;
 
-        /*public FontAttributes FontAttribute
+
+
+
+       /* public IEnumerable<Colors> GetAllColors()
         {
-            get => _fontAttribute;
-            set
-            {
-                if (_fontAttribute != value)
-                {
-                    _fontAttribute = value;
-                    OnPropertyChanged(nameof(FontAttribute));
-                }
-            }
-        }
-
-        private int _textAlignment = 0;
-
-        public int TextAlignment
-        {
-            get => _textAlignment;
-            set
-            {
-                if (_textAlignment != value)
-                {
-                    _textAlignment = value;
-                    OnPropertyChanged(nameof(TextAlignment));
-                }
-            }
+            return Enum.GetValues(typeof(Colors)).Cast<Colors>();
         }*/
-       // private FontAttributes _fontAttribute; // Assuming FontAttributes is an enum
+
+
+
         public FontAttributes FontAttribute
         {
             get => _fontAttribute;
@@ -121,6 +118,8 @@ namespace AllNotes.ViewModels
         private bool FlyoutPage1Detail;
         private bool _firstNoteCreated;
 
+
+
         public int NewNoteColor
         {
             get => _newNoteColor;
@@ -133,12 +132,25 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
+        
         public NewNotePage BindingContext { get; private set; }
-
+   
+        public ICommand MenuItemSelectedCommandd { get; }
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
-           // _menuPageViewModel = menuPageViewModel;
+
+
+           
+
+            MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
+            MenuItems = new ObservableCollection<MenuItemModel>
+         {
+            new MenuItemModel { Title = "Background Color", Type = MenuType.ColorPicker },
+             new MenuItemModel { Title = "Share", CommandAction = ShareNote }
+         };
+
+
+
             NewNoteColor = (int)Colors.Yellow;
             NoteColors = new ObservableCollection<int> {
                 ((int)Colors.Yellow),
@@ -167,13 +179,103 @@ namespace AllNotes.ViewModels
                 selectedFolderID = note.folderID;
             }
         }
+
+
+        // private FontAttributes _fontAttribute; // Assuming FontAttributes is an enum
+        //  public ICommand ChangeNoteColorCommand => new Command<object>(ChangeNoteColor);
+       // public ICommand ChangeNoteColorCommand => new Command<object>(ChangeNoteColor);
+       /* private void ChangeNoteColor(object colorEnumValue)
+        {
+            if (colorEnumValue is Colors color)
+            {
+                // Logic to change the note color
+                NewNoteColor = (int)color;
+                // Update note color in the database or UI
+            }
+        }*/
+
+        private void OpenMenu()
+        {
+            var newNotePopup = new NewNotePopup();
+            newNotePopup.BindingContext = this;
+            Application.Current.MainPage.Navigation.ShowPopup(newNotePopup);
+        }
+
+        private void ExecuteMenuItem(MenuItemModel item)
+        {
+            item?.CommandAction?.Invoke();
+        }
+        private async void SelectColor()
+        {
+            // Implement color selection logic here
+        }
+
+        private async void ShareNote()
+        {
+            try
+            {
+                // Assuming CurrentNoteContent holds the text of the note being edited or created
+                var noteContent = NewNoteText;
+                var noteTitle = NewNoteTitle;
+
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await Share.RequestAsync(new ShareTextRequest
+                    {
+                        Text = noteContent,
+                        Title = noteTitle
+                    });
+                });
+            }
+            catch (Exception ex)
+            {
+                // Log or display the exception message
+                Debug.WriteLine($"Error in sharing: {ex.Message}");
+            }
+        }
+
+        private ObservableCollection<MenuItemModel> _menuItems;
+        public ObservableCollection<MenuItemModel> MenuItems
+        {
+            get => _menuItems;
+            set
+            {
+                _menuItems = value;
+                OnPropertyChanged(nameof(MenuItems)); // Assuming INotifyPropertyChanged implementation
+            }
+        }
+
+        private string _newNoteText;
+
+        public string NewNoteText
+        {
+            get { return _newNoteText; }
+            set
+            {
+                _newNoteText = value;
+                OnPropertyChanged(nameof(NewNoteText));
+            }
+        }
+        private string _newNoteTitle;
+
+        public string NewNoteTitle
+        {
+            get { return _newNoteTitle; }
+            set
+            {
+                _newNoteTitle = value;
+                OnPropertyChanged(nameof(NewNoteTitle));
+            }
+        }
+
+
         public NewNoteViewModel(int folderID)
         {
-       
+
 
             selectedFolderID = folderID;
 
-            
+
         }
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, int folderID)
         {
@@ -190,63 +292,7 @@ namespace AllNotes.ViewModels
         }
 
 
-        /* private async void SaveNote()
-         {
-             if (string.IsNullOrEmpty(NewNoteText))
-             {
-                 return; // Return if the note text is null or empty
-             }
-
-             var db = AppDatabase.Instance();
-             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-             string fontAttributesString = ConvertFontAttributesToString(FontAttribute);
-             string textAlignmentString = ConvertTextAlignmentToString(TextAlignment);
-             if (_note == null) // If creating a new note
-             {
-                 AppNote note = new AppNote
-                 {
-                     folderID = selectedFolderID,
-                     Text = NewNoteText,
-                     Title = NewNoteTitle,
-                     Date = currentDateTime,
-                     Color = NewNoteColor,
-                     FontSize = FontSize,
-                     FontAttributes = ConvertFontAttributesToString(FontAttribute),
-                     TextAlignment = ConvertTextAlignmentToString(TextAlignment)
-                     // Set other properties like Color if needed
-                 };
-
-                 await db.InsertNote(selectedFolderID, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
-                 MessagingCenter.Send(this, "RefreshNotes");
-
-                 if (_menuPageViewModel != null)
-                 {
-                     _menuPageViewModel.Reset();
-                 }
-             }
-             else // If updating an existing note
-             {
-                 _note.Text = NewNoteText;
-                 _note.Title = NewNoteTitle;
-                 _note.Date = currentDateTime;
-                 _note.Color = NewNoteColor;
-                 _note.FontSize = FontSize;
-                 _note.FontAttributes = ConvertFontAttributesToString(FontAttribute);
-                 _note.TextAlignment = ConvertTextAlignmentToString(TextAlignment);
-
-
-                 await db.UpdateNote(_note.id, NewNoteTitle, NewNoteText, currentDateTime, NewNoteColor);
-
-                 // Inform any relevant part of your app that the note has been updated
-                 MessagingCenter.Send(this, "NoteUpdated", _note);
-             }
-
-             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-             {
-                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                 await navigationPage?.PopAsync();
-             }
-         }*/
+        
         private async void SaveNote()
         {
             if (string.IsNullOrEmpty(NewNoteText))
@@ -316,12 +362,7 @@ namespace AllNotes.ViewModels
             var defaultFolder = AppDatabase.Instance().GetFirstFolder(); // Or other logic to determine default
             return defaultFolder?.Id ?? 0; // 0 or another appropriate default
         }
-        private void OpenMenu()
-        {
-            var noteColorSelectionPopup = new NoteColorSelectionPopup();
-            noteColorSelectionPopup.BindingContext = this;
-            Application.Current.MainPage.Navigation.ShowPopup(noteColorSelectionPopup);
-        }
+       
 
         private void OpenFontSizePopup()
         {
@@ -370,15 +411,15 @@ namespace AllNotes.ViewModels
             TextAlignment = 0;
         }
 
-       private void AlignTextCenter()
-{
-    TextAlignment = TextAlignment.Center; // Using the enum value
-}
+        private void AlignTextCenter()
+        {
+            TextAlignment = TextAlignment.Center; // Using the enum value
+        }
 
-private void AlignTextRight()
-{
-    TextAlignment = TextAlignment.End; // Using the enum value
-}
+        private void AlignTextRight()
+        {
+            TextAlignment = TextAlignment.End; // Using the enum value
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

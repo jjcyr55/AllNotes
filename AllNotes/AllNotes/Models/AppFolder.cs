@@ -29,7 +29,8 @@ namespace AllNotes.Models
         public string IconPath { get; set; } = "";
 
         public string noteCount { get; set; } = "0";
-
+        public bool IsSecure { get; set; }
+        public string EncryptedPassword { get; set; }
 
         public AppFolder(string FolderName)
         {

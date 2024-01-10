@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AllNotes.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -16,6 +17,7 @@ namespace AllNotes.Views.NewNote.Popups
         public FontSizeSelectionPopup()
         {
             InitializeComponent();
+            BindingContext = new NewNoteViewModel();
         }
     }
 }

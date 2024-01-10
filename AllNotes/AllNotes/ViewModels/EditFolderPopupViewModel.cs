@@ -16,9 +16,9 @@ using Xamarin.Forms;
 
 namespace AllNotes.ViewModels
 {
-    public class EditFolderPopupViewModel : INotifyPropertyChanged
+    public class EditFolderPopupViewModel //: INotifyPropertyChanged
     {
-        public ICommand RenameCommand { get; private set; }
+       /* public ICommand RenameCommand { get; private set; }
         public ICommand DeleteCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
 
@@ -26,15 +26,15 @@ namespace AllNotes.ViewModels
 
         public EditFolderPopupViewModel(AppFolder selectedFolder)
         {
-           /* _selectedFolder = selectedFolder;
+           *//* _selectedFolder = selectedFolder;
             RenameCommand = new Command(async () => await RenameFolder());
             DeleteCommand = new Command(DeleteFolder);
-            CancelCommand = new Command(Cancel);*/
+            CancelCommand = new Command(Cancel);*//*
         }
 
         private async Task RenameFolder()
         {
-            /* if (_selectedFolder == null || string.IsNullOrEmpty(_selectedFolder.Name))
+            *//* if (_selectedFolder == null || string.IsNullOrEmpty(_selectedFolder.Name))
              {
                  // Handle the case where _selectedFolder is null or name is empty
                  return;
@@ -44,7 +44,7 @@ namespace AllNotes.ViewModels
                 // Display an alert or handle the case where no folder is selected
                 await Application.Current.MainPage.DisplayAlert("Error", "No folder selected for renaming.", "OK");
                 return;
-            }*/
+            }*//*
 
             string result = await Application.Current.MainPage.DisplayPromptAsync(
                 "Rename Folder",
@@ -78,6 +78,6 @@ namespace AllNotes.ViewModels
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+        }*/
     }
 }

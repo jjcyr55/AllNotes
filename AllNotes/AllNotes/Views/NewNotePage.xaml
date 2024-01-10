@@ -43,7 +43,7 @@
                 Keyboard="Chat"
                 Margin="20, 0"
                 Placeholder="Type here..."
-                Text="{Binding NewNoteText}"
+                Text="{Binding NewNoteText, Mode=TwoWay}"
                 FontSize="{Binding FontSize}"
                 FontAttributes="{Binding FontAttribute}"
                 FlexLayout.Grow="1" />
