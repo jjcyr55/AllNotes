@@ -10,6 +10,22 @@
              Title="Manage Folders">
     <ContentPage.Content>
         <StackLayout>
+
+
+            <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
+                <SearchBar x:Name="searchBarElement"
+                Text="{Binding SearchQuery, Mode=TwoWay}"
+Placeholder="Search Folders"
+TextChanged="SearchBar_TextChanged"
+FontSize="Small"
+TextColor="Black"
+HorizontalOptions="FillAndExpand">
+                    <SearchBar.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="SearchBar_Tapped" />
+                    </SearchBar.GestureRecognizers>
+                </SearchBar>
+            </Frame>
+
             <!-- CollectionView for displaying folders -->
             <CollectionView x:Name="foldersCollectionView" 
                             x:FieldModifier="public"

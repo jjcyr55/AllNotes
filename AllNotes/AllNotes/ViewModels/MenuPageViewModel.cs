@@ -142,7 +142,40 @@ namespace AllNotes.ViewModels
 
             CancelCommand = new Command(CancelOperation);
         }
+        private string _searchQuery;
+        public string SearchQuery
+        {
+            get => _searchQuery;
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged(nameof(SearchQuery));
+                PerformSearch(); // Call the search method when the query changes
+            }
+        }
+        public void PerformSearch()
+        {
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                // If the search query is empty, show all notes
+                RefreshFolderList();
+            }
+            else
+            {
+                // Filter the notes based on the query
+                var filteredFolders = AppDatabase.Instance().GetFolderList()
+    .Where(folder => folder.Name.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0 ||
+                   folder.Name.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0)
+    .ToList();
 
+                // Update the Notes collection with the search results
+                FolderList.Clear();
+                foreach (var folder in filteredFolders)
+                {
+                    FolderList.Add(folder);
+                }
+            }
+        }
 
 
 

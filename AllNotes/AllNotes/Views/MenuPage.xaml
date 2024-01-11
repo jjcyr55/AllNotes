@@ -25,6 +25,19 @@
 
         <BoxView HeightRequest="2" BackgroundColor="LightGray" Margin="5,10"/>
         <!-- Divider -->
+        <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
+            <SearchBar x:Name="searchBarElement"
+                Text="{Binding SearchQuery, Mode=TwoWay}"
+Placeholder="Search Folders"
+TextChanged="SearchBar_TextChanged"
+FontSize="Small"
+TextColor="Black"
+HorizontalOptions="FillAndExpand">
+                <SearchBar.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="SearchBar_Tapped" />
+                </SearchBar.GestureRecognizers>
+            </SearchBar>
+        </Frame>
 
         <!-- Folder Collection -->
         <CollectionView x:Name="menuContent"
@@ -32,7 +45,9 @@
                         SelectionMode="Single"
                         ItemsSource="{Binding FolderList}"
                         SelectedItem="{Binding SelectedFolder, Mode=TwoWay}">
-            <CollectionView.ItemTemplate>
+
+
+                <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="5,10">
                         <Grid.ColumnDefinitions>
@@ -42,8 +57,8 @@
                             <ColumnDefinition Width="30"/>
                             <!-- For lock icon -->
                         </Grid.ColumnDefinitions>
-
-                        <Image Source="{Binding IconPath}" Grid.Column="0"/>
+                       
+                            <Image Source="{Binding IconPath}" Grid.Column="0"/>
 
                         <Label Grid.Column="1"
                                Margin="20,0"

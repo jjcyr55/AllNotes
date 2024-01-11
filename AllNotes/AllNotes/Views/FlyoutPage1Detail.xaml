@@ -39,7 +39,7 @@
                 <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
                     <SearchBar x:Name="searchBarElement"
                                Text="{Binding SearchQuery, Mode=TwoWay}"
-               Placeholder="Search a note"
+               Placeholder="Search Notes"
                TextChanged="SearchBar_TextChanged"
                FontSize="Small"
                TextColor="Black"
