@@ -156,18 +156,21 @@ namespace AllNotes.ViewModels
 
             var encryptedPassword = EncryptPassword(password);
 
+            var iconPath = "folder_locker.png";
+
             var newFolder = new AppFolder
             {
                 Name = folderName,
                 IsSecure = true,
                 EncryptedPassword = encryptedPassword,
+                IconPath = iconPath,
                 // other properties...
             };
 
             AppDatabase.Instance().InsertFolder(newFolder);
             RefreshFolderList(); // Update your folder list
         }
-
+       
         private string EncryptPassword(string password)
         {
             // This is a placeholder for actual encryption logic
@@ -219,20 +222,7 @@ namespace AllNotes.ViewModels
                 // Update UI elements (buttons, selection visuals) based on the mode
             }
         }
-       // public ICommand DeleteMultipleFoldersCommand => new Command(async () => await DeleteMultipleFoldersAsync());
-
-
-
-
-        /*private void RefreshFolderList()
-        {
-            FolderList.Clear();
-            var folders = AppDatabase.Instance().GetFolderList();
-            foreach (var folder in folders)
-            {
-                FolderList.Add(folder);
-            }
-        }*/
+      
         private void RefreshFolderList()
         {
             FolderList.Clear();
@@ -338,47 +328,7 @@ namespace AllNotes.ViewModels
 
 
 
-       /* private void AddSpecialFolder(string name, string iconPath)
-        {
-            if (!FolderList.Any(f => f.Name == name))
-            {
-                FolderList.Add(new AppFolder(name, iconPath, ""));
-            }
-        }
-
-        private void AddSpecialFolderIfNeeded(string name, string iconPath)
-        {
-            if (!FolderList.Any(f => f.Name == name))
-            {
-                FolderList.Add(new AppFolder(name, iconPath, ""));
-            }
-        }
-
-
-        private void AddSpecialFolderIfMissing(string name, string iconPath)
-        {
-            if (!FolderList.Any(f => f.Name == name))
-            {
-                FolderList.Add(new AppFolder(name, iconPath, ""));
-            }
-        }*/
-
-
-
-
-       /* private void AddSpecialFolders()
-        {
-           // AddSpecialFolder("Default Folder", "folder_account_outline.png", "");
-            AddSpecialFolder("Edit Folder", "folder_account_outline.png", "");
-        }
-
-        private void AddSpecialFolder(string name, string iconPath, string noteCount)
-        {
-            if (!FolderList.Any(f => f.Name == name))
-            {
-                FolderList.Add(new AppFolder(name, iconPath, noteCount));
-            }
-        }*/
+       
 
 
 
@@ -418,11 +368,25 @@ namespace AllNotes.ViewModels
             }
         }
 
+        private bool _isSecure;
 
-        
+        public bool IsSecure
+        {
+            get => _isSecure;
+            set
+            {
+                if (_isSecure != value)
+                {
+                    _isSecure = value;
+                    OnPropertyChanged(nameof(IsSecure));
+                    OnPropertyChanged(nameof(LockIconVisible));
+                }
+            }
+        }
+        public bool LockIconVisible => IsSecure;
 
 
-           public ICommand FolderSelectedCommand => new Command<AppFolder>(NavigateToFlyoutPage1Detail);
+        public ICommand FolderSelectedCommand => new Command<AppFolder>(NavigateToFlyoutPage1Detail);
 
 
         /* public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)

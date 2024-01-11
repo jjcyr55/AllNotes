@@ -66,7 +66,7 @@ namespace AllNotes.Database
             var defaultFolder = dbConnection.Table<AppFolder>().FirstOrDefault(f => f.Name == "Default Folder");
             if (defaultFolder == null)
             {
-                InsertFolder(new AppFolder("Default Folder", "default_icon.png"));
+                InsertFolder(new AppFolder("Default Folder", "folder_account_outline.png"));
             }
         }
 

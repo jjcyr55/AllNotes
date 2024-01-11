@@ -29,8 +29,9 @@ namespace AllNotes.Models
         public string IconPath { get; set; } = "";
 
         public string noteCount { get; set; } = "0";
-        public bool IsSecure { get; set; }
+       // public bool IsSecure { get; set; }
         public string EncryptedPassword { get; set; }
+      //  public bool LockIconVisible => IsSecure;
 
         public AppFolder(string FolderName)
         {
@@ -50,6 +51,23 @@ namespace AllNotes.Models
         public AppFolder()
         {
         }
+        private bool _isSecure;
+
+        public bool IsSecure
+        {
+            get => _isSecure;
+            set
+            {
+                if (_isSecure != value)
+                {
+                    _isSecure = value;
+                    OnPropertyChanged(nameof(IsSecure));
+                    OnPropertyChanged(nameof(LockIconVisible));
+                }
+            }
+        }
+
+        public bool LockIconVisible => IsSecure;
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

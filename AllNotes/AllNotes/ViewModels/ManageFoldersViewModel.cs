@@ -56,6 +56,24 @@ namespace AllNotes.ViewModels
                 OnPropertyChanged(nameof(SelectedFolders));
             }
         }
+        private bool _isSecure;
+
+        public bool IsSecure
+        {
+            get => _isSecure;
+            set
+            {
+                if (_isSecure != value)
+                {
+                    _isSecure = value;
+                   
+                    OnPropertyChanged(nameof(IsSecure));
+                    OnPropertyChanged(nameof(LockIconVisible));
+                }
+            }
+        }
+        //PROMPT GETS STUCK ON INFINITE LOOP PLEASE SELECT A SINGLE FOLDER TO RENAME IF MORE THAN ONE FOLDER IS SELECTED FOR RENAME, DELETE WORKING FOOD SO FAR
+        public object LockIconVisible { get; private set; }
 
         private async Task RenameSelectedFolder()
         {
@@ -64,11 +82,25 @@ namespace AllNotes.ViewModels
                 var selectedFolder = _selectedFolders.FirstOrDefault() as AppFolder;
                 if (selectedFolder != null)
                 {
+                    // Check if the folder is secure and prompt for a password
+                    if (selectedFolder.IsSecure)
+                    {
+                        string inputPassword = await Application.Current.MainPage.DisplayPromptAsync("Secure Folder", "Enter password:", "Ok", "Cancel", "Password", maxLength: 20, keyboard: Keyboard.Text);
+
+                        // Validate password
+                        if (!ValidatePassword(inputPassword, selectedFolder.EncryptedPassword))
+                        {
+                            await Application.Current.MainPage.DisplayAlert("Error", "Incorrect Password", "OK");
+                            return; // Exit if password is incorrect
+                        }
+                    }
+
+                    // Proceed with renaming after password validation
                     string newName = await Application.Current.MainPage.DisplayPromptAsync("Rename Folder", "Enter new folder name:", initialValue: selectedFolder.Name);
                     if (!string.IsNullOrEmpty(newName))
                     {
                         selectedFolder.Name = newName;
-                         AppDatabase.Instance().UpdateFolder(selectedFolder);
+                        AppDatabase.Instance().UpdateFolder(selectedFolder);
 
                         RefreshFolders();
                         MessagingCenter.Send(this, "FoldersUpdated");
@@ -86,6 +118,31 @@ namespace AllNotes.ViewModels
         {
             if (_selectedFolders != null && _selectedFolders.Any())
             {
+                // Check if any selected folder is secure
+                bool containsSecureFolder = _selectedFolders.Any(obj => obj is AppFolder folder && folder.IsSecure);
+
+                if (containsSecureFolder)
+                {
+                    string inputPassword = await Application.Current.MainPage.DisplayPromptAsync("Secure Folder", "Enter password:", "Ok", "Cancel", "Password", maxLength: 20, keyboard: Keyboard.Text);
+
+                    // Validate password for all secure folders
+                    bool isPasswordValid = _selectedFolders.All(obj =>
+                    {
+                        if (obj is AppFolder folder && folder.IsSecure)
+                        {
+                            return ValidatePassword(inputPassword, folder.EncryptedPassword);
+                        }
+                        return true; // If folder is not secure, skip password check
+                    });
+
+                    if (!isPasswordValid)
+                    {
+                        await Application.Current.MainPage.DisplayAlert("Error", "Incorrect Password", "OK");
+                        return; // Exit if password is incorrect
+                    }
+                }
+
+                // Confirm deletion
                 bool isUserSure = await Application.Current.MainPage.DisplayAlert(
                     "Confirm Delete",
                     "Are you sure you want to delete the selected folders?",
@@ -115,7 +172,20 @@ namespace AllNotes.ViewModels
                     "OK");
             }
         }
-
+        private bool ValidatePassword(string inputPassword, string encryptedPassword)
+        {
+            // Decrypt the encryptedPassword and compare with inputPassword
+            // For demonstration, assuming simple base64 decryption
+            try
+            {
+                string decryptedPassword = Encoding.UTF8.GetString(Convert.FromBase64String(encryptedPassword));
+                return decryptedPassword == inputPassword;
+            }
+            catch
+            {
+                return false;
+            }
+        }
 
         private void RefreshFolders()
         {

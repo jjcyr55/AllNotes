@@ -169,4 +169,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\folder_plus1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\folder_locker.png" />
+  </ItemGroup>
 </Project>

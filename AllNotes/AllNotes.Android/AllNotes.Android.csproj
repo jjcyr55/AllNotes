@@ -124,5 +124,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\folder_plus1.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\folder_locker.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
