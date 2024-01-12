@@ -20,6 +20,7 @@ using AllNotes.Views;
 using AllNotes.Database;
 using AllNotes.Repositories;
 using Xamarin.Essentials;
+using System.Text.RegularExpressions;
 
 namespace AllNotes.ViewModels
 {
@@ -321,7 +322,7 @@ namespace AllNotes.ViewModels
          }*/
 
 
-        private void RefreshNotes()
+        public void RefreshNotes()
         {
             if (SelectedFolder != null)
             {
@@ -331,7 +332,7 @@ namespace AllNotes.ViewModels
                 {
                     Notes.Add(note);
                 }
-               
+
             }
             else
             {
@@ -347,10 +348,32 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
+        public static string StripHtml(string htmlContent)
+        {
+            return Regex.Replace(htmlContent, "<.*?>", string.Empty);
+        }
 
 
         public Command<AppNote> TapNoteCommand { get; set; }
+        /* private async void TapNote(AppNote selectedNote)
+         {
+             if (selectedNote != null)
+             {
+                 if (_selectionMode == SelectionMode.None)
+                 {
+                     var newNoteVM = new NewNoteViewModel(this, selectedNote);
+                     var newNotePage = new NewNotePage(newNoteVM);
+                     newNotePage.BindingContext = newNoteVM;
+                     //   await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
+                     if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+                     {
+                         var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                         await navigationPage?.PushAsync(newNotePage);
+                     }
+                 }
+             }
+         }*/
+
         private async void TapNote(AppNote selectedNote)
         {
             if (selectedNote != null)
@@ -360,11 +383,10 @@ namespace AllNotes.ViewModels
                     var newNoteVM = new NewNoteViewModel(this, selectedNote);
                     var newNotePage = new NewNotePage(newNoteVM);
                     newNotePage.BindingContext = newNoteVM;
-                    //   await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
                     if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
                     {
                         var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                        await navigationPage?.PushAsync(newNotePage);
+                        await newNoteVM.OpenTEditor(); // Open TEditor with the selected note
                     }
                 }
             }
@@ -399,9 +421,9 @@ namespace AllNotes.ViewModels
 
             // Rest of your method...
         }
-       
+
         public ICommand DeleteNotesCommand => new Command(DeleteNotes);
-       
+
         private async void DeleteNotes()
         {
             try
@@ -412,11 +434,11 @@ namespace AllNotes.ViewModels
                 {
                     if (note is AppNote) // Ensure only AppNote objects are deleted
                     {
-                         db.DeleteNote(note); // Use async version for database operations
+                        db.DeleteNote(note); // Use async version for database operations
                     }
                 }
 
-                 RefreshNotes(); // Refresh the notes list after deletion
+                RefreshNotes(); // Refresh the notes list after deletion
                 SelectedNotes.Clear(); // Clear the selection
                 ShowOrHideToolbar(); // Reset the UI state
                 SelectionMode = SelectionMode.None;
@@ -437,7 +459,7 @@ namespace AllNotes.ViewModels
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-      
+
 
         public event PropertyChangedEventHandler PropertyChanged;
     }

@@ -19,7 +19,7 @@ namespace AllNotes.Views.NewNote
             InitializeComponent();
             NavigationPage.SetHasNavigationBar(this, false);
             _newNoteViewModel = newNoteViewModel;
-            editor.SetBinding(EditorNoUnderline.AlignmentProperty, "TextAlignment");
+           editor.SetBinding(EditorNoUnderline.AlignmentProperty, "TextAlignment");
             BindingContext = newNoteViewModel;
         }
         public NewNotePage()

@@ -44,7 +44,7 @@ namespace AllNotes.ViewModels
         public static MenuPage Instance { get; private set; }
         public ICommand RenameFolderCommand { get; private set; }
 
-       // public ICommand DeleteFolderCommand { get; private set; }
+       
         public ICommand CancelEditFolderCommand { get; private set; }
         public ICommand CancelCommand { get; private set; }
 
@@ -52,13 +52,11 @@ namespace AllNotes.ViewModels
         private ObservableCollection<AppFolder> _folderList;
 
         private AppFolder _selectedFolder;
-        //  public List<AppFolder> folderList { get; set; }
-        //  AppFolder _selectedfolder = null;
+       
         int controlMenuCount = 0;
         private int folderID;
         int selectedFolderID = 0;
-        // AppFolder selectedFolder;
-        // AppFolder selectedfolder = null;
+        
         public ICommand AddFolderCommand { get; private set; }
      
 
@@ -92,7 +90,7 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-        //  private AppFolder _selectedFolder;
+      
 
         public ICommand AddSecureFolderCommand => new Command(ShowAddSecureFolderPopup);
 
@@ -108,10 +106,9 @@ namespace AllNotes.ViewModels
 
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
-           // EditFolderCommand = new Command<AppFolder>((folder) => HandleEditFolder(folder));
+          
             FolderList = new ObservableCollection<AppFolder>(AppDatabase.Instance().GetFolderList());
-            //    DeleteFolderCommand = new Command(async () => await DeleteFolderAsync());
-            // NavigateToManageFoldersCommand = new Command(NavigateToManageFolders);
+           
             NavigateToManageFoldersCommand = new Command(async () => await NavigateToManageFolders());
 
             selectedFolderID = folderID;
@@ -137,10 +134,9 @@ namespace AllNotes.ViewModels
             {
                 Reset(); // Refresh the list
             });
-            //  RenameFolderCommand = new Command(async () => await RenameFolderAsync(selectedfolder));
-           // DeleteFolderCommand = new Command<AppFolder>(async (folder) => await DeleteFolderAsync(folder));
+            
 
-            CancelCommand = new Command(CancelOperation);
+          
         }
         private string _searchQuery;
         public string SearchQuery
@@ -267,16 +263,7 @@ namespace AllNotes.ViewModels
         }
 
 
-        private void CancelOperation()
-        {
-            // Logic to handle cancellation
-        }
-       
-
-        private void CancelEditFolder()
-        {
-            // Logic to close the popup or cancel the edit operation
-        }
+        
 
       
         
@@ -436,15 +423,11 @@ namespace AllNotes.ViewModels
                  await _navigationService.NavigateToMainPage(selectedFolder);
              }
          }*/
+        //CREATE POPUPS IN FOR SECURE FOLDER SELECT IN AN EFFORT TO HIDE PASSWORD, SAME FOR MANAGE FOLDERS DELETE AND RENAME
         //GET MORE ROBUST PASSWORD ENCRYPTION AND POSSIBLY SET UP USERNAME AND PASSWORD RETRIEVE METHODS. ALSO CREATE METHODS TO DENY FOLDER DELETION ON SECURE FOLDER WITHOUT PASSWORD. ALSO SHOW LOCK FOLDER ICON FOR SECURE FOLDERS
         public async void NavigateToFlyoutPage1Detail(AppFolder selectedFolder)
         {
-            if (selectedFolder.Name == "Edit Folder")
-            {
-                // Your existing logic for "Edit Folder"...
-            }
-            else
-            {
+            
                 // Check if the folder is secure
                 if (selectedFolder.IsSecure)
                 {
@@ -468,7 +451,7 @@ namespace AllNotes.ViewModels
                     await OpenFolder(selectedFolder);
                 }
             }
-        }
+        
 
         private bool ValidatePassword(string inputPassword, string encryptedPassword)
         {

@@ -18,6 +18,7 @@ namespace AllNotes.Models
         public string Title { get; set; }
 
         public string Text { get; set; }
+        public string Text1 { get; set; }
         public string Date { get; set; }
         public int Color { get; set; }
       
@@ -27,7 +28,8 @@ namespace AllNotes.Models
          public int FontSize { get; set; }
     public string FontAttributes { get; set; } // Example: "Bold, Italic"
     public string TextAlignment { get; set; } // Example: "Left", "Center", "Right"
-    //public int Color { get; set; } // Assuming color is stored as an integer
+                                              //public int Color { get; set; } // Assuming color is stored as an integer
+       
 
         //  public Type TargetPage { get; set; }
 

@@ -96,7 +96,30 @@ namespace AllNotes.Views
 
 
         }
-       
+
+        /* private async void GoToNewNotePage()
+         {
+             int folderId = GetSelectedFolderId();
+             if (folderId == 0)
+             {
+                 // No folder is selected, prompt the user
+                 PromptUserToSelectFolder();
+                 if (folderId == 0)
+                 {
+                     // User didn't select a folder, return without navigating
+                     return;
+                 }
+             }
+             // Create an instance of NewNoteViewModel with the selected folder ID
+             var newNoteViewModel = new NewNoteViewModel(folderId);
+
+             // Pass the ViewModel to NewNotePage
+             var newNotePage = new NewNotePage(newNoteViewModel);
+
+             // Use Xamarin.Forms navigation to push the new page
+             await Navigation.PushAsync(newNotePage);
+         }*/
+
         private async void GoToNewNotePage()
         {
             int folderId = GetSelectedFolderId();
@@ -110,16 +133,13 @@ namespace AllNotes.Views
                     return;
                 }
             }
+
             // Create an instance of NewNoteViewModel with the selected folder ID
             var newNoteViewModel = new NewNoteViewModel(folderId);
 
-            // Pass the ViewModel to NewNotePage
-            var newNotePage = new NewNotePage(newNoteViewModel);
-
-            // Use Xamarin.Forms navigation to push the new page
-            await Navigation.PushAsync(newNotePage);
+            // Instead of navigating to NewNotePage, open TEditor directly
+            await newNoteViewModel.OpenTEditor(); // Open TEditor for a new note
         }
-
 
         // Method to get the currently selected folder ID
         private int GetSelectedFolderId()

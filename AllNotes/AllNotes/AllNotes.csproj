@@ -35,9 +35,11 @@
     <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
     <PackageReference Include="sqlite-net" Version="1.6.292" />
     <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-    <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.7" />
-    <PackageReference Include="SQLitePCLRaw.provider.dynamic_cdecl" Version="2.1.7" />   
+   
 	  <PackageReference Include="Refractored.FloatingActionButtonForms" Version="2.1.0" />
+   
+	  <PackageReference Include="TEditor2" Version="1.4.4" />   
+	 
 	  <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.6" />
 	  <PackageReference Include="Xamarin.Forms" Version="5.0.0.2622" />
 	  <PackageReference Include="Xamarin.Essentials" Version="1.8.0" />
@@ -65,6 +67,9 @@
 	</ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Update="Views\CustomToolbar.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
     <EmbeddedResource Update="Views\EditFolderPopup.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>

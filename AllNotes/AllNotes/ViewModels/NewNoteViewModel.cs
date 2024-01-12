@@ -18,16 +18,21 @@ using System.Threading.Tasks;
 using Xamarin.Essentials;
 using System.Diagnostics;
 using AllNotes.Data.Enum;
+using System.Runtime.InteropServices;
+using TEditor;
+using TEditor.Abstractions;
+//using TEditor.Abstractions;
+//using TEditor;
 
 namespace AllNotes.ViewModels
 {
     public class NewNoteViewModel : INotifyPropertyChanged
     {
- 
+
         public ICommand MenuItemSelectedCommand { get; }
         public ICommand SaveNoteCommand => new Command(SaveNote);
-         public ICommand OpenMenuCommand => new Command(OpenMenu);
-     
+        public ICommand OpenMenuCommand => new Command(OpenMenu);
+
         public ICommand OpenFontSizePopupCommand => new Command(OpenFontSizePopup);
         public ICommand OpenJustifyTextPopupCommand => new Command(OpenJustifyTextPopup);
         // public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
@@ -55,7 +60,7 @@ namespace AllNotes.ViewModels
         private AppDatabase _database;
         private MainPageViewModel _mainPageViewModel;
         private MenuPageViewModel _menuPageViewModel;
-        
+
         private AppNote _note;
         int selectedFolderID = 0;
         AppNote selectedNote = null;
@@ -65,10 +70,20 @@ namespace AllNotes.ViewModels
 
 
 
-       /* public IEnumerable<Colors> GetAllColors()
+        /* public IEnumerable<Colors> GetAllColors()
+         {
+             return Enum.GetValues(typeof(Colors)).Cast<Colors>();
+         }*/
+        private string _htmlContent;
+        public string HtmlContent
         {
-            return Enum.GetValues(typeof(Colors)).Cast<Colors>();
-        }*/
+            get => _htmlContent;
+            set
+            {
+                _htmlContent = value;
+                OnPropertyChanged(nameof(HtmlContent));
+            }
+        }
 
 
 
@@ -132,15 +147,30 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-        
+
         public NewNotePage BindingContext { get; private set; }
-   
+        //  public ICommand OpenTEditorCommand { get; private set; }
         public ICommand MenuItemSelectedCommandd { get; }
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
+            _mainPageViewModel = mainPageViewModel;
+            _note = note;
 
-           
+            if (_note != null)
+            {
+                // Existing note - initialize with its content
+                NewNoteTitle = note.Title;
+                HtmlContent = note.Text; // Ensure this is the correct property for HTML content
+            }
+            else
+            {
+                // New note - initialize as necessary
+                NewNoteTitle = "";
+                HtmlContent = ""; // Set as blank or a default value if needed
+            }
+
+
 
             MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
             MenuItems = new ObservableCollection<MenuItemModel>
@@ -179,21 +209,24 @@ namespace AllNotes.ViewModels
                 selectedFolderID = note.folderID;
             }
         }
+        public ICommand OpenTEditorCommand => new Command(async () => await OpenTEditor());
 
-
-        // private FontAttributes _fontAttribute; // Assuming FontAttributes is an enum
-        //  public ICommand ChangeNoteColorCommand => new Command<object>(ChangeNoteColor);
-       // public ICommand ChangeNoteColorCommand => new Command<object>(ChangeNoteColor);
-       /* private void ChangeNoteColor(object colorEnumValue)
+        public async Task OpenTEditor()
         {
-            if (colorEnumValue is Colors color)
-            {
-                // Logic to change the note color
-                NewNoteColor = (int)color;
-                // Update note color in the database or UI
-            }
-        }*/
+            var toolbar = new ToolbarBuilder().AddBasic().AddH1().AddH2().AddH3().AddH4().AddH5().AddH6().AddBold().AddItalic().AddUnderline().AddJustifyLeft().AddAll(); // and so on
+                                                                                                                                                                          // TEditorResponse response = await CrossTEditor.Current.ShowTEditor("<p>Initial content</p>", toolbar);
+            TEditorResponse response = await CrossTEditor.Current.ShowTEditor(HtmlContent, toolbar);
 
+
+
+            if (!string.IsNullOrEmpty(response.HTML))
+            {
+                HtmlContent = response.HTML;
+                SaveNote();
+            }
+        }
+
+        
         private void OpenMenu()
         {
             var newNotePopup = new NewNotePopup();
@@ -292,13 +325,14 @@ namespace AllNotes.ViewModels
         }
 
 
-        
-        private async void SaveNote()
+
+        /*private async void SaveNote()
         {
-            if (string.IsNullOrEmpty(NewNoteText))
+            if (string.IsNullOrEmpty(HtmlContent))
             {
                 return; // Return if the note text is null or empty
             }
+            var noteContent = HtmlContent;
 
             var db = AppDatabase.Instance();
             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
@@ -308,13 +342,14 @@ namespace AllNotes.ViewModels
                 AppNote note = new AppNote
                 {
                     folderID = selectedFolderID,
-                    Text = NewNoteText,
+                    Text = HtmlContent,
                     Title = NewNoteTitle,
                     Date = currentDateTime,
                     Color = NewNoteColor,
                     FontSize = FontSize,
-                    FontAttributes = ConvertFontAttributesToString(FontAttribute),
-                    TextAlignment = ConvertTextAlignmentToString(TextAlignment)
+                   // Text1 = HtmlContent
+                    *//* FontAttributes = ConvertFontAttributesToString(FontAttribute),
+                     TextAlignment = ConvertTextAlignmentToString(TextAlignment)*//*
                 };
 
                 await db.InsertNote(note); // Use 'note' here
@@ -327,7 +362,7 @@ namespace AllNotes.ViewModels
             }
             else // If updating an existing note
             {
-                _note.Text = NewNoteText;
+                _note.Text = HtmlContent;
                 _note.Title = NewNoteTitle;
                 _note.Date = currentDateTime;
                 _note.Color = NewNoteColor;
@@ -345,6 +380,51 @@ namespace AllNotes.ViewModels
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
+               // _mainPageViewModel.RefreshNotes();
+            }
+        }*/
+        private async void SaveNote()
+        {
+            // Check if the HTML content is null or empty instead
+            if (string.IsNullOrEmpty(HtmlContent))
+            {
+                return; // Return if the HTML content is null or empty
+            }
+
+            var db = AppDatabase.Instance();
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (_note == null) // If creating a new note
+            {
+                AppNote note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = HtmlContent, // Use HtmlContent here
+                    Title = NewNoteTitle,
+                    Date = currentDateTime,
+                    Color = NewNoteColor,
+                    FontSize = FontSize,
+                    // Other properties as needed
+                };
+
+                await db.InsertNote(note); // Insert the new note
+                MessagingCenter.Send(this, "RefreshNotes");
+            }
+            else // If updating an existing note
+            {
+                _note.Text = HtmlContent; // Update the note's text with HtmlContent
+                                          // Update other properties as needed
+                await db.UpdateNote(_note); // Update the existing note
+
+                MessagingCenter.Send(this, "NoteUpdated", _note);
+            }
+
+            // Navigation logic after saving
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+              //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
             }
         }
 
@@ -362,7 +442,7 @@ namespace AllNotes.ViewModels
             var defaultFolder = AppDatabase.Instance().GetFirstFolder(); // Or other logic to determine default
             return defaultFolder?.Id ?? 0; // 0 or another appropriate default
         }
-       
+
 
         private void OpenFontSizePopup()
         {

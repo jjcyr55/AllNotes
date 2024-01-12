@@ -4,6 +4,7 @@
              xmlns:converters="clr-namespace:AllNotes.Converters"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              xmlns:ui="clr-namespace:AllNotes.Views.NewNote.UI"
+             xmlns:views="clr-namespace:AllNotes.Views"
              xmlns:local="clr-namespace:AllNotes.CustomRenderers" 
              xmlns:viewmodels="clr-namespace:AllNotes.ViewModels" 
              x:DataType="viewmodels:NewNoteViewModel"
@@ -38,6 +39,19 @@
                     CornerRadius="30"
                     xct:TouchEffect.NativeAnimation="True" />
             </FlexLayout>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- For Toolbar -->
+                    <RowDefinition Height="*"/>
+                    <!-- For Editor/WebView -->
+                </Grid.RowDefinitions>
+                <WebView>
+                <WebView.Source>
+                        <HtmlWebViewSource Html="{Binding SelectedNote.HtmlContent}" />
+                    </WebView.Source>
+            </WebView>
+            </Grid>
             <local:EditorNoUnderline
                 x:Name="editor"
                 Keyboard="Chat"
@@ -47,7 +61,20 @@
                 FontSize="{Binding FontSize}"
                 FontAttributes="{Binding FontAttribute}"
                 FlexLayout.Grow="1" />
-            <ui:Toolbar />
+           
+            <Grid>
+                <!-- Main content of the page -->
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- Your main content here -->
+                
+
+                <!-- Custom Toolbar -->
+                <views:CustomToolbar Grid.Row="1" />
+            </Grid>
         </FlexLayout>
     </ContentPage.Content>
 </ContentPage>
