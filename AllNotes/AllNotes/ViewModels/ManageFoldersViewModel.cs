@@ -19,32 +19,164 @@ namespace AllNotes.ViewModels
         public ICommand DeleteFoldersCommand { get; set; }
         public ICommand RenameFolderCommand { get; private set; }
 
+        // public ICommand AddSubfolderCommand { get; private set; }
+        public ICommand AddSubfolderCommand { get; private set; }
+
         private ObservableCollection<AppFolder> selectedFolder;
-        private AppFolder _selectedFolder;
+        //   private AppFolder _selectedFolder;
         private AppDatabase _appDatabase;
-      
+
         private ObservableCollection<AppFolder> _folderList;
 
-       
+
         int controlMenuCount = 0;
         private int folderID;
         int selectedFolderID = 0;
-        
+
         public ManageFoldersViewModel()
         {
+            //  AddSubfolderCommand = new Command<AppFolder>(AddSubfolder);
+            //   AddSubfolderCommand = new Command<AppFolder>(async (parentFolder) => await AddSubfolder(parentFolder));
+
+
+            // AddSubfolderCommand = new Command<AppFolder>(AddSubfolder);
+
+            AddSubfolderCommand = new Command(async () => await AddSubfolder());
+
+            MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "FolderUpdated", (sender, updatedFolder) =>
+            {
+                // Logic to update the folder list based on the updated folder
+            });
+            // AddSubfolderCommand = new Command(async () => await AddSubfolder());
+
+            // AddSubfolderCommand = new Command<AppFolder>(AddSubfolder);
+
+
             FolderList = new ObservableCollection<AppFolder>(AppDatabase.Instance().GetFolderList());
 
-           
+
             selectedFolderID = folderID;
-            _appDatabase = new AppDatabase(); 
+            _appDatabase = new AppDatabase();
             SelectedFolders = _selectedFolders;
-          
+
             DeleteFoldersCommand = new Command(async () => await DeleteSelectedFolders());
             RenameFolderCommand = new Command(async () => await RenameSelectedFolder());
             _selectedFolders = new List<object>();
         }
 
-       
+        private async Task AddSubfolder()
+        {
+            if (_selectedFolders != null && _selectedFolders.Count == 1)
+            {
+                var parentFolder = _selectedFolders.FirstOrDefault() as AppFolder;
+                if (parentFolder != null)
+                {
+                    string subfolderName = await Application.Current.MainPage.DisplayPromptAsync("New Subfolder", "Enter subfolder name:");
+                    if (!string.IsNullOrEmpty(subfolderName))
+                    {
+                        var newSubfolder = new AppFolder
+                        {
+                            Name = subfolderName,
+                            ParentFolderId = parentFolder.Id,
+                            IconPath = "folder_account_outline.png" // Set the icon path here
+                        };
+
+                        AppDatabase.Instance().InsertFolder(newSubfolder);
+                        RefreshFolders();
+                        MessagingCenter.Send(this, "SubfolderAdded", newSubfolder);
+
+
+                    }
+                }
+            }
+            else
+            {
+                await Application.Current.MainPage.DisplayAlert("Add Subfolder", "Please select a single folder to add a subfolder.", "OK");
+
+            }
+        }
+
+        /*private async void AddSubfolder(AppFolder parentFolder)
+        {
+            string subfolderName = await Application.Current.MainPage.DisplayPromptAsync("New Subfolder", "Enter the name for the new subfolder:");
+
+            if (!string.IsNullOrEmpty(subfolderName))
+            {
+                var newSubfolder = new AppFolder
+                {
+                    Name = subfolderName,
+                    ParentFolderId = parentFolder.Id,
+                    // Set other necessary properties as needed
+                };
+
+                AppDatabase.Instance().InsertFolder(newSubfolder);
+
+                // Update local collection if necessary or send a message to update the UI
+                MessagingCenter.Send(this, "SubfolderAdded", newSubfolder);
+            }
+        }*/
+
+
+
+
+
+        private AppFolder _selectedFolder;
+        public AppFolder SelectedFolder
+        {
+            get => _selectedFolder;
+            set
+            {
+                if (_selectedFolder != value)
+                {
+                    _selectedFolder = value;
+                    OnPropertyChanged(nameof(SelectedFolder));
+                    // Additional logic if needed
+                }
+            }
+        }
+
+
+
+        private void RefreshUIWithNewSubfolder(AppFolder newSubfolder, AppFolder parentFolder)
+        {
+            // Add the new subfolder to the parent folder's subfolder collection
+            if (parentFolder.Subfolders == null)
+            {
+                parentFolder.Subfolders = new ObservableCollection<AppFolder>();
+            }
+            parentFolder.Subfolders.Add(newSubfolder);
+
+            // Notify the UI of the changes
+            OnPropertyChanged(nameof(FolderList));
+        }
+        //WAS WORKING KEEP AN EYE ON THIS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /* private async void AddSubfolder(AppFolder parentFolder)
+         {
+             // Logic to add a subfolder
+             // This might involve showing a prompt to enter the subfolder name
+
+             // and then creating the subfolder with the parentFolder's Id as ParentFolderId
+             string subfolderName = await Application.Current.MainPage.DisplayPromptAsync("New Subfolder", "Enter the name for the new subfolder:");
+
+             if (!string.IsNullOrEmpty(subfolderName))
+             {
+                 var newSubfolder = new AppFolder
+                 {
+                     Name = subfolderName,
+                     ParentFolderId = parentFolder.Id,
+                     // Set other necessary properties as needed
+                 };
+
+                 AppDatabase.Instance().InsertFolder(newSubfolder);
+
+                 // Update local collection if necessary or send a message to update the UI
+                 MessagingCenter.Send(this, "SubfolderAdded", newSubfolder);
+             }
+         }*/
+
+
+
+
         private IList<object> _selectedFolders;
 
         public IList<object> SelectedFolders
@@ -66,7 +198,7 @@ namespace AllNotes.ViewModels
                 if (_isSecure != value)
                 {
                     _isSecure = value;
-                   
+
                     OnPropertyChanged(nameof(IsSecure));
                     OnPropertyChanged(nameof(LockIconVisible));
                 }
@@ -232,4 +364,4 @@ namespace AllNotes.ViewModels
             }
         }
     }
-    }
+}

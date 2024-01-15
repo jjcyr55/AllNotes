@@ -9,72 +9,10 @@
              xmlns:viewmodels="clr-namespace:AllNotes.ViewModels" 
              x:DataType="viewmodels:NewNoteViewModel"
              x:Class="AllNotes.Views.NewNote.NewNotePage">
-    
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:ColorConverter x:Key="colorConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+
+
 
     <ContentPage.Content>
-        <FlexLayout Direction="Column" BackgroundColor="{Binding NewNoteColor, Converter={StaticResource colorConverter}}">
-            <FlexLayout Direction="Row" HeightRequest="60" Margin="10, 0" AlignItems="Center">
-                <ImageButton
-                    Command="{Binding SaveNoteCommand}"
-                    Source="back.png"
-                    HeightRequest="50"
-                    WidthRequest="50"
-                    BackgroundColor="Transparent"
-                    Padding="15"
-                    CornerRadius="30"
-                    xct:TouchEffect.NativeAnimation="True" />
-                <local:EntryNoUnderline Placeholder="Title" Text="{Binding NewNoteTitle}" FlexLayout.Grow="1" />
-                <ImageButton
-                    Command="{Binding OpenMenuCommand}"
-                    Source="menuDots.png"
-                    HeightRequest="50"
-                    WidthRequest="50"
-                    BackgroundColor="Transparent"
-                    Padding="15"
-                    CornerRadius="30"
-                    xct:TouchEffect.NativeAnimation="True" />
-            </FlexLayout>
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <!-- For Toolbar -->
-                    <RowDefinition Height="*"/>
-                    <!-- For Editor/WebView -->
-                </Grid.RowDefinitions>
-                <WebView>
-                <WebView.Source>
-                        <HtmlWebViewSource Html="{Binding SelectedNote.HtmlContent}" />
-                    </WebView.Source>
-            </WebView>
-            </Grid>
-            <local:EditorNoUnderline
-                x:Name="editor"
-                Keyboard="Chat"
-                Margin="20, 0"
-                Placeholder="Type here..."
-                Text="{Binding NewNoteText, Mode=TwoWay}"
-                FontSize="{Binding FontSize}"
-                FontAttributes="{Binding FontAttribute}"
-                FlexLayout.Grow="1" />
-           
-            <Grid>
-                <!-- Main content of the page -->
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                </Grid.RowDefinitions>
-
-                <!-- Your main content here -->
-                
-
-                <!-- Custom Toolbar -->
-                <views:CustomToolbar Grid.Row="1" />
-            </Grid>
-        </FlexLayout>
+        
     </ContentPage.Content>
 </ContentPage>

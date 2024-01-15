@@ -154,6 +154,13 @@ namespace AllNotes.ViewModels
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
+            MessagingCenter.Subscribe<MainPageViewModel>(this, "OpenFullScreenEditor", (sender) =>
+            {
+                OpenTEditor();
+            });
+
+
+
             _mainPageViewModel = mainPageViewModel;
             _note = note;
 
@@ -209,7 +216,7 @@ namespace AllNotes.ViewModels
                 selectedFolderID = note.folderID;
             }
         }
-        public ICommand OpenTEditorCommand => new Command(async () => await OpenTEditor());
+      //  public ICommand OpenTEditorCommand => new Command(async () => await OpenTEditor());
 
         public async Task OpenTEditor()
         {
@@ -226,7 +233,14 @@ namespace AllNotes.ViewModels
             }
         }
 
-        
+
+
+
+
+       /* TEditorResponse response = await CrossTEditor.Current.ShowTEditor("<p>XAM consulting</p>");
+         if (!string.IsNullOrEmpty(response.HTML))
+             _displayWebView.Source = new HtmlWebViewSource() { Html = response.HTML };*/
+
         private void OpenMenu()
         {
             var newNotePopup = new NewNotePopup();
@@ -424,7 +438,7 @@ namespace AllNotes.ViewModels
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
-              //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
+                //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
             }
         }
 

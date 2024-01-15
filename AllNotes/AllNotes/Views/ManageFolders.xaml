@@ -48,6 +48,7 @@ HorizontalOptions="FillAndExpand">
             <!-- Delete Button -->
             <Button Text="Rename Folder" Command="{Binding RenameFolderCommand}" />
             <Button Text="Delete" Command="{Binding DeleteFoldersCommand}" />
+            <Button Text="Add SubFolder" Command="{Binding AddSubfolderCommand}" CommandParameter="{Binding SelectedFolders}" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

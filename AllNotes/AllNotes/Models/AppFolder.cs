@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace AllNotes.Models
 {
@@ -20,18 +21,52 @@ namespace AllNotes.Models
         [AutoIncrement, PrimaryKey]
         public int Id { get; set; }
 
-        //public string Title { get; set; }
-       // public string IconSource { get; set; }
-        //[Ignore]
-        //public Type TargetPage { get; set; }
+
         public string Name { get; set; } = "";
 
         public string IconPath { get; set; } = "";
 
         public string noteCount { get; set; } = "0";
-       // public bool IsSecure { get; set; }
+        // public bool IsSecure { get; set; }
         public string EncryptedPassword { get; set; }
-      //  public bool LockIconVisible => IsSecure;
+        //  public bool LockIconVisible => IsSecure;
+        public int? ParentFolderId { get; set; }
+        public bool HasSubfolders => Subfolders.Any();
+
+        // public bool IsExpanded { get; set; }
+        public string ExpandCollapseIcon => HasSubfolders && IsExpanded ? "arrow_up.png" : "arrow_down.png";
+
+        [Ignore]
+        public ObservableCollection<AppFolder> Subfolders { get; set; }
+
+        private bool _isExpanded;
+        public bool IsExpanded
+        {
+            get => _isExpanded;
+            set
+            {
+                if (_isExpanded != value)
+                {
+                    _isExpanded = value;
+                    OnPropertyChanged(nameof(IsExpanded));
+                }
+            }
+        }
+
+
+
+
+
+
+        public AppFolder()
+        {
+            Subfolders = new ObservableCollection<AppFolder>();
+        }
+
+        /*public AppFolder()
+        {
+           
+        }*/
 
         public AppFolder(string FolderName)
         {
@@ -48,10 +83,9 @@ namespace AllNotes.Models
             IconPath = Path;
             noteCount = Count;
         }
-        public AppFolder()
-        {
-        }
+
         private bool _isSecure;
+        internal int selectedFolderID;
 
         public bool IsSecure
         {

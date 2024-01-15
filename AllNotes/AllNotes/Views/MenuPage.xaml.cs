@@ -10,13 +10,13 @@ namespace AllNotes.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MenuPage : ContentPage
     {
-        public CollectionView MenuContent { get { return menuContent; } }
+        //    public CollectionView MenuContent { get { return menuContent; } }
         private MenuPageViewModel _viewModel;
         private MenuPage _menuPage;
         private MenuPageViewModel viewModel;
 
 
-          public MenuPageViewModel MenuPageViewModel { get; set; }
+        public MenuPageViewModel MenuPageViewModel { get; set; }
 
 
         public MenuPage()
@@ -31,12 +31,23 @@ namespace AllNotes.Views
 
         }
 
+
+        private void OnFolderSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItem != null)
+            {
+                ((ListView)sender).SelectedItem = null; // Manually deselect the item
+            }
+        }
+
+
+        //COMMENTING OUT THIS AND THE ABOVE MENUCONTENT. KEEP AN EYE ON THIS FOR POTENTIAL ISSUES UPDATING MENU
         public void UpdateMenu()
         {
             // Update the menu UI as needed
             // For example, you can reassign the ItemsSource of the CollectionView
             // to reflect the updated FolderList from the ViewModel.
-            menuContent.ItemsSource = _viewModel.FolderList;
+            //   menuContent.ItemsSource = _viewModel.FolderList;
 
         }
 
