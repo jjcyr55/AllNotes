@@ -36,7 +36,7 @@ namespace AllNotes.ViewModels
 
         private readonly INavigationService _navigationService;
         public ObservableCollection<AppFolder> DisplayFolders { get; set; }
-        public MenuPageViewModel()
+        public MenuPageViewModel(FolderService instance)
         {
             _navigationService = DependencyService.Get<INavigationService>();
         }
@@ -60,7 +60,7 @@ namespace AllNotes.ViewModels
         int selectedFolderID = 0;
         public ObservableCollection<AppFolder> Folders { get; set; }
         public ICommand AddFolderCommand { get; private set; }
-
+        private readonly FolderService _folderService;
 
 
         public ObservableCollection<AppFolder> FolderList
@@ -128,20 +128,10 @@ namespace AllNotes.ViewModels
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
 
-            SelectParentFolderCommand = new Command<AppFolder>(SelectParentFolder);
+          
             SelectSubfolderCommand = new Command<AppFolder>(SelectSubfolder);
-            /* MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "SubfolderAdded", (sender, subfolder) =>
-             {
-                 var parentFolder = FolderList.FirstOrDefault(f => f.Id == subfolder.ParentFolderId);
-                 if (parentFolder != null)
-                 {
-                     parentFolder.Subfolders.Add(subfolder);
-                     parentFolder.IsExpanded = true;
-                     OnPropertyChanged(nameof(parentFolder.Subfolders)); // Notify UI about the subfolders update
-                    RefreshFolderList();
-                 }
-             });*/
 
+            
             MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "SubfolderAdded", (sender, subfolder) =>
             {
                 var parentFolder = FolderList.FirstOrDefault(f => f.Id == subfolder.ParentFolderId);
@@ -158,6 +148,21 @@ namespace AllNotes.ViewModels
                 }
             });
 
+            
+
+
+            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FolderListUpdated", (sender) =>
+            {
+                RefreshFolderList();
+            });
+           
+            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FolderRenamed", (sender) =>
+            {
+                //  RefreshFolderList();
+                Reset();
+              // Method to update the folder list in MenuPageViewModel
+            });
+           
 
 
             ToggleFolderCommand = new Command<AppFolder>(ToggleFolder);
@@ -180,10 +185,10 @@ namespace AllNotes.ViewModels
             _navigationService = DependencyService.Get<INavigationService>();
 
             Reset();
-            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FoldersUpdated", (sender) =>
+           /* MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FoldersUpdated", (sender) =>
             {
                 RefreshFolderList();
-            });
+            });*/
             _folderList = new ObservableCollection<AppFolder>();
 
             InitializeViewModel();
@@ -200,11 +205,70 @@ namespace AllNotes.ViewModels
             });
 
         }
+        private void HandleRenamedFolder(AppFolder updatedFolder)
+        {
+            // Find the folder in your FolderList and update it
+            var folderToUpdate = FolderList.FirstOrDefault(f => f.Id == updatedFolder.Id);
+            if (folderToUpdate != null)
+            {
+                folderToUpdate.Name = updatedFolder.Name;
+                // Update any other properties if necessary
+               
+                // Refresh the UI or list
+                OnPropertyChanged(nameof(FolderList));
+            }
+        }
+        public MenuPageViewModel()
+        {
+        }
 
-        private void SelectParentFolder(AppFolder folder)
+        private void HandleSubfolderAdded(AppFolder parentFolder, AppFolder newSubfolder)
+        {
+            var parentInList = FolderList.FirstOrDefault(f => f.Id == parentFolder.Id);
+            if (parentInList != null)
+            {
+                if (parentInList.Subfolders == null)
+                    parentInList.Subfolders = new ObservableCollection<AppFolder>();
+
+                if (!parentInList.Subfolders.Any(sf => sf.Id == newSubfolder.Id))
+                {
+                    parentInList.Subfolders.Add(newSubfolder);
+                    OnPropertyChanged(nameof(FolderList)); // Notify that FolderList has changed
+                }
+            }
+
+            // Optionally, refresh the list UI
+            RefreshUI();
+        }
+
+        private void RefreshUI()
+        {
+            var tempFolderList = FolderList.ToList();
+            FolderList = null;
+            FolderList = new ObservableCollection<AppFolder>(tempFolderList);
+        }
+
+        private void UpdateSubfolders(AppFolder parentFolder, AppFolder newSubfolder)
+        {
+            var parentInList = FolderList.FirstOrDefault(f => f.Id == parentFolder.Id);
+            if (parentInList != null)
+            {
+                if (parentInList.Subfolders == null)
+                    parentInList.Subfolders = new ObservableCollection<AppFolder>();
+
+                if (!parentInList.Subfolders.Any(sf => sf.Id == newSubfolder.Id))
+                {
+                    parentInList.Subfolders.Add(newSubfolder);
+                    OnPropertyChanged(nameof(FolderList)); // Notify that FolderList has changed
+                }
+            }
+        }
+
+
+        /*private void SelectParentFolder(AppFolder folder)
         {
             // Handle parent folder selection
-        }
+        }*/
 
         private async void SelectSubfolder(AppFolder subfolder)
         {
@@ -219,77 +283,193 @@ namespace AllNotes.ViewModels
                 //  SelectedFolder = null;
             }
         }
-        /*private void RefreshFolderList()
+        //UNCOMMENT THIS IF NEEDED!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        private void AddSubfoldersRecursively(AppFolder parentFolder, IEnumerable<AppFolder> allFolders)
         {
-            FolderList.Clear();
-            var folders = AppDatabase.Instance().GetFolderList();
-            foreach (var folder in folders)
+            var subfolders = allFolders.Where(f => f.ParentFolderId == parentFolder.Id);
+            foreach (var subfolder in subfolders)
             {
-                FolderList.Add(folder);
+                FolderList.Add(subfolder); // Adjust this if needed to reflect hierarchy in UI
+                AddSubfoldersRecursively(subfolder, allFolders);
             }
         }
-        public async Task Reset()
-        {
-            FolderList.Clear();
-            var foldersFromDb = AppDatabase.Instance().GetFolderList();
 
-            // Add regular folders
-            foreach (var folder in foldersFromDb)
-            {
-                FolderList.Add(folder);
-            }
-
-            // Add "Edit Folder" as a special item
-            //   AddSpecialFolder("Edit Folder", "edit_folder_icon.png");
-        }*/
-        private void RefreshFolderList()
-        {
-            FolderList.Clear();
-            var allFolders = AppDatabase.Instance().GetFolderList();
-
-            // Creating a dictionary to hold folders by their IDs for easy lookup
-            var foldersById = allFolders.ToDictionary(f => f.Id);
-
-            // First, add all top-level folders to the FolderList
-            foreach (var folder in allFolders.Where(f => f.ParentFolderId == null))
-            {
-                FolderList.Add(folder);
-            }
-
-            // Then, populate subfolders for each folder
-            foreach (var folder in allFolders)
-            {
-                if (folder.ParentFolderId.HasValue && foldersById.ContainsKey(folder.ParentFolderId.Value))
-                {
-                    var parentFolder = foldersById[folder.ParentFolderId.Value];
-                    if (parentFolder.Subfolders == null)
-                    {
-                        parentFolder.Subfolders = new ObservableCollection<AppFolder>();
-                    }
-
-                    if (!parentFolder.Subfolders.Contains(folder))
-                    {
-                        parentFolder.Subfolders.Add(folder);
-                    }
-                }
-            }
-
-            // Notifying the UI that the FolderList has been updated
-            OnPropertyChanged(nameof(FolderList));
-        }
 
         /* private void RefreshFolderList()
          {
              FolderList.Clear();
              var allFolders = AppDatabase.Instance().GetFolderList();
-             var topLevelFolders = allFolders.Where(folder => folder.ParentFolderId == null).ToList();
-             foreach (var folder in topLevelFolders)
+
+             // Creating a dictionary to hold folders by their IDs for easy lookup
+             var foldersById = allFolders.ToDictionary(f => f.Id);
+
+             // First, add all top-level folders to the FolderList
+             foreach (var folder in allFolders.Where(f => f.ParentFolderId == null))
              {
                  FolderList.Add(folder);
              }
 
-             BuildFolderHierarchy(allFolders);
+             // Then, populate subfolders for each folder
+             foreach (var folder in allFolders)
+             {
+                 if (folder.ParentFolderId.HasValue && foldersById.ContainsKey(folder.ParentFolderId.Value))
+                 {
+                     var parentFolder = foldersById[folder.ParentFolderId.Value];
+                     if (parentFolder.Subfolders == null)
+                     {
+                         parentFolder.Subfolders = new ObservableCollection<AppFolder>();
+                     }
+
+                     if (!parentFolder.Subfolders.Contains(folder))
+                     {
+                         parentFolder.Subfolders.Add(folder);
+                     }
+                 }
+             }
+
+             // Notifying the UI that the FolderList has been updated
+             OnPropertyChanged(nameof(FolderList));
          }*/
+
+        /* private void RefreshFolderList()
+         {
+             var allFolders = AppDatabase.Instance().GetFolderList();
+
+             // Update or add new folders
+             foreach (var folder in allFolders)
+             {
+                 var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
+                 if (existingFolder != null)
+                 {
+                     // Update existing folder properties if needed
+                     existingFolder.Name = folder.Name;
+                     existingFolder.IconPath = folder.IconPath;
+                     // ... other properties ...
+                 }
+                 else
+                 {
+                     // This is a new folder, add it to the list
+                     FolderList.Add(folder);
+                 }
+             }
+
+             // Remove any folders that no longer exist
+             for (int i = FolderList.Count - 1; i >= 0; i--)
+             {
+                 var folder = FolderList[i];
+                 if (!allFolders.Any(f => f.Id == folder.Id))
+                 {
+                     FolderList.RemoveAt(i);
+                 }
+             }
+
+             OnPropertyChanged(nameof(FolderList));
+         }*/
+        //THIS REFRESH METHOD WORKS SO UNCOMMENT IT IF OTHER METHODS DONT WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        private void RefreshFolderList()
+        {
+            var allFolders = AppDatabase.Instance().GetFolderList();
+            var folderDict = FolderList.ToDictionary(f => f.Id, f => f);
+
+            // Refresh the top-level folders (those without a ParentFolderId)
+            var topLevelFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
+
+            // Remove top-level folders that no longer exist
+            for (int i = FolderList.Count - 1; i >= 0; i--)
+            {
+                if (!topLevelFolders.Any(tf => tf.Id == FolderList[i].Id))
+                {
+                    FolderList.RemoveAt(i);
+                }
+            }
+
+            // Update existing folders and add new ones
+            foreach (var folder in topLevelFolders)
+            {
+                if (folderDict.TryGetValue(folder.Id, out var existingFolder))
+                {
+                    // Update existing folder
+                    UpdateFolderProperties(existingFolder, folder);
+                }
+                else
+                {
+                    // This is a new folder,
+
+                    FolderList.Add(folder);
+                }
+            }
+
+
+            // Update subfolders for each folder
+            foreach (var folder in FolderList)
+            {
+                UpdateSubfolders(folder, allFolders);
+            }
+
+            OnPropertyChanged(nameof(FolderList));
+        }
+
+        private void UpdateFolderProperties(AppFolder existingFolder, AppFolder newFolderData)
+        {
+            existingFolder.Name = newFolderData.Name;
+            existingFolder.IconPath = newFolderData.IconPath;
+            // ... other properties as needed ...
+        }
+
+        private void UpdateSubfolders(AppFolder parentFolder, IEnumerable<AppFolder> allFolders)
+        {
+            var subfolders = allFolders.Where(f => f.ParentFolderId == parentFolder.Id).ToList();
+
+            if (parentFolder.Subfolders == null)
+                parentFolder.Subfolders = new ObservableCollection<AppFolder>();
+
+            if (parentFolder.Subfolders == null)
+            {
+                parentFolder.Subfolders = new ObservableCollection<AppFolder>();
+            }
+
+            // Update or add subfolders
+            foreach (var subfolder in subfolders)
+            {
+                var existingSubfolder = parentFolder.Subfolders.FirstOrDefault(f => f.Id == subfolder.Id);
+                if (existingSubfolder == null)
+                {
+                    parentFolder.Subfolders.Add(subfolder);
+                }
+                else
+                {
+                    // Update existing subfolder properties
+                    UpdateFolderProperties(existingSubfolder, subfolder);
+                }
+            }
+        }
+
+
+
+
+
+        /*private void UpdateSubfolders(AppFolder parentFolder, IEnumerable<AppFolder> allFolders)
+        {
+            var subfolders = allFolders.Where(f => f.ParentFolderId == parentFolder.Id).ToList();
+            if (parentFolder.Subfolders == null)
+                parentFolder.Subfolders = new ObservableCollection<AppFolder>();
+
+            foreach (var subfolder in subfolders)
+            {
+                var existingSubfolder = parentFolder.Subfolders.FirstOrDefault(f => f.Id == subfolder.Id);
+                if (existingSubfolder == null)
+                {
+                    parentFolder.Subfolders.Add(subfolder);
+                }
+                else
+                {
+                    // Update existing subfolder properties if needed
+                    existingSubfolder.Name = subfolder.Name;
+                    existingSubfolder.IconPath = subfolder.IconPath;
+                    // ... other properties ...
+                }
+            }
+        }*/
 
 
         public async Task Reset()

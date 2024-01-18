@@ -1,4 +1,5 @@
 ﻿using AllNotes.Models;
+using AllNotes.Services;
 using AllNotes.ViewModels;
 using System;
 using System.Linq;
@@ -23,7 +24,7 @@ namespace AllNotes.Views
         {
             InitializeComponent();
             BindingContext = new MenuPageViewModel();
-
+         //  this.BindingContext = new MenuPageViewModel(FolderService.Instance);
             _viewModel = new MenuPageViewModel(this);
             BindingContext = _viewModel;
             UpdateMenu();

@@ -4,9 +4,7 @@
              x:Class="AllNotes.App"
              xmlns:android="clr-namespace:Xamarin.Forms.PlatformConfiguration.AndroidSpecific;assembly=Xamarin.Forms.Core"
              android:Application.WindowSoftInputModeAdjust="Resize"
-             xmlns:local="clr-namespace:AllNotes.ViewModels"
-            
-                    >
+             xmlns:local="clr-namespace:AllNotes.ViewModels" xmlns:converters="clr-namespace:AllNotes.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <x:String x:Key="AlignLeft">&#xf036;</x:String>
@@ -20,7 +18,7 @@
             <x:String x:Key="Check">&#xf00c;</x:String>
             <x:String x:Key="Lock">&#xf023;</x:String>
             <Color x:Key="LightGray">#f7f7f7</Color>
-            
+            <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" TrueColor="LightGray" FalseColor="Transparent"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -1,4 +1,5 @@
-﻿using AllNotes.ViewModels;
+﻿using AllNotes.Models;
+using AllNotes.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,65 @@ namespace AllNotes.Views
     public partial class ManageFolders : ContentPage
     {
         private ManageFoldersViewModel _manageFoldersViewModel;
+        private ManageFoldersViewModel manageFoldersViewModel;
+        private ManageFolders _manageFolders;
+
+        public ManageFoldersViewModel ManageFoldersViewModel { get; set; }
         public ManageFolders(ManageFoldersViewModel manageFoldersViewModel)
         {
             InitializeComponent();
-            _manageFoldersViewModel = manageFoldersViewModel;
-            this.BindingContext = _manageFoldersViewModel;
+           BindingContext = new ManageFoldersViewModel();
+
+            _manageFoldersViewModel= new ManageFoldersViewModel(this);
+            BindingContext = _manageFoldersViewModel;
+        
+        }
+        private void ToggleFolderDirectly(object sender
+, EventArgs e)
+        {
+            if (sender is Image image && image.BindingContext is AppFolder folder)
+            {
+                folder.IsExpanded = !folder.IsExpanded;
+
+           
+                    // This line is necessary to refresh the ListView
+        foldersListView.ItemsSource = null;
+                foldersListView.ItemsSource = _manageFoldersViewModel.FolderList;
+            }
+        }
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            // Subscribe to messages when the page appears
+            MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "SubfolderAddedInMenuPage", (sender, newSubfolder) =>
+            {
+                // Handle the message
+            });
+        }
+
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            // Unsubscribe from messages when the page disappears
+            MessagingCenter.Unsubscribe<ManageFoldersViewModel, AppFolder>(this, "SubfolderAddedInMenuPage");
+        }
+        /*private void OnFolderSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItem is AppFolder selectedFolder)
+            {
+                ((ManageFoldersViewModel)BindingContext).SelectedFolder = selectedFolder;
+            }
+    // Optionally, you can deselect the item immediately
+    ((ListView)sender).SelectedItem = null;
+        }
+    }*/
+
+        private void OnFolderSelected(object sender, SelectedItemChangedEventArgs e)
+        {
+            if (e.SelectedItem != null)
+            {
+                ((ListView)sender).SelectedItem = null; // Manually deselect the item
+            }
         }
     }
-}
+    }

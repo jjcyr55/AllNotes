@@ -27,17 +27,23 @@ namespace AllNotes.Models
         public string IconPath { get; set; } = "";
 
         public string noteCount { get; set; } = "0";
-        // public bool IsSecure { get; set; }
+       
         public string EncryptedPassword { get; set; }
-        //  public bool LockIconVisible => IsSecure;
+        public int NestingLevel { get; set; }
         public int? ParentFolderId { get; set; }
         public bool HasSubfolders => Subfolders.Any();
 
-        // public bool IsExpanded { get; set; }
+        
         public string ExpandCollapseIcon => HasSubfolders && IsExpanded ? "arrow_up.png" : "arrow_down.png";
 
         [Ignore]
         public ObservableCollection<AppFolder> Subfolders { get; set; }
+
+
+
+
+
+
 
         private bool _isExpanded;
         public bool IsExpanded
@@ -53,7 +59,16 @@ namespace AllNotes.Models
             }
         }
 
-
+        private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                _isSelected = value;
+                OnPropertyChanged(nameof(IsSelected));
+            }
+        }
 
 
 
@@ -67,7 +82,7 @@ namespace AllNotes.Models
         {
            
         }*/
-
+        
         public AppFolder(string FolderName)
         {
             Name = FolderName;
