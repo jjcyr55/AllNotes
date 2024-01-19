@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="AllNotes.Views.NewNote.Popups.ParentFolderPopup"
+            Size="300,175"
+ BackgroundColor="White"
+  xmlns:local="clr-namespace:AllNotes.ViewModels"
+ 
+ VerticalOptions="Start"
+ HorizontalOptions="End"
+ xct:ShadowEffect.Color="Transparent"
+ x:Name="MyPopup2">
+
+
+    <Frame CornerRadius="15"
+           HasShadow="True"
+           IsClippedToBounds="True"
+           Padding="20"
+           Margin="20"
+           BackgroundColor="White">
+
+        <StackLayout>
+        <!-- Label for Add Subfolder -->
+        <Label Text="Add Subfolder" Margin="10">
+            <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AddSubfolderCommand}" Tapped="OnAddSubfolderTapped" />
+            </Label.GestureRecognizers>
+        </Label>
+
+        <!-- Label for Rename -->
+        <Label Text="Rename" Margin="10">
+            <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding RenameFolderCommand}" Tapped="OnRenameTapped" />
+            </Label.GestureRecognizers>
+        </Label>
+
+        <!-- Label for Delete -->
+        <Label Text="Delete" Margin="10">
+            <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding DeleteFoldersCommand}" Tapped="OnDeleteTapped" />
+            </Label.GestureRecognizers>
+        </Label>
+    </StackLayout>
+    </Frame>
+</xct:Popup>

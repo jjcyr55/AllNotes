@@ -55,6 +55,7 @@ namespace AllNotes.Models
                 {
                     _isExpanded = value;
                     OnPropertyChanged(nameof(IsExpanded));
+                    OnPropertyChanged(nameof(ExpandCollapseIcon));
                 }
             }
         }
@@ -115,7 +116,16 @@ namespace AllNotes.Models
                 }
             }
         }
-
+        private string _optionsIconPath = "folder_options.png";
+        public string OptionsIconPath
+        {
+            get => _optionsIconPath;
+            set
+            {
+                _optionsIconPath = value;
+                OnPropertyChanged(nameof(OptionsIconPath));
+            }
+        }
         public bool LockIconVisible => IsSecure;
 
         protected virtual void OnPropertyChanged(string propertyName)

@@ -127,8 +127,16 @@ namespace AllNotes.ViewModels
 
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
+            MessagingCenter.Subscribe<ParentFolderPopupViewModel, AppFolder>(this, "FolderUpdated", (sender, updatedFolder) =>
+            {
+                // Update logic for MenuPage's folder list
+                // This might involve refreshing the folder list or updating a specific folder
 
-          
+                // For example:
+                //  RefreshFolderList();
+                Reset();
+            });
+
             SelectSubfolderCommand = new Command<AppFolder>(SelectSubfolder);
 
             

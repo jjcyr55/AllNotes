@@ -133,5 +133,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\arrow_up.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\folder_options.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

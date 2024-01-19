@@ -46,9 +46,9 @@ HorizontalOptions="FillAndExpand">
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="*"/>
                             </Grid.ColumnDefinitions>
+
                                 
-                                <Image Source="{Binding IconPath}" Grid.Column="0" WidthRequest="30" HeightRequest="30"/>
-                                <BoxView BackgroundColor="{Binding IsSelected, Converter={StaticResource BooleanToColorConverter}}"
+                                    <BoxView BackgroundColor="{Binding IsSelected, Converter={StaticResource BooleanToColorConverter}}"
                  HorizontalOptions="FillAndExpand"
 VerticalOptions="FillAndExpand"/>
                                 <Label Text="{Binding Name}"
@@ -56,6 +56,17 @@ VerticalOptions="FillAndExpand"/>
    FontSize="16"
    FontAttributes="Bold"
    VerticalOptions="CenterAndExpand" />
+
+
+                                <Image Source="folder_options.png" Grid.Column="0" WidthRequest="30" HeightRequest="30">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.FolderIconTappedCommand, Source={x:Reference ManageFoldersPage}}" CommandParameter="{Binding .}" />
+                                    </Image.GestureRecognizers>
+
+                                </Image>
+
+
+
                                 <Image Source="{Binding ExpandCollapseIcon}
 " Grid.Column="2" WidthRequest="20" HeightRequest="20" IsVisible="{Binding HasSubfolders}" VerticalOptions="Center">
                                     
@@ -67,25 +78,32 @@ VerticalOptions="FillAndExpand"/>
                             </Grid>
                             
                             <!-- Subfolder StackLayout (Nested) -->
-                        <StackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,0,0" BindableLayout.ItemsSource="{Binding Subfolders}">
-                                
+                            <StackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,0,0" BindableLayout.ItemsSource="{Binding Subfolders}">
                                 <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                        
-
+                                    <DataTemplate>
                                         <!-- Subfolder Item -->
-                                    <Label Text="{Binding Name}"
-                                       FontSize="18"
-                                       VerticalOptions="CenterAndExpand">
-                                            
-                                            <Label.GestureRecognizers>
-                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectSubfolderCommand, Source={x:Reference ManageFoldersPage}}" CommandParameter="{Binding .}"/>
-                                            </Label.GestureRecognizers>
-                                        </Label>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
+                                        <StackLayout Orientation="Horizontal" Padding="0,5">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <!-- Icon -->
+                                                <Image Source="folder_options.png" Grid.Column="0" WidthRequest="30" HeightRequest="30">
+                                                    <Image.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.FolderIconTappedCommand, Source={x:Reference ManageFoldersPage}}" CommandParameter="{Binding .}" />
+                                                    </Image.GestureRecognizers>
+                                                </Image>
+
+                                                <!-- Subfolder Name -->
+                                                <Label Text="{Binding Name}" Grid.Column="1" FontSize="18" VerticalOptions="CenterAndExpand" />
+                                            </Grid>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
                         </StackLayout>
-                    </StackLayout>
                 </ViewCell>
             </DataTemplate>
         </ListView.ItemTemplate>

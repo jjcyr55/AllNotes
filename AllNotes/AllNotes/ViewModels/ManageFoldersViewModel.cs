@@ -2,6 +2,7 @@
 using AllNotes.Models;
 using AllNotes.Services;
 using AllNotes.Views;
+using AllNotes.Views.NewNote.Popups;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -11,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Forms;
 
 namespace AllNotes.ViewModels
@@ -67,7 +69,10 @@ namespace AllNotes.ViewModels
         public ICommand SelectSubfolderCommand { get; }
         public ICommand AddSubfolderCommand { get; private set; }
         public ICommand ToggleFolderCommand { get; private set; }
-     
+        public ICommand RenameSubfolderCommand { get; private set; }
+
+      
+        public ICommand OpenSubFolderPopupCommand { get; private set; }
 
         private ObservableCollection<AppFolder> selectedFolder;
         //   private AppFolder _selectedFolder;
@@ -85,18 +90,96 @@ namespace AllNotes.ViewModels
                 }
             }
         }
+         private AppFolder _selectedSubfolder;
+        public AppFolder SelectedSubfolder
+        {
+            get => _selectedSubfolder;
+            set
+            {
+                if (_selectedSubfolder != value)
+                {
+                    _selectedSubfolder = value;
+                    OnPropertyChanged(nameof(SelectedSubfolder));
+                    // Additional logic if needed when a subfolder is selected
+                }
+            }
+        }
+        /* private AppFolder _selectedFolder;
+         public AppFolder SelectedFolder
+         {
+             get => _selectedFolder;
+             set
+             {
+                 if (_selectedFolder != value)
+                 {
+                     // Deselect the previous folder
+                     if (_selectedFolder != null)
+                     {
+                         _selectedFolder.IsSelected = false;
+                     }
 
+                     _selectedFolder = value;
+                     if (_selectedFolder != null)
+                     {
+                         _selectedFolder.IsSelected = true;
+                     }
 
+                     OnPropertyChanged(nameof(SelectedFolder));
+                 }
+             }
+         }*/
+        public ICommand OpenParentFolderPopupCommand { get; private set; }
+
+        public ICommand FolderOptionsCommand { get; private set; }
+        public ICommand FolderIconTappedCommand { get; private set; }
+        public ICommand OpenFolderOptionsCommand { get; private set; }
         public ICommand AddFolderCommand { get; private set; }
         private readonly FolderService _folderService;
 
 
         public ManageFoldersViewModel(Views.ManageFolders manageFolders)
         {
-           // _folderService = folderService;
-            SelectParentFolderCommand = new Command<AppFolder>(SelectParentFolder);
+
+            FolderIconTappedCommand = new Command<AppFolder>(HandleFolderIconTapped);
+
+          //  OpenParentFolderPopupCommand = new Command<AppFolder>(OpenParentFolderPopup);
+            MessagingCenter.Subscribe<ParentFolderPopupViewModel, AppFolder>(this, "FolderUpdated", (sender, updatedFolder) =>
+            {
+                // Update the folder in your FolderList
+                var folderToUpdate = FolderList.FirstOrDefault(f => f.Id == updatedFolder.Id);
+                if (folderToUpdate != null)
+                {
+                    folderToUpdate.Name = updatedFolder.Name;
+                    // Update other properties as necessary
+
+                    OnPropertyChanged(nameof(FolderList));
+                }
+
+                // Optionally, you can call a method to refresh the entire folder list
+                 Reset();
+            });
+            
+            /* MessagingCenter.Subscribe<ParentFolderPopupViewModel, AppFolder>(this, "FolderUpdated", (sender, updatedFolder) =>
+             {
+                 // Update logic for MenuPage's folder list
+                 // This might involve refreshing the folder list or updating a specific folder
+
+                 // For example:
+                 //  RefreshFolderList();
+                 UpdateFolderList(updatedFolder);
+                 Reset();
+             });*/
+            //   FolderOptionsCommand = new Command<AppFolder>(ExecuteFolderOptionsCommand);
+            //  OpenParentFolderPopupCommand = new Command<AppFolder>(OpenParentFolderPopup);
+            //  OpenSubFolderPopupCommand = new Command<AppFolder>(OpenSubFolderPopup);
+
+
             SelectSubfolderCommand = new Command<AppFolder>(SelectSubfolder);
 
+            // _folderService = folderService;
+            SelectParentFolderCommand = new Command<AppFolder>(SelectParentFolder);
+
+            
             SelectedFolder = null;
             //  ToggleFolderCommand = new Command<AppFolder>(ToggleFolder);
 
@@ -143,18 +226,111 @@ namespace AllNotes.ViewModels
 
 
         }
-        //WORK ON SUBFOLDER ADDING 2 SUBFOLDERS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        /* private void OpenParentFolderPopup(AppFolder selectedFolder)
+         {
 
-        /*private void LongPressNote(AppNote selectedNote)
+             // Set the selected folder
+             SelectedFolder = selectedFolder;
+             var parentFolderPopup = new ParentFolderPopup(selectedFolder);
+             parentFolderPopup.BindingContext = this; // 'this' refers to ManageFoldersViewModel
+                                                      // folderPopup.Show();
+             Application.Current.MainPage.Navigation.ShowPopup(parentFolderPopup);
+
+         }*/
+        private void OpenFolderOptionsPopup(AppFolder folder)
         {
-            if (selectedNote != null)
+            // Logic to open the popup
+            var folderOptionsPopup = new ParentFolderPopup(folder);
+          
+            Application.Current.MainPage.Navigation.ShowPopup(folderOptionsPopup);
+
+            // Open the popup
+        }
+
+        private void HandleFolderIconTapped(AppFolder folder)
+        {
+            if (folder != null)
             {
-                if (_selectionMode == SelectionMode.None)
+                SelectedFolder = folder; // Set the selected folder
+                OpenFolderOptionsPopup(folder); // Method to open the popup
+            }
+        }
+
+        /*private void OpenParentFolderPopup(AppFolder folder)
+        {
+            if (folder != null)
+            {
+                var parentFolderPopup = new ParentFolderPopup(folder);
+                // Assuming you're using Xamarin Community Toolkit or similar
+                
+                Application.Current.MainPage.Navigation.ShowPopup(parentFolderPopup);
+            }
+        }*/
+        //REMEMBER I COMMENTED OUT STUFF IN PARENTFOLDERPOPUP FOR EXPERAMENT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+        /*
+
+        private void ExecuteFolderOptionsCommand(AppFolder folder)
+        {
+            if (folder != null)
+            {
+                ResetFolderSelectionsExcept(folder);
+                SelectedFolder = folder;
+                OpenParentFolderPopup(folder);
+            }
+        }
+
+        private void ResetFolderSelectionsExcept(AppFolder exceptFolder)
+        {
+            foreach (var f in FolderList)
+            {
+                if (f != exceptFolder)
                 {
-                    ShowOrHideToolbar();
-                    SelectionMode = SelectionMode.Multiple;
-                    SelectedNotes.Add(selectedNote);
+                    f.IsSelected = false;
                 }
+                ResetSubfolderSelectionsExcept(f, exceptFolder);
+            }
+        }
+
+        private void ResetSubfolderSelectionsExcept(AppFolder folder, AppFolder exceptFolder)
+        {
+            foreach (var sub in folder.Subfolders)
+            {
+                if (sub != exceptFolder)
+                {
+                    sub.IsSelected = false;
+                }
+            }
+        }
+        private void OpenSubFolderPopup(AppFolder folder)
+        {
+            if (folder != null)
+            {
+                var subFolderPopup = new SubFolderPopup(folder);
+                // Assuming you're using Xamarin Community Toolkit or similar
+
+                Application.Current.MainPage.Navigation.ShowPopup(subFolderPopup);
+            }
+        }*/
+
+        /*private void HandleSubfolderSelection(AppFolder subfolder)
+        {
+            // Set the selected subfolder for renaming
+            // You can implement your logic here, like navigating to a new page or showing a prompt
+            ShowRenamePrompt(subfolder);
+        }
+
+        private async void ShowRenamePrompt(AppFolder subfolder)
+        {
+            string newName = await Application.Current.MainPage.DisplayPromptAsync("Rename Subfolder", "Enter new subfolder name:", initialValue: subfolder.Name);
+            if (!string.IsNullOrEmpty(newName))
+            {
+                subfolder.Name = newName;
+                AppDatabase.Instance().UpdateFolder(subfolder);
+
+                // Refresh the list or implement other logic as needed
+                RefreshFolders();
+                // Send a message if necessary
+                MessagingCenter.Send(this, "SubfolderRenamed", subfolder);
             }
         }*/
 
@@ -262,40 +438,7 @@ namespace AllNotes.ViewModels
 
 
 
-        /*private async Task AddSubfolder()
-        {
-            if (_selectedFolders != null && _selectedFolders.Count == 1)
-            {
-                var parentFolder = _selectedFolders.FirstOrDefault() as AppFolder;
-                if (parentFolder != null)
-                {
-                    string subfolderName = await Application.Current.MainPage.DisplayPromptAsync("New Subfolder", "Enter subfolder name:");
-                    if (!string.IsNullOrEmpty(subfolderName))
-                    {
-                        var newSubfolder = new AppFolder
-                        {
-                            Name = subfolderName,
-                            ParentFolderId = parentFolder.Id,
-                            IconPath = "folder_account_outline.png" // Set the icon path here
-                        };
-
-                        AppDatabase.Instance().InsertFolder(newSubfolder);
-                        RefreshFolders();
-                        //  RefreshFolderList();
-                           MessagingCenter.Send(this, "SubfolderAdded", newSubfolder);
-                        //  MessagingCenter.Send(this, "SubfolderAdded", (parent: parentFolder, subfolder: newSubfolder));
-                        // MessagingCenter.Send(this, "SubfolderAdded");
-                      //  MessagingCenter.Send(this, "SubfolderAdded", (parent: parentFolder, subfolder: newSubfolder));
-
-                    }
-                }
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("Add Subfolder", "Please select a single folder to add a subfolder.", "OK");
-
-            }
-        }*/
+       
         private async Task AddSubfolder()
         {
             if (_selectedFolders != null && _selectedFolders.Count == 1)
@@ -419,34 +562,7 @@ namespace AllNotes.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Rename Folder", "Please select a single folder to rename.", "OK");
             }
         }
-        /*private async Task RenameSelectedFolder()
-        {
-            if (_selectedFolders.Count == 1)
-            {
-                var selectedFolder = _selectedFolders[0] as AppFolder;
-                if (selectedFolder != null)
-                {
-                    // ... existing code for renaming logic ...
-
-                    // Proceed with renaming after password validation
-                    string newName = await Application.Current.MainPage.DisplayPromptAsync("Rename Folder", "Enter new folder name:", initialValue: selectedFolder.Name);
-                    if (!string.IsNullOrEmpty(newName))
-                    {
-                        selectedFolder.Name = newName;
-                        AppDatabase.Instance().UpdateFolder(selectedFolder);
-
-                        RefreshFolders();
-                        // Send the updated folder as part of the message
-                        MessagingCenter.Send(this, "FolderRenamed", selectedFolder);
-                    }
-                }
-            }
-            else
-            {
-                await Application.Current.MainPage.DisplayAlert("Rename Folder", "Please select a single folder to rename.", "OK");
-            }
-        }*/
-
+       
 
 
         private async Task DeleteSelectedFolders()

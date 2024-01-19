@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AllNotes.Views.NewNote.Popups.SubFolderPopup"
+            xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+                      Size="300,175"
+BackgroundColor="White"
+ xmlns:local="clr-namespace:AllNotes.ViewModels"
+
+VerticalOptions="Start"
+HorizontalOptions="End"
+xct:ShadowEffect.Color="Transparent"
+x:Name="MyPopup3">
+    <Frame CornerRadius="15"
+    HasShadow="True"
+    IsClippedToBounds="True"
+    Padding="20"
+    Margin="20"
+    BackgroundColor="White">
+
+        <CollectionView 
+     x:Name="MenuCollectionView" ItemsSource="{Binding MenuItems}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <StackLayout Padding="10">
+                        <Label Text="{Binding Title}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Path=BindingContext.MenuItemSelectedCommand, Source={x:Reference MyPopup}}" CommandParameter="{Binding .}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+
+                        <FlexLayout BindableLayout.ItemsSource="{Binding NoteColors}" 
+     IsVisible="{Binding Type, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:MenuType.ColorPicker}}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate>
+                                    <BoxView Color="{Binding Converter={StaticResource ColorConverter}}"
+              WidthRequest="30"
+              HeightRequest="30"
+              Margin="5"
+              CornerRadius="15">
+                                        <BoxView.GestureRecognizers>
+                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ChangeNoteColorCommand, Source={x:Reference MyPopup}}" CommandParameter="{Binding .}" />
+                                        </BoxView.GestureRecognizers>
+                                    </BoxView>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </FlexLayout>
+                    </StackLayout>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Frame>
+</xct:Popup>

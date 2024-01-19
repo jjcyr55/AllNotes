@@ -181,4 +181,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\arrow_up.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\folder_options.png" />
+  </ItemGroup>
 </Project>

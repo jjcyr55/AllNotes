@@ -103,6 +103,12 @@
 	<EmbeddedResource Update="Views\NewNote\Popups\NewNotePopup.xaml">
 		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
+	<EmbeddedResource Update="Views\NewNote\Popups\ParentFolderPopup.xaml">
+	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	</EmbeddedResource>
+	<EmbeddedResource Update="Views\NewNote\Popups\SubFolderPopup.xaml">
+	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\UI\Toolbar.xaml">
 		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>

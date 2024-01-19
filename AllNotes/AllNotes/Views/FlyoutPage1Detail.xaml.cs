@@ -66,13 +66,13 @@ namespace AllNotes.Views
             _currentFolder = selectedFolder;
             _menuPageViewModel = new MenuPageViewModel();
             BindingContext = _menuPageViewModel;
-            MessagingCenter.Subscribe<EditFolderPopupViewModel>(this, "FolderUpdated", (sender) => _menuPageViewModel.Reset());
+            MessagingCenter.Subscribe<ParentFolderPopupViewModel>(this, "FolderUpdated", (sender) => _menuPageViewModel.Reset());
 
         }
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
-            MessagingCenter.Unsubscribe<EditFolderPopupViewModel>(this, "FolderUpdated");
+            MessagingCenter.Unsubscribe<ParentFolderPopupViewModel>(this, "FolderUpdated");
         }
 
         public FlyoutPage1Detail()

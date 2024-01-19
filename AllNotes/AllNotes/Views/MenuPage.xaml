@@ -41,6 +41,7 @@ HorizontalOptions="FillAndExpand">
 
         <!-- Folder Collection    IsVisible="{Binding IsExpanded}" -->
         <ListView x:Name="foldersListView"
+                   SelectionMode="{Binding SelectionMode}"
           ItemsSource="{Binding FolderList}"
            SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
                   ItemSelected="OnFolderSelected"
