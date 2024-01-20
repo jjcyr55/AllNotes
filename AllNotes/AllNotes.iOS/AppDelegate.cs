@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Foundation;
+using Syncfusion.Licensing;
 using UIKit;
 
 namespace AllNotes.iOS
@@ -22,7 +23,8 @@ namespace AllNotes.iOS
         //
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-        
+            SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ=");
+            Syncfusion.XForms.iOS.RichTextEditor.SfRichTextEditorRenderer.Init();
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 

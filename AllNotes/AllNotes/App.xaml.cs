@@ -27,9 +27,9 @@ namespace AllNotes
         public App()
         {
             InitializeComponent();
-           // MainPage = new NavigationPage(new FlyoutPage1());
-
-            AppDatabase.Instance().Init();
+            // MainPage = new NavigationPage(new FlyoutPage1());
+          //  Ngo9BigBOggjHTQxAR8 / V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ =
+             AppDatabase.Instance().Init();
             DependencyService.Register<INavigationService, NavigationService>();
 
 

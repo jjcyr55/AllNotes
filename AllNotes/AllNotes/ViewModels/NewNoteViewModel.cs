@@ -19,8 +19,8 @@ using Xamarin.Essentials;
 using System.Diagnostics;
 using AllNotes.Data.Enum;
 using System.Runtime.InteropServices;
-using TEditor;
-using TEditor.Abstractions;
+using Syncfusion.XForms.RichTextEditor;
+
 //using TEditor.Abstractions;
 //using TEditor;
 
@@ -30,7 +30,7 @@ namespace AllNotes.ViewModels
     {
 
         public ICommand MenuItemSelectedCommand { get; }
-        public ICommand SaveNoteCommand => new Command(SaveNote);
+       public ICommand SaveNoteCommand => new Command(SaveNote);
         public ICommand OpenMenuCommand => new Command(OpenMenu);
 
         public ICommand OpenFontSizePopupCommand => new Command(OpenFontSizePopup);
@@ -74,18 +74,8 @@ namespace AllNotes.ViewModels
          {
              return Enum.GetValues(typeof(Colors)).Cast<Colors>();
          }*/
-        private string _htmlContent;
-        public string HtmlContent
-        {
-            get => _htmlContent;
-            set
-            {
-                _htmlContent = value;
-                OnPropertyChanged(nameof(HtmlContent));
-            }
-        }
 
-
+       
 
         public FontAttributes FontAttribute
         {
@@ -149,14 +139,17 @@ namespace AllNotes.ViewModels
         }
 
         public NewNotePage BindingContext { get; private set; }
-        //  public ICommand OpenTEditorCommand { get; private set; }
+
         public ICommand MenuItemSelectedCommandd { get; }
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
+
+
+
             MessagingCenter.Subscribe<MainPageViewModel>(this, "OpenFullScreenEditor", (sender) =>
             {
-                OpenTEditor();
+             //   OpenTEditor();
             });
 
 
@@ -216,32 +209,8 @@ namespace AllNotes.ViewModels
                 selectedFolderID = note.folderID;
             }
         }
-      //  public ICommand OpenTEditorCommand => new Command(async () => await OpenTEditor());
 
-        public async Task OpenTEditor()
-        {
-            var toolbar = new ToolbarBuilder().AddBasic().AddH1().AddH2().AddH3().AddH4().AddH5().AddH6().AddBold().AddItalic().AddUnderline().AddJustifyLeft().AddAll(); // and so on
-                                                                                                                                                                          // TEditorResponse response = await CrossTEditor.Current.ShowTEditor("<p>Initial content</p>", toolbar);
-            TEditorResponse response = await CrossTEditor.Current.ShowTEditor(HtmlContent, toolbar);
-
-
-
-            if (!string.IsNullOrEmpty(response.HTML))
-            {
-                HtmlContent = response.HTML;
-                SaveNote();
-            }
-        }
-
-
-
-
-
-       /* TEditorResponse response = await CrossTEditor.Current.ShowTEditor("<p>XAM consulting</p>");
-         if (!string.IsNullOrEmpty(response.HTML))
-             _displayWebView.Source = new HtmlWebViewSource() { Html = response.HTML };*/
-
-        private void OpenMenu()
+                private void OpenMenu()
         {
             var newNotePopup = new NewNotePopup();
             newNotePopup.BindingContext = this;
@@ -292,17 +261,7 @@ namespace AllNotes.ViewModels
             }
         }
 
-        private string _newNoteText;
-
-        public string NewNoteText
-        {
-            get { return _newNoteText; }
-            set
-            {
-                _newNoteText = value;
-                OnPropertyChanged(nameof(NewNoteText));
-            }
-        }
+        
         private string _newNoteTitle;
 
         public string NewNoteTitle
@@ -340,63 +299,57 @@ namespace AllNotes.ViewModels
 
 
 
-        /*private async void SaveNote()
-        {
-            if (string.IsNullOrEmpty(HtmlContent))
-            {
-                return; // Return if the note text is null or empty
-            }
-            var noteContent = HtmlContent;
 
-            var db = AppDatabase.Instance();
-            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+        /* public async Task SaveNoteAsync()
+         {
+             if (string.IsNullOrEmpty(HtmlContent))
+             {
+                 // Handle empty content
+                 return;
+                 // Check if the HTML content is null or empty instead
+                 //if (string.IsNullOrEmpty(HtmlContent))
+                 // {
+                 //return; // Return if the HTML content is null or empty
+             }
 
-            if (_note == null) // If creating a new note
-            {
-                AppNote note = new AppNote
-                {
-                    folderID = selectedFolderID,
-                    Text = HtmlContent,
-                    Title = NewNoteTitle,
-                    Date = currentDateTime,
-                    Color = NewNoteColor,
-                    FontSize = FontSize,
-                   // Text1 = HtmlContent
-                    *//* FontAttributes = ConvertFontAttributesToString(FontAttribute),
-                     TextAlignment = ConvertTextAlignmentToString(TextAlignment)*//*
-                };
+             var db = AppDatabase.Instance();
+             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-                await db.InsertNote(note); // Use 'note' here
-                MessagingCenter.Send(this, "RefreshNotes");
+             if (_note == null) // If creating a new note
+             {
+                 AppNote note = new AppNote
+                 {
 
-                if (_menuPageViewModel != null)
-                {
-                    _menuPageViewModel.Reset();
-                }
-            }
-            else // If updating an existing note
-            {
-                _note.Text = HtmlContent;
-                _note.Title = NewNoteTitle;
-                _note.Date = currentDateTime;
-                _note.Color = NewNoteColor;
-                _note.FontSize = FontSize;
-                _note.FontAttributes = ConvertFontAttributesToString(FontAttribute);
-                _note.TextAlignment = ConvertTextAlignmentToString(TextAlignment);
+                      folderID = selectedFolderID,
+                     Text = HtmlContent, // Use HtmlContent here
+                     Title = NewNoteTitle,
+                     Date = currentDateTime,
+                     Color = NewNoteColor,
+                     FontSize = FontSize,
+                     // Other properties as needed
+                 };
 
-                await db.UpdateNote(_note); // Use '_note' here
+                 await db.InsertNote(note); // Insert the new note
+                 MessagingCenter.Send(this, "RefreshNotes");
+             }
+             else // If updating an existing note
+             {
+                 _note.Text = HtmlContent; // Update the note's text with HtmlContent
+                                           // Update other properties as needed
+                 await db.UpdateNote(_note); // Update the existing note
 
-                // Inform any relevant part of your app that the note has been updated
-                MessagingCenter.Send(this, "NoteUpdated", _note);
-            }
+                 MessagingCenter.Send(this, "NoteUpdated", _note);
+             }
 
-            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-            {
-                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                await navigationPage?.PopAsync();
-               // _mainPageViewModel.RefreshNotes();
-            }
-        }*/
+             // Navigation logic after saving
+             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+             {
+                 folderID = selectedFolderID;
+                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                 await navigationPage?.PopAsync();
+                 //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
+             }
+         }*/
         private async void SaveNote()
         {
             // Check if the HTML content is null or empty instead
@@ -441,8 +394,69 @@ namespace AllNotes.ViewModels
                 //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
             }
         }
+       // public ICommand GoBackCommand => new Command(async () => await GoBack());
+      //  public ICommand SaveNoteCommand => new Command(async () => await SaveNote());
 
-        private string ConvertFontAttributesToString(FontAttributes fontAttributes)
+        /*private async Task GoBack()
+        {
+            await SaveNoteAsync(); // Save the note
+            selectedFolderID = folderID;   // Navigation logic after saving
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+                //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
+            }
+        }*/
+       /* public async Task HandlePageDisappearing()
+        {
+            selectedFolderID = folderID;
+            // Your logic here, such as saving the note
+            await SaveNoteAsync(); // Assuming SaveNote is async now
+        }*/
+
+        private string _htmlContent;
+        public string HtmlContent
+        {
+            get => _htmlContent;
+            set
+            {
+                if (_htmlContent != value)
+                {
+                    _htmlContent = value;
+                    OnPropertyChanged(nameof(HtmlContent));
+                }
+            }
+        }
+        private string _newNoteText;
+
+        public string NewNoteText
+        {
+            get { return _newNoteText; }
+            set
+            {
+                _newNoteText = value;
+                OnPropertyChanged(nameof(NewNoteText));
+            }
+        }
+        private string _editorContent;
+        public string EditorContent
+        {
+            get { return _editorContent; }
+            set
+            {
+                _editorContent = value;
+                OnPropertyChanged(nameof(EditorContent));
+            }
+        }
+
+
+
+
+
+
+
+        /*private string ConvertFontAttributesToString(FontAttributes fontAttributes)
         {
             return fontAttributes.ToString(); // Modify this based on how you want to store the value
         }
@@ -455,7 +469,7 @@ namespace AllNotes.ViewModels
         {
             var defaultFolder = AppDatabase.Instance().GetFirstFolder(); // Or other logic to determine default
             return defaultFolder?.Id ?? 0; // 0 or another appropriate default
-        }
+        }*/
 
 
         private void OpenFontSizePopup()

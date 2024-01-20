@@ -99,7 +99,31 @@ namespace AllNotes.Views
 
 
 
-        private async void GoToNewNotePage()
+        /*private async void GoToNewNotePage()
+        {
+            int folderId = GetSelectedFolderId();
+            if (folderId == 0)
+            {
+                // No folder is selected, prompt the user
+                PromptUserToSelectFolder();
+                if (folderId == 0)
+                {
+                    // User didn't select a folder, return without navigating
+                    return;
+                }
+            }
+              var newNoteViewModel = new NewNoteViewModel(folderId); // Pass the correct folder ID
+              await Navigation.PushAsync(new NewNotePage(newNoteViewModel));
+            // Create an instance of NewNoteViewModel with the selected folder ID
+        //    var newNoteViewModel = new NewNoteViewModel(folderId);
+          //  await Navigation.PushAsync(new NewNotePage());
+          //  MessagingCenter.Send(this, "OpenFullScreenEditor");
+
+            // Instead of navigating to NewNotePage, open TEditor directly
+          //  await newNoteViewModel.OpenTEditor(); // Open TEditor for a new note
+        }*/
+
+        /*private async void GoToNewNotePage()
         {
             int folderId = GetSelectedFolderId();
             if (folderId == 0)
@@ -113,14 +137,63 @@ namespace AllNotes.Views
                 }
             }
 
+
             // Create an instance of NewNoteViewModel with the selected folder ID
             var newNoteViewModel = new NewNoteViewModel(folderId);
-            MessagingCenter.Send(this, "OpenFullScreenEditor");
 
-            // Instead of navigating to NewNotePage, open TEditor directly
-            await newNoteViewModel.OpenTEditor(); // Open TEditor for a new note
+            // Pass the ViewModel to NewNotePage
+            var newNotePage = new NewNotePage(newNoteViewModel);
+
+            await Navigation.PushAsync(new NewNotePage(folderId));
+            // Use Xamarin.Forms navigation to push the new page
+            //await Navigation.PushAsync(newNotePage);
+        }*/
+        private async void GoToNewNotePage()
+        {
+            int folderId = GetSelectedFolderId();
+            if (folderId == 0)
+            {
+                // No folder is selected, prompt the user
+                PromptUserToSelectFolder();
+                if (folderId == 0)
+                {
+                    // User didn't select a folder, return without navigating
+                    return;
+                }
+            }
+            // Create an instance of NewNoteViewModel with the selected folder ID
+            var newNoteViewModel = new NewNoteViewModel(folderId);
+
+            // Pass the ViewModel to NewNotePage
+            var newNotePage = new NewNotePage(newNoteViewModel);
+
+            // Use Xamarin.Forms navigation to push the new page
+            await Navigation.PushAsync(newNotePage);
         }
+        /*private async void GoToNewNotePage()
+        {
+            int folderId = GetSelectedFolderId();
+            if (folderId == 0)
+            {
+                PromptUserToSelectFolder();
+                return;
+            }
 
+            var newNoteViewModel = new NewNoteViewModel(folderId);
+            await Navigation.PushAsync(new NewNotePage(newNoteViewModel));
+        }*/
+
+
+        // Method to get the currently selected folder ID
+        private int GetSelectedFolderId()
+        {
+            var mainPageViewModel = BindingContext as MainPageViewModel;
+            if (mainPageViewModel != null && mainPageViewModel.SelectedFolder != null)
+            {
+                return mainPageViewModel.SelectedFolder.Id;
+            }
+            return 0;
+        }
 
         /* private async void GoToNewNotePage()
          {
@@ -145,7 +218,7 @@ namespace AllNotes.Views
          }*/
 
         // Method to get the currently selected folder ID
-        private int GetSelectedFolderId()
+        /*private int GetSelectedFolderId()
         {
             var mainPageViewModel = BindingContext as MainPageViewModel;
             if (mainPageViewModel != null && mainPageViewModel.SelectedFolder != null)
@@ -153,7 +226,7 @@ namespace AllNotes.Views
                 return mainPageViewModel.SelectedFolder.Id;
             }
             return 0;
-        }
+        }*/
 
        
         private async void PromptUserToSelectFolder()
@@ -189,52 +262,7 @@ namespace AllNotes.Views
 
 
 
-        /* protected override bool OnBackButtonPressed()
-         {
-             if (this.Detail.Navigation.NavigationStack.Count > 1)
-             {
-                 this.Detail.Navigation.PopAsync(); // Go back to the previous page in the stack
-                 return true; // Prevent default back button behavior
-             }
-
-             return base.OnBackButtonPressed();
-             *//*if (_mainPageViewModel.MultiSelectEnabled)
-                 _mainPageViewModel.ShowOrHideToolbar();
-
-             return true;*//*
-         }*/
-        /*protected override bool OnBackButtonPressed()
-        {
-            if (_mainPageViewModel.MultiSelectEnabled)
-                _mainPageViewModel.ShowOrHideToolbar();
-            if (this.Detail.Navigation.NavigationStack.Count > 1)
-            {
-                this.Detail.Navigation.PopAsync(); // Go back to the previous page in the stack
-                return true; // Prevent default back button behavior
-            }
-
-            return base.OnBackButtonPressed();
-            
-
-           // return true; 
-         }*/
-        /* protected override bool OnBackButtonPressed()
-         {
-             // Check if multi-select mode is enabled
-             if (_mainPageViewModel != null && _mainPageViewModel.MultiSelectEnabled)
-             {
-                 // Disable multi-select mode and update UI accordingly
-                 _mainPageViewModel.MultiSelectEnabled = false;
-                 _mainPageViewModel.ShowOrHideToolbar();
-
-                 // Stay on the current page
-                 return true; // This intercepts the back button press, preventing the default behavior
-             }
-
-             // If not in multi-select mode, proceed with the default back button behavior
-             return base.OnBackButtonPressed();
-         }*/
-        //BACK CAUSING CRASH ON LONGPRESS!!!!!!!!!!!!!!!!!FIX!!!!!!!!!!!
+       
         protected override bool OnBackButtonPressed()
         {
             // Check if the app is in multi-select mode

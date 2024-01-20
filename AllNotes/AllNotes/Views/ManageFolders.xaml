@@ -89,6 +89,10 @@ VerticalOptions="FillAndExpand"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
 
+                                                <BoxView BackgroundColor="{Binding IsSelected, Converter={StaticResource BooleanToColorConverter}}"
+                 HorizontalOptions="FillAndExpand"
+VerticalOptions="FillAndExpand"/>
+
                                                 <!-- Icon -->
                                                 <Image Source="folder_options.png" Grid.Column="0" WidthRequest="30" HeightRequest="30">
                                                     <Image.GestureRecognizers>

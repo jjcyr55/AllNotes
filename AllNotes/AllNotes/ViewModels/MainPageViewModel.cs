@@ -127,7 +127,7 @@ namespace AllNotes.ViewModels
                 PerformSearch(); // Call the search method when the query changes
             }
         }
-        public void PerformSearch()
+        /*public void PerformSearch()
         {
             if (string.IsNullOrWhiteSpace(SearchQuery))
             {
@@ -149,7 +149,45 @@ namespace AllNotes.ViewModels
                     Notes.Add(note);
                 }
             }
+        }*/
+
+
+        public void PerformSearch()
+        {
+            if (string.IsNullOrWhiteSpace(SearchQuery))
+            {
+                RefreshNotes();
+            }
+            else
+            {
+                // Ensure selectedFolder is not null
+                if (selectedFolder == null)
+                {
+                    return;
+                }
+
+                var noteList = AppDatabase.Instance().GetNoteList(selectedFolder.Id);
+                if (noteList == null)
+                {
+                    return;
+                }
+
+                // Filter the notes based on the query
+                var filteredNotes = noteList
+                    .Where(note => (note.Title != null && note.Title.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0) ||
+                                   (note.Text != null && note.Text.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0))
+                    .ToList();
+
+                Notes.Clear();
+                foreach (var note in filteredNotes)
+                {
+                    Notes.Add(note);
+                }
+            }
         }
+
+
+
         public MainPageViewModel(AppFolder selectedFolder)
         {
             selectedFolder = selectedFolder;
@@ -295,31 +333,7 @@ namespace AllNotes.ViewModels
             }
         }
 
-        /* public void RefreshNotes()
-         {
-             if (SelectedFolder != null)
-             {
-                 Notes.Clear();
-                 var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
-                 foreach (var note in notesFromDb)
-                 {
-                     Notes.Add(note);
-                 }
-             }
-             else
-             {
-                 var SelectedFolder = AppDatabase.Instance().GetFirstFolder();
-                 if (SelectedFolder != null)
-                 {
-                     Notes.Clear();
-                     var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
-                     foreach (var note in notesFromDb)
-                     {
-                         Notes.Add(note);
-                     }
-                 }
-             }
-         }*/
+       
 
 
         public void RefreshNotes()
@@ -355,25 +369,7 @@ namespace AllNotes.ViewModels
 
 
         public Command<AppNote> TapNoteCommand { get; set; }
-        /* private async void TapNote(AppNote selectedNote)
-         {
-             if (selectedNote != null)
-             {
-                 if (_selectionMode == SelectionMode.None)
-                 {
-                     var newNoteVM = new NewNoteViewModel(this, selectedNote);
-                     var newNotePage = new NewNotePage(newNoteVM);
-                     newNotePage.BindingContext = newNoteVM;
-                     //   await Application.Current.MainPage.Navigation.PushAsync(newNotePage);
-                     if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-                     {
-                         var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                         await navigationPage?.PushAsync(newNotePage);
-                     }
-                 }
-             }
-         }*/
-
+       
         private async void TapNote(AppNote selectedNote)
         {
             if (selectedNote != null)
@@ -386,7 +382,8 @@ namespace AllNotes.ViewModels
                     if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
                     {
                         var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                        await newNoteVM.OpenTEditor(); // Open TEditor with the selected note
+                        await navigationPage?.PushAsync(newNotePage);
+                        //  await newNoteVM.OpenTEditor(); // Open TEditor with the selected note
                     }
                 }
             }

@@ -7,12 +7,33 @@
              xmlns:views="clr-namespace:AllNotes.Views"
              xmlns:local="clr-namespace:AllNotes.CustomRenderers" 
              xmlns:viewmodels="clr-namespace:AllNotes.ViewModels" 
+             xmlns:richtexteditor="clr-namespace:Syncfusion.XForms.RichTextEditor;assembly=Syncfusion.SfRichTextEditor.XForms"
              x:DataType="viewmodels:NewNoteViewModel"
              x:Class="AllNotes.Views.NewNote.NewNotePage">
 
 
 
-    <ContentPage.Content>
-        
-    </ContentPage.Content>
+    
+        <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Save" Command="{Binding SaveNoteCommand}" />
+        </ContentPage.ToolbarItems>
+
+        <StackLayout>
+        <ImageButton
+     Command="{Binding SaveNoteCommand}"
+     Source="back.png"
+     HeightRequest="50"
+     WidthRequest="50"
+     BackgroundColor="Transparent"
+     Padding="15"
+     CornerRadius="30"
+     xct:TouchEffect.NativeAnimation="True" />
+        <local:EntryNoUnderline Placeholder="Title" Text="{Binding NewNoteTitle}" FlexLayout.Grow="1" />
+        <!-- Custom Back Button -->
+       
+            <!-- Rich Text Editor -->
+            <richtexteditor:SfRichTextEditor x:Name="richTextEditor"
+                                         VerticalOptions="FillAndExpand"
+                                         HtmlText="{Binding HtmlContent, Mode=TwoWay}" />
+        </StackLayout>
 </ContentPage>

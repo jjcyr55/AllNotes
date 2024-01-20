@@ -9,14 +9,14 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using TEditor;
-using TEditor.Abstractions;
+//using TEditor;
+//using TEditor.Abstractions;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
 namespace AllNotes.Views
 {
-	[XamlCompilation(XamlCompilationOptions.Compile)]
+	/*[XamlCompilation(XamlCompilationOptions.Compile)]
 	public partial class FullScreenEditorPage : ContentPage
 	{
 
@@ -141,5 +141,5 @@ namespace AllNotes.Views
             }
         }
 
-    }
+    }*/
 }

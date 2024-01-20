@@ -8,7 +8,7 @@
             <Button Text="B" Command="{Binding BoldTextCommand}" Margin="2"/>
             <Button Text="I" Command="{Binding ItalicCommand}" Margin="2"/>
             <Button Text="U" Command="{Binding UnderlineCommand}" Margin="2"/>
-            <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />
+         <!--   <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />-->
 
             <!-- Add other buttons as needed, with Margin for spacing -->
         </StackLayout>
