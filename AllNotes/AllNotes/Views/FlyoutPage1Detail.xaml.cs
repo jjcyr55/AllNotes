@@ -67,6 +67,9 @@ namespace AllNotes.Views
             _menuPageViewModel = new MenuPageViewModel();
             BindingContext = _menuPageViewModel;
             MessagingCenter.Subscribe<ParentFolderPopupViewModel>(this, "FolderUpdated", (sender) => _menuPageViewModel.Reset());
+            MessagingCenter.Subscribe<AppNote>(this, "RefreshNotes", (sender) => {
+                _mainPageViewModel.RefreshNotes();
+            });
 
         }
         protected override void OnDisappearing()
@@ -74,7 +77,12 @@ namespace AllNotes.Views
             base.OnDisappearing();
             MessagingCenter.Unsubscribe<ParentFolderPopupViewModel>(this, "FolderUpdated");
         }
-
+        protected override void OnAppearing()
+        {
+            base.OnAppearing();
+            var viewModel = this.BindingContext as MainPageViewModel;
+            viewModel?.RefreshNotes();
+        }
         public FlyoutPage1Detail()
         {
             InitializeComponent();
@@ -262,8 +270,8 @@ namespace AllNotes.Views
 
 
 
-       
-        protected override bool OnBackButtonPressed()
+
+        /*protected override bool OnBackButtonPressed()
         {
             // Check if the app is in multi-select mode
             if (_mainPageViewModel.IsInMultiSelectMode)
@@ -277,7 +285,7 @@ namespace AllNotes.Views
 
             // Allow default back button behavior
             return base.OnBackButtonPressed();
-        }
+        }*/
         /* protected override bool OnBackButtonPressed()
          {
              if (_mainPageViewModel != null && _mainPageViewModel.MultiSelectEnabled)
@@ -286,6 +294,13 @@ namespace AllNotes.Views
 
              return true;
          }*/
+        protected override bool OnBackButtonPressed()
+        {
+            if (_mainPageViewModel.MultiSelectEnabled)
+                _mainPageViewModel.ShowOrHideToolbar();
+
+            return true;
+        }
 
         private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {

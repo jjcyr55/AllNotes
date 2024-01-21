@@ -66,6 +66,9 @@
 		<Compile Update="Views\NewNote\Popups\NewNotePopup.xaml.cs">
 		  <DependentUpon>NewNotePopup.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\NewNote\Popups\NoteColorSelectionPopup.xaml.cs">
+		  <DependentUpon>NoteColorSelectionPopup.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\NewNote\UI\ToolbarButton.xaml.cs">
 			<DependentUpon>ToolbarButton.xaml</DependentUpon>
 		</Compile>
@@ -107,6 +110,9 @@
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\NewNotePopup.xaml">
 		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	</EmbeddedResource>
+	<EmbeddedResource Update="Views\NewNote\Popups\NoteColorSelectionPopup.xaml">
+	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\ParentFolderPopup.xaml">
 	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>

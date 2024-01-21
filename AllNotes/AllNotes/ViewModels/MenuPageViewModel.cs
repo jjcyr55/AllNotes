@@ -180,8 +180,23 @@ namespace AllNotes.ViewModels
             {
                 UpdateFolderList(updatedFolder);
             });
+            MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "Reset", (sender, updatedFolder) =>
+            {
+                UpdateFolderList(updatedFolder);
+            });
 
-
+            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
+            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "Reset", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
+            MessagingCenter.Subscribe<MainPageViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
 
             FolderList = new ObservableCollection<AppFolder>(AppDatabase.Instance().GetFolderList());
 
@@ -212,6 +227,11 @@ namespace AllNotes.ViewModels
                 Reset(); // Refresh the list
             });
 
+            MessagingCenter.Subscribe<MainPageViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
+
         }
         private void HandleRenamedFolder(AppFolder updatedFolder)
         {
@@ -230,6 +250,17 @@ namespace AllNotes.ViewModels
         {
         }
 
+        public void UpdateNoteCountForFolder(int folderId)
+        {
+            Debug.WriteLine($"Updating note count for folder {folderId}");
+            var folder = FolderList.FirstOrDefault(f => f.Id == folderId);
+            if (folder != null)
+            {
+                folder.NoteCount = AppDatabase.Instance().GetNoteList(folderId).Count;
+                OnPropertyChanged(nameof(FolderList));
+                Reset();
+            }
+        }
         private void HandleSubfolderAdded(AppFolder parentFolder, AppFolder newSubfolder)
         {
             var parentInList = FolderList.FirstOrDefault(f => f.Id == parentFolder.Id);
@@ -273,10 +304,7 @@ namespace AllNotes.ViewModels
         }
 
 
-        /*private void SelectParentFolder(AppFolder folder)
-        {
-            // Handle parent folder selection
-        }*/
+       
 
         private async void SelectSubfolder(AppFolder subfolder)
         {
@@ -374,7 +402,7 @@ namespace AllNotes.ViewModels
              OnPropertyChanged(nameof(FolderList));
          }*/
         //THIS REFRESH METHOD WORKS SO UNCOMMENT IT IF OTHER METHODS DONT WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        private void RefreshFolderList()
+        public void RefreshFolderList()
         {
             var allFolders = AppDatabase.Instance().GetFolderList();
             var folderDict = FolderList.ToDictionary(f => f.Id, f => f);
@@ -489,7 +517,7 @@ namespace AllNotes.ViewModels
 
 
 
-        private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
+        /*private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
         {
             var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
             foreach (var folder in rootFolders)
@@ -498,7 +526,29 @@ namespace AllNotes.ViewModels
                     allFolders.Where(f => f.ParentFolderId == folder.Id));
                 FolderList.Add(folder);
             }
+        }*/
+
+
+        private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
+        {
+            var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
+            foreach (var folder in rootFolders)
+            {
+                // Calculate note count for each folder
+                folder.NoteCount = AppDatabase.Instance().GetNoteList(folder.Id).Count;
+
+                // Recursively build subfolder hierarchy and calculate their note counts
+                folder.Subfolders = new ObservableCollection<AppFolder>(
+                    allFolders.Where(f => f.ParentFolderId == folder.Id)
+                              .Select(subfolder => {
+                                  subfolder.NoteCount = AppDatabase.Instance().GetNoteList(subfolder.Id).Count;
+                                  return subfolder;
+                              }));
+                FolderList.Add(folder);
+            }
         }
+
+
 
         private async Task LoadFoldersFromDatabase()
         {

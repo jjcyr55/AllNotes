@@ -14,25 +14,37 @@
             <converters:TextAlignmentConverter x:Key="textAlignmentConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-   
 
-
+    
     <AbsoluteLayout>
         <ScrollView AbsoluteLayout.LayoutBounds = "0,0,1,1" AbsoluteLayout.LayoutFlags = "All">
             <StackLayout>
-                <FlexLayout JustifyContent="Center" AlignContent="Center" Margin="100">
-                    <Label Text="All Notes" FontSize='30' FontAttributes="Bold" />
-                </FlexLayout>
+                <FlexLayout JustifyContent="End" AlignContent="End" Margin="10">
+                 
+                    <ImageButton
+Command="{Binding OpenMenuCommand}"
+Source="menuDots.png"
+HeightRequest="50"
+WidthRequest="50"
+BackgroundColor="Transparent"
+Padding="15"
+CornerRadius="30"
+xct:TouchEffect.NativeAnimation="True" />
 
+                </FlexLayout>
+                
                 <Frame x:Name="frameTop" BackgroundColor="Transparent"  Margin="20,0,20,0" Padding="0,10,0,0" IsVisible="true">
                     <ImageButton Clicked="BtnOption_Clicked" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Source="dotsBlack.png" WidthRequest="30" 
   HeightRequest="30" BackgroundColor="#f3f2f3" />
                 </Frame>
-
-
+                
                 <StackLayout x:Name="stackTop" Margin="20,0,20,0" IsVisible="true">
                     <Label Text="All notes" FontAttributes="Bold" FontSize="30" TextColor="Black"/>
-                    <Label x:Name="LblNbNotes" Text="76 notes" FontSize="Small"/>
+
+                    <Label Text="{Binding NoteCount, StringFormat='{0} Notes'}"
+           FontAttributes="Bold"
+           HorizontalOptions="Start"
+           VerticalOptions="Center" />
                 </StackLayout>
 
 
@@ -57,6 +69,7 @@
                         </CollectionView.ItemsLayout>
                         <CollectionView.EmptyView>
                             <Label Text="You have no notes..." />
+                            <Label Text="{Binding PreviewText}" />
                         </CollectionView.EmptyView>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
@@ -82,13 +95,14 @@
                                    HasShadow="True"
                                    IsClippedToBounds="True"
                                    Padding="0">
-                                        <Label Text="{Binding Text}" 
+                                       <!-- <Label Text="{Binding Text}" 
                                             MaxLines="5" 
                                             LineBreakMode="TailTruncation" 
                                             Padding="15" 
                                             FontSize="{Binding FontSize}" 
-                                            HorizontalTextAlignment="{Binding TextAlignment, Converter={StaticResource textAlignmentConverter}}" /> 
+                                            HorizontalTextAlignment="{Binding TextAlignment, Converter={StaticResource textAlignmentConverter}}" /> -->
                                         <!-- Other labels and elements -->
+                                        
 
                                         <AbsoluteLayout HeightRequest="100"
                                                     WidthRequest="100"
@@ -98,7 +112,15 @@
                                                     xct:TouchEffect.CommandParameter="{Binding .}"
                                                     xct:TouchEffect.LongPressCommand="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.LongPressNoteCommand}"
                                                     xct:TouchEffect.LongPressCommandParameter="{Binding .}">
+
                                             
+
+                                            <Image Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
+                                                   Margin="10,5,10,5"
+           WidthRequest="15"
+           HeightRequest="15"
+           IsVisible="{Binding IsFavorite}" />
+
                                             <Image
                                                 x:Name="Check"
                                                 Source="check.png"

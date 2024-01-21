@@ -106,6 +106,8 @@ namespace AllNotes
 
         protected override void OnResume()
         {
+            var menuPageViewModel = new MenuPageViewModel();
+   menuPageViewModel.RefreshFolderList();
         }
     }
 }

@@ -20,31 +20,27 @@ using System.Diagnostics;
 using AllNotes.Data.Enum;
 using System.Runtime.InteropServices;
 using Syncfusion.XForms.RichTextEditor;
+using AllNotes.Converters;
 
 //using TEditor.Abstractions;
 //using TEditor;
 
 namespace AllNotes.ViewModels
 {
-    public class NewNoteViewModel : INotifyPropertyChanged
+    public class NewNoteViewModel : BaseViewModel
     {
 
         public ICommand MenuItemSelectedCommand { get; }
        public ICommand SaveNoteCommand => new Command(SaveNote);
         public ICommand OpenMenuCommand => new Command(OpenMenu);
 
-        public ICommand OpenFontSizePopupCommand => new Command(OpenFontSizePopup);
-        public ICommand OpenJustifyTextPopupCommand => new Command(OpenJustifyTextPopup);
-        // public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
+        
+       
 
-        // public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
-        public ICommand ChangeNoteColorCommand => new Command(ChangeNoteColor);
+       
         public ICommand BoldTextCommand => new Command(BoldText);
-        public ICommand ItalicizeTextCommand => new Command(ItalicizeText);
-        public ICommand ChangeFontSizeCommand => new Command(ChangeFontSize);
-        public ICommand AlignTextLeftCommand => new Command(AlignTextLeft);
-        public ICommand AlignTextCenterCommand => new Command(AlignTextCenter);
-        public ICommand AlignTextRightCommand => new Command(AlignTextRight);
+
+        public ICommand ShareNoteCommand => new Command(ShareNote);
 
 
 
@@ -123,20 +119,43 @@ namespace AllNotes.ViewModels
         private bool FlyoutPage1Detail;
         private bool _firstNoteCreated;
 
-
-
-        public int NewNoteColor
+        private bool _isFavorite;
+        public bool IsFavorite
         {
-            get => _newNoteColor;
+            get => _isFavorite;
             set
             {
-                if (_newNoteColor != value)
-                {
-                    _newNoteColor = value;
-                    OnPropertyChanged(nameof(NewNoteColor));
-                }
+                _isFavorite = value;
+                OnPropertyChanged(nameof(IsFavorite));
             }
         }
+        public Action BackgroundColorAction { get; set; }
+        public Action ShareAction { get; set; }
+
+
+        public ICommand ToggleFavoriteCommand => new Command(ToggleFavorite);
+
+
+        /* public ICommand ToggleFavoriteCommand => new Command(() =>
+         {
+             IsFavorite = !IsFavorite;
+         });*/
+
+        /* public int NewNoteColor
+         {
+             get => _newNoteColor;
+             set
+             {
+                 if (_newNoteColor != value)
+                 {
+                     _newNoteColor = value;
+                     OnPropertyChanged(nameof(NewNoteColor));
+                 }
+             }
+         }*/
+
+        public ICommand BackgroundColorActionCommand => new Command(ExecuteBackgroundColorAction);
+        public ICommand ShareActionCommand => new Command(ExecuteShareAction);
 
         public NewNotePage BindingContext { get; private set; }
 
@@ -144,12 +163,18 @@ namespace AllNotes.ViewModels
         public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
+            //    BackgroundColorAction = () => { /* Logic for Background Color */ };
+            //   ShareAction = () => { /* Logic for Share */ };
 
 
 
-            MessagingCenter.Subscribe<MainPageViewModel>(this, "OpenFullScreenEditor", (sender) =>
+
+            //  InitializeMenuItems();
+
+
+            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
             {
-             //   OpenTEditor();
+                _menuPageViewModel.UpdateNoteCountForFolder(folderId);
             });
 
 
@@ -162,12 +187,14 @@ namespace AllNotes.ViewModels
                 // Existing note - initialize with its content
                 NewNoteTitle = note.Title;
                 HtmlContent = note.Text; // Ensure this is the correct property for HTML content
+                NewNoteColorValue = note.Color;
             }
             else
             {
                 // New note - initialize as necessary
                 NewNoteTitle = "";
                 HtmlContent = ""; // Set as blank or a default value if needed
+                NewNoteColorValue= 0;
             }
 
 
@@ -175,13 +202,15 @@ namespace AllNotes.ViewModels
             MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
             MenuItems = new ObservableCollection<MenuItemModel>
          {
-            new MenuItemModel { Title = "Background Color", Type = MenuType.ColorPicker },
-             new MenuItemModel { Title = "Share", CommandAction = ShareNote }
+        //    new MenuItemModel { Title = "Background Color", Type = MenuType.ColorPicker },
+         //    new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+         //    new MenuItemModel {  Icon = "heart.png", CommandAction = ToggleFavorite }, // Update this line
+             
          };
 
+            //   new MenuItemModel { Title = "Favorite", Command = new Command(FavoriteNote) }
 
-
-            NewNoteColor = (int)Colors.Yellow;
+            NewNoteColorValue = (int)Colors.Orange;
             NoteColors = new ObservableCollection<int> {
                 ((int)Colors.Yellow),
                 ((int)Colors.Green),
@@ -190,6 +219,7 @@ namespace AllNotes.ViewModels
                 ((int)Colors.Pink),
                 ((int)Colors.Red),
                 ((int)Colors.Orange),
+                ((int)Colors.White),
             };
             FontSizes = new Collection<int> { 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 22, 24, 26, 28, 30, 32, 36, 40 };
             NewNoteTitle = "";
@@ -203,36 +233,78 @@ namespace AllNotes.ViewModels
                 NewNoteTitle = note.Title;
                 NewNoteText = note.Text;
                 Date = note.Date;
-                NewNoteColor = note.Color;
+                NewNoteColorValue = note.Color;
                 folderID = note.folderID;
                 selectedNote = note;
                 selectedFolderID = note.folderID;
             }
         }
+       /* private void InitializeMenuItems()
+        {
+            MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
+            MenuItems = new ObservableCollection<MenuItemModel>
+            
+            {
+                 new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+            // new MenuItemModel { Title = "Background Color", Command = ChangeNoteColorCommand },
+           //   new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+            // Other dynamic menu items...
 
-                private void OpenMenu()
+        };
+        }*/
+
+        private void FavoriteNote(object obj)
+        {
+            throw new NotImplementedException();
+        }
+
+        //OLD MENU STILL WANT TO USE BUT HAVE TO WORK ON IT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        private void OpenMenu()
         {
             var newNotePopup = new NewNotePopup();
             newNotePopup.BindingContext = this;
             Application.Current.MainPage.Navigation.ShowPopup(newNotePopup);
         }
+        private void ExecuteBackgroundColorAction()
+        {
+            // Assuming BackgroundColorAction is an Action you've defined
+            BackgroundColorAction?.Invoke();
+        }
 
+        private void ExecuteShareAction()
+        {
+            ShareAction?.Invoke();
+        }
         private void ExecuteMenuItem(MenuItemModel item)
         {
             item?.CommandAction?.Invoke();
         }
-        private async void SelectColor()
+       
+        private async void ToggleFavorite()
         {
-            // Implement color selection logic here
-        }
+            IsFavorite = !IsFavorite;
 
-        private async void ShareNote()
+            if (_note != null)
+            {
+                _note.IsFavorite = IsFavorite;
+                await AppDatabase.Instance().UpdateNote(_note); // Update the note in the database
+                MessagingCenter.Send(this, "NoteUpdated", _note.folderID);
+            }
+            else if (!string.IsNullOrEmpty(HtmlContent))
+            {
+                SaveNote(); // Save the new note with the favorite status
+            }
+            // Send a message to refresh the notes list in the main view
+            MessagingCenter.Send(this, "RefreshNotes");
+        }
+        /*private async void ShareNote()
         {
             try
             {
                 // Assuming CurrentNoteContent holds the text of the note being edited or created
                 var noteContent = NewNoteText;
                 var noteTitle = NewNoteTitle;
+                var noteColor = NewNoteColorValue;
 
                 Device.BeginInvokeOnMainThread(async () =>
                 {
@@ -248,7 +320,91 @@ namespace AllNotes.ViewModels
                 // Log or display the exception message
                 Debug.WriteLine($"Error in sharing: {ex.Message}");
             }
+        }*/
+
+
+
+        private async void ShareNote()
+        {
+            try
+            {
+                // Save and share logic
+                if (_note == null || string.IsNullOrWhiteSpace(HtmlContent))
+                {
+                    var action = await Application.Current.MainPage.DisplayAlert("Save and Share",
+                                      "The note must be saved before sharing. Save and share now?",
+                                      "Save and Share", "Cancel");
+
+                    if (action)
+                    {
+                        await SaveNoteInternal(); // Use an internal save method
+
+                        // Check if the note now has content after saving
+                        if (!string.IsNullOrWhiteSpace(HtmlContent))
+                        {
+                            await Share.RequestAsync(new ShareTextRequest
+                            {
+                                Text = HtmlContent, // Assuming HtmlContent has the note text
+                                Title = NewNoteTitle
+                            });
+                        }
+                        else
+                        {
+                            await Application.Current.MainPage.DisplayAlert("Share", "There is nothing to share.", "OK");
+                        }
+                        return;
+                    }
+                }
+
+                // Proceed with sharing if there is content
+                if (!string.IsNullOrWhiteSpace(HtmlContent))
+                {
+                    await Share.RequestAsync(new ShareTextRequest
+                    {
+                        Text = HtmlContent,
+                        Title = NewNoteTitle
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error in sharing: {ex.Message}");
+            }
         }
+
+        // Internal method for saving a note
+        private async Task SaveNoteInternal()
+        {
+            if (string.IsNullOrEmpty(HtmlContent))
+            {
+                return;
+            }
+
+            var db = AppDatabase.Instance();
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (_note == null) // Creating a new note
+            {
+                _note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = HtmlContent,
+                    Title = NewNoteTitle,
+                    Date = currentDateTime,
+                    IsFavorite = IsFavorite
+                };
+                await db.InsertNote(_note);
+            }
+            else // Updating an existing note
+            {
+                _note.Text = HtmlContent;
+                await db.UpdateNote(_note);
+            }
+
+            MessagingCenter.Send(this, "RefreshNotes");
+            // Other logic after saving...
+        }
+
 
         private ObservableCollection<MenuItemModel> _menuItems;
         public ObservableCollection<MenuItemModel> MenuItems
@@ -300,57 +456,8 @@ namespace AllNotes.ViewModels
 
 
 
-        /* public async Task SaveNoteAsync()
-         {
-             if (string.IsNullOrEmpty(HtmlContent))
-             {
-                 // Handle empty content
-                 return;
-                 // Check if the HTML content is null or empty instead
-                 //if (string.IsNullOrEmpty(HtmlContent))
-                 // {
-                 //return; // Return if the HTML content is null or empty
-             }
 
-             var db = AppDatabase.Instance();
-             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
-             if (_note == null) // If creating a new note
-             {
-                 AppNote note = new AppNote
-                 {
-
-                      folderID = selectedFolderID,
-                     Text = HtmlContent, // Use HtmlContent here
-                     Title = NewNoteTitle,
-                     Date = currentDateTime,
-                     Color = NewNoteColor,
-                     FontSize = FontSize,
-                     // Other properties as needed
-                 };
-
-                 await db.InsertNote(note); // Insert the new note
-                 MessagingCenter.Send(this, "RefreshNotes");
-             }
-             else // If updating an existing note
-             {
-                 _note.Text = HtmlContent; // Update the note's text with HtmlContent
-                                           // Update other properties as needed
-                 await db.UpdateNote(_note); // Update the existing note
-
-                 MessagingCenter.Send(this, "NoteUpdated", _note);
-             }
-
-             // Navigation logic after saving
-             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
-             {
-                 folderID = selectedFolderID;
-                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                 await navigationPage?.PopAsync();
-                 //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
-             }
-         }*/
-        private async void SaveNote()
+        /*private async void SaveNote()
         {
             // Check if the HTML content is null or empty instead
             if (string.IsNullOrEmpty(HtmlContent))
@@ -369,10 +476,13 @@ namespace AllNotes.ViewModels
                     Text = HtmlContent, // Use HtmlContent here
                     Title = NewNoteTitle,
                     Date = currentDateTime,
-                    Color = NewNoteColor,
-                    FontSize = FontSize,
-                    // Other properties as needed
-                };
+                   // Color = NewNoteColorValue,
+                  //  FontSize = FontSize,
+                    IsFavorite = IsFavorite,
+                    
+                // Other properties as needed
+            };
+               
 
                 await db.InsertNote(note); // Insert the new note
                 MessagingCenter.Send(this, "RefreshNotes");
@@ -382,7 +492,7 @@ namespace AllNotes.ViewModels
                 _note.Text = HtmlContent; // Update the note's text with HtmlContent
                                           // Update other properties as needed
                 await db.UpdateNote(_note); // Update the existing note
-
+                MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", _note.folderID);
                 MessagingCenter.Send(this, "NoteUpdated", _note);
             }
 
@@ -391,29 +501,53 @@ namespace AllNotes.ViewModels
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
+               
                 //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
-            }
-        }
-       // public ICommand GoBackCommand => new Command(async () => await GoBack());
-      //  public ICommand SaveNoteCommand => new Command(async () => await SaveNote());
 
-        /*private async Task GoBack()
+            }
+        }*/
+        private async void SaveNote()
         {
-            await SaveNoteAsync(); // Save the note
-            selectedFolderID = folderID;   // Navigation logic after saving
+            if (string.IsNullOrEmpty(HtmlContent))
+            {
+                return; // Return if the HTML content is null or empty
+            }
+
+            var db = AppDatabase.Instance();
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (_note == null) // If creating a new note
+            {
+                AppNote note = new AppNote
+                {
+                    folderID = selectedFolderID,
+                    Text = HtmlContent,
+                    Title = NewNoteTitle,
+                    Date = currentDateTime,
+                    IsFavorite = IsFavorite,
+                    // Other properties as needed
+                };
+
+                await db.InsertNote(note); // Insert the new note
+                MessagingCenter.Send(this, "RefreshNotes");
+                MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", selectedFolderID); // Notify MenuPageViewModel
+            }
+            else // If updating an existing note
+            {
+                _note.Text = HtmlContent;
+                await db.UpdateNote(_note); // Update the existing note
+                MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", _note.folderID);
+                MessagingCenter.Send(this, "NoteUpdated", _note);
+            }
+
+            // Navigation logic after saving
             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
             {
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
-                //  _mainPageViewModel.RefreshNotes(); // Ensure this refreshes the notes list
             }
-        }*/
-       /* public async Task HandlePageDisappearing()
-        {
-            selectedFolderID = folderID;
-            // Your logic here, such as saving the note
-            await SaveNoteAsync(); // Assuming SaveNote is async now
-        }*/
+        }
+
 
         private string _htmlContent;
         public string HtmlContent
@@ -472,26 +606,74 @@ namespace AllNotes.ViewModels
         }*/
 
 
-        private void OpenFontSizePopup()
+       
+        public void UpdateEditorBackgroundColor(Color newColor)
         {
-            var fontSizeSelectionPopup = new FontSizeSelectionPopup();
-            fontSizeSelectionPopup.BindingContext = this;
-            Application.Current.MainPage.Navigation.ShowPopup(fontSizeSelectionPopup);
+            // Convert Color to HEX
+            var hexColor = newColor.ToHex();
+
+            // CSS to change background color
+            string css = $"<style>body{{background-color:{hexColor};}}</style>";
+
+            // Prepend CSS to HtmlContent
+            HtmlContent = css + HtmlContent;
+
+            // Notify the view that HtmlContent has changed
+            OnPropertyChanged(nameof(HtmlContent));
+        }
+      //  public ICommand ChangeNoteColorCommand => new Command<int>(ChangeNoteColor);
+
+        /* private void ChangeNoteColor(int colorValue)
+         {
+             Color newColor = Color.FromUint((uint)colorValue);
+           NewNoteColorValue = newColor; // This should be fine if NewNoteColor is of type Color
+             UpdateEditorBackgroundColor(newColor);
+         }*/
+       /* private void ChangeNoteColor(int colorValue)
+        {
+            // Convert colorValue to Color
+            Color newColor = Color.FromUint((uint)colorValue);
+
+            // Assign the integer color value
+            NewNoteColorValue = colorValue;
+
+            // Update the background color of the editor
+            UpdateEditorBackgroundColor(newColor);
+        }*/
+
+
+
+        private int _newNoteColorValue;
+        public int NewNoteColorValue
+        {
+            get => _newNoteColorValue;
+            set
+            {
+                _newNoteColorValue = value;
+                OnPropertyChanged(nameof(NewNoteColorValue));
+                OnPropertyChanged(nameof(NewNoteColorValue)); // Update the UI color as well
+            }
         }
 
-        private void OpenJustifyTextPopup()
-        {
-            var justifyTextSelectionPopup = new JustifyTextSelectionPopup();
-            justifyTextSelectionPopup.BindingContext = this;
-            Application.Current.MainPage.Navigation.ShowPopup(justifyTextSelectionPopup);
-        }
+        public Color NewNoteColor => ColorConverter.ConvertColor(NewNoteColorValue);
+
+
+
+
+
 
         private void ChangeNoteColor(object o)
         {
             int color = (int)o;
-            NewNoteColor = color;
+            NewNoteColorValue = color;
+          //  UpdateEditorBackgroundColor(newColor);
         }
-
+       /* private void OpenMenu()
+        {
+            var noteColorSelectionPopup = new NoteColorSelectionPopup();
+            noteColorSelectionPopup.BindingContext = this;
+            Application.Current.MainPage.Navigation.ShowPopup(noteColorSelectionPopup);
+        }*/
         private void BoldText()
         {
             if (FontAttribute != FontAttributes.Bold)
@@ -500,40 +682,8 @@ namespace AllNotes.ViewModels
                 FontAttribute = FontAttributes.None;
         }
 
-        private void ItalicizeText()
-        {
-            if (FontAttribute != FontAttributes.Italic)
-                FontAttribute = FontAttributes.Italic;
-            else
-                FontAttribute = FontAttributes.None;
-        }
+       
 
-        private void ChangeFontSize(object o)
-        {
-            int fontSize = (int)o;
-            FontSize = fontSize;
-        }
-
-        private void AlignTextLeft()
-        {
-            TextAlignment = 0;
-        }
-
-        private void AlignTextCenter()
-        {
-            TextAlignment = TextAlignment.Center; // Using the enum value
-        }
-
-        private void AlignTextRight()
-        {
-            TextAlignment = TextAlignment.End; // Using the enum value
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+       
     }
 }

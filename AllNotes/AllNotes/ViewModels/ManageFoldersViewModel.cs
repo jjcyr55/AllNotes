@@ -395,13 +395,31 @@ namespace AllNotes.ViewModels
             var allFolders = AppDatabase.Instance().GetFolderList();
             BuildFolderHierarchy(allFolders);
         }
+        /* private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
+         {
+             var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
+             foreach (var folder in rootFolders)
+             {
+                 folder.Subfolders = new ObservableCollection<AppFolder>(
+                     allFolders.Where(f => f.ParentFolderId == folder.Id));
+                 FolderList.Add(folder);
+             }
+         }*/
         private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
         {
             var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
             foreach (var folder in rootFolders)
             {
+                // Calculate note count for each folder
+                folder.NoteCount = AppDatabase.Instance().GetNoteList(folder.Id).Count;
+
+                // Recursively build subfolder hierarchy and calculate their note counts
                 folder.Subfolders = new ObservableCollection<AppFolder>(
-                    allFolders.Where(f => f.ParentFolderId == folder.Id));
+                    allFolders.Where(f => f.ParentFolderId == folder.Id)
+                              .Select(subfolder => {
+                                  subfolder.NoteCount = AppDatabase.Instance().GetNoteList(subfolder.Id).Count;
+                                  return subfolder;
+                              }));
                 FolderList.Add(folder);
             }
         }

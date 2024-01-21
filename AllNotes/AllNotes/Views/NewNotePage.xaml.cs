@@ -14,52 +14,41 @@ namespace AllNotes.Views.NewNote
 {
     public partial class NewNotePage : ContentPage
     {
-        public NewNoteViewModel _newNoteViewModel;
-        public int folderID { get; set; }
-        int selectedFolderID = 0;
-        public NewNotePage(NewNoteViewModel newNoteViewModel)
-        {
-            folderID = selectedFolderID;
-            InitializeComponent();
-              NavigationPage.SetHasNavigationBar(this, false);
-            _newNoteViewModel = newNoteViewModel;
-          //  editor.SetBinding(EditorNoUnderline.AlignmentProperty, "TextAlignment");
-            BindingContext = newNoteViewModel;
-        }
+        public int FolderID { get; set; } // If needed for specific logic
+
+        // Constructor for a new note in a specific folder
         public NewNotePage(int folderId)
         {
-            folderID = selectedFolderID;
             InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
+            BindingContext = new NewNoteViewModel(folderId);
+        }
+
+        // Constructor for an existing note
+        public NewNotePage(NewNoteViewModel newNoteViewModel)
+        {
+            InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
+            BindingContext = newNoteViewModel;
+        }
+
+        // Default constructor for a new note without specifying a folder
+        public NewNotePage()
+        {
+            InitializeComponent();
+            NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = new NewNoteViewModel();
         }
 
-        public NewNotePage()
+        // Optional: Override the back button behavior if needed
+        /*protected override bool OnBackButtonPressed()
         {
-        }
-
-        /* protected override bool OnBackButtonPressed()
-         {
-             var viewModel = BindingContext as NewNoteViewModel;
-             if (viewModel != null)
-             {
-                 // Run the SaveNote method and wait for it to complete
-                 Task.Run(() => viewModel.SaveNote()).Wait();
-             }
-
-             return base.OnBackButtonPressed();
-         }*/
-       
-
-        /*public NewNotePage(int folderId)
-        {
-            InitializeComponent();
-
-            if (folderId == 0)
+            var viewModel = BindingContext as NewNoteViewModel;
+            if (viewModel != null)
             {
-                folderId = GetDefaultFolderId(); // Implement GetDefaultFolderId to retrieve a valid default ID
+                Task.Run(() => viewModel.SaveNote()).Wait();
             }
-
-            BindingContext = new NewNoteViewModel(folderId);
+            return base.OnBackButtonPressed();
         }*/
     }
 }

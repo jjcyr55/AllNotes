@@ -11,15 +11,16 @@
              x:DataType="viewmodels:NewNoteViewModel"
              x:Class="AllNotes.Views.NewNote.NewNotePage">
 
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:ColorConverter x:Key="colorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-
-    
-        <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Command="{Binding SaveNoteCommand}" />
-        </ContentPage.ToolbarItems>
-
-        <StackLayout>
-        <ImageButton
+    <StackLayout>
+        <FlexLayout Direction="Column" BackgroundColor="{Binding NewNoteColor, Converter={StaticResource colorConverter}}">
+            <FlexLayout Direction="Row" HeightRequest="60" Margin="10, 0" AlignItems="Center">
+                <ImageButton
      Command="{Binding SaveNoteCommand}"
      Source="back.png"
      HeightRequest="50"
@@ -30,10 +31,34 @@
      xct:TouchEffect.NativeAnimation="True" />
         <local:EntryNoUnderline Placeholder="Title" Text="{Binding NewNoteTitle}" FlexLayout.Grow="1" />
         <!-- Custom Back Button -->
-       
-            <!-- Rich Text Editor -->
-            <richtexteditor:SfRichTextEditor x:Name="richTextEditor"
-                                         VerticalOptions="FillAndExpand"
-                                         HtmlText="{Binding HtmlContent, Mode=TwoWay}" />
-        </StackLayout>
+        <ImageButton
+     Command="{Binding OpenMenuCommand}"
+     Source="menuDots.png"
+     HeightRequest="50"
+     WidthRequest="50"
+     BackgroundColor="Transparent"
+     Padding="15"
+     CornerRadius="30"
+     xct:TouchEffect.NativeAnimation="True" />
+        <!-- Rich Text Editor -->
+               
+            </FlexLayout>
+           
+        </FlexLayout>
+        <richtexteditor:SfRichTextEditor x:Name="richTextEditor"
+VerticalOptions="FillAndExpand"
+HtmlText="{Binding HtmlContent, Mode=TwoWay}" />
+        <views:CustomToolbar/>
+    </StackLayout>
 </ContentPage>
+
+
+
+
+
+
+
+
+
+
+

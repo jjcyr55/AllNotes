@@ -15,6 +15,7 @@ namespace AllNotes.Converters
         public static Color Pink = Color.FromHex("#FFD4DB");
         public static Color Red = Color.FromHex("#E77480");
         public static Color Orange = Color.FromHex("#F7BA8E");
+        public static Color White = Color.FromHex("#FFFFFF");
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
@@ -23,6 +24,8 @@ namespace AllNotes.Converters
             {
                 if (color == (int)Colors.Yellow)
                     return Yellow;
+                if (color == (int)Colors.White)
+                    return White;
                 if (color == (int)Colors.Green)
                     return Green;
                 if (color == (int)Colors.Blue)
@@ -38,12 +41,37 @@ namespace AllNotes.Converters
               
             }
 
-            return Color.LightGray;
+            return Color.White;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
+        public static Color ConvertColor(int colorValue)
+        {
+            switch (colorValue)
+            {
+                case (int)Colors.White:
+                    return White;
+                case (int)Colors.Yellow:
+                    return Yellow;
+                case (int)Colors.Green:
+                    return Green;
+                case (int)Colors.Blue:
+                    return Blue;
+                case (int)Colors.Purple:
+                    return Purple;
+                case (int)Colors.Pink:
+                    return Pink;
+                case (int)Colors.Red:
+                    return Red;
+                case (int)Colors.Orange:
+                    return Orange;
+                default:
+                    return Color.White;
+            }
+        }
+
     }
 }

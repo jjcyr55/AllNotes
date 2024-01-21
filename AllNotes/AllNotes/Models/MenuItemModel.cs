@@ -15,7 +15,7 @@ namespace AllNotes.Models
         public string iconPath { get; set; }
         public Type TargetType { get; set; }
         public Action CommandAction { get; set; }
-
+   
         public MenuType Type { get; set; } // Add an enum for MenuType with values like Normal, ColorPicker, etc.
         public ICommand Command { get; set; }
     }

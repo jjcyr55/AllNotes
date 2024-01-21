@@ -19,6 +19,7 @@
             <x:String x:Key="Lock">&#xf023;</x:String>
             <Color x:Key="LightGray">#f7f7f7</Color>
             <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" TrueColor="LightGray" FalseColor="Transparent"/>
+            <converters:FavoriteIconConverter x:Key="FavoriteIconConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

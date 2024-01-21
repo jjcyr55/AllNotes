@@ -4,19 +4,16 @@
            xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
            xmlns:converters="clr-namespace:AllNotes.Converters"
            x:Class="AllNotes.Views.NewNote.Popups.NewNotePopup"
-           Size="300,175"
+           Size="300,475"
            BackgroundColor="White"
-            xmlns:local="clr-namespace:AllNotes.ViewModels"
-           
+           xmlns:local="clr-namespace:AllNotes.ViewModels"
            VerticalOptions="Start"
            HorizontalOptions="End"
            xct:ShadowEffect.Color="Transparent"
            x:Name="MyPopup">
-   <!-- <xct:Popup.BindingContext>
-        <local:MenuViewModel />
-    </xct:Popup.BindingContext>-->
-
-  
+    <xct:Popup.BindingContext>
+        <local:NewNoteViewModel />
+    </xct:Popup.BindingContext>
 
     <Frame CornerRadius="15"
            HasShadow="True"
@@ -24,37 +21,43 @@
            Padding="20"
            Margin="20"
            BackgroundColor="White">
+        <StackLayout>
+            <!-- Static Menu Items -->
+            <Label Text="Share">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ShareNoteCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <!-- Add other static menu items here if needed -->
 
-        <CollectionView 
-            x:Name="MenuCollectionView" ItemsSource="{Binding MenuItems}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <StackLayout Padding="10">
+            <!-- Dynamic Menu CollectionView for additional items -->
+            <CollectionView x:Name="MenuCollectionView" ItemsSource="{Binding MenuItems}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
                         <Label Text="{Binding Title}">
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Command="{Binding Path=BindingContext.MenuItemSelectedCommand, Source={x:Reference MyPopup}}" CommandParameter="{Binding .}" />
                             </Label.GestureRecognizers>
                         </Label>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-                        <FlexLayout BindableLayout.ItemsSource="{Binding NoteColors}" 
-            IsVisible="{Binding Type, Converter={StaticResource EnumToBooleanConverter}, ConverterParameter={x:Static local:MenuType.ColorPicker}}">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate>
-                                    <BoxView Color="{Binding Converter={StaticResource ColorConverter}}"
-                     WidthRequest="30"
-                     HeightRequest="30"
-                     Margin="5"
-                     CornerRadius="15">
-                                        <BoxView.GestureRecognizers>
-                                            <TapGestureRecognizer Command="{Binding Path=BindingContext.ChangeNoteColorCommand, Source={x:Reference MyPopup}}" CommandParameter="{Binding .}" />
-                                        </BoxView.GestureRecognizers>
-                                    </BoxView>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </FlexLayout>
-                    </StackLayout>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
+            <!-- Favorite Option -->
+            <Image Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
+                   WidthRequest="24"
+                   HeightRequest="24"
+                   HorizontalOptions="Start">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ToggleFavoriteCommand}" />
+                </Image.GestureRecognizers>
+            </Image>
+
+
+           
+
+
+        </StackLayout>
     </Frame>
 </xct:Popup>
+

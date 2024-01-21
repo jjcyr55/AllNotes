@@ -21,11 +21,11 @@ namespace AllNotes.Models
         public string Text1 { get; set; }
         public string Date { get; set; }
         public int Color { get; set; }
-      
-        /*public int FontAttribute { get; set; } // stored as int
-        public int FontSize { get; set; } // or int
-        public int TextAlignment { get; set; }*/
-         public int FontSize { get; set; }
+
+        public bool IsFavorite { get; set; } 
+
+        public string PreviewText { get; set; }
+        public int FontSize { get; set; }
     public string FontAttributes { get; set; } // Example: "Bold, Italic"
     public string TextAlignment { get; set; } // Example: "Left", "Center", "Right"
                                               //public int Color { get; set; } // Assuming color is stored as an integer

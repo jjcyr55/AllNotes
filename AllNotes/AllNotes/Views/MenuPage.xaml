@@ -62,6 +62,10 @@ HorizontalOptions="FillAndExpand">
                                FontSize="16"
                                FontAttributes="Bold"
                                VerticalOptions="CenterAndExpand" />
+                                <Label Text="{Binding NoteCount, StringFormat='{0} notes'}"
+       Grid.Column="2"
+       FontSize="16"
+       VerticalOptions="CenterAndExpand" />
                                 <Image Source="{Binding ExpandCollapseIcon}"
                                Grid.Column="2"
                                WidthRequest="20" HeightRequest="20"

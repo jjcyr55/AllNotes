@@ -27,11 +27,11 @@ namespace AllNotes.Views.NewNote.Popups
             InitializeComponent();
             //  this.BindingContext = new MenuViewModel();
 
-            /* BindingContext = new MenuViewModel();
+          BindingContext = new MenuViewModel();
 
-             _viewModel1 = new MenuViewModel(this);
-             BindingContext = _viewModel1;*/
-        //    this.BindingContext = new MenuViewModel();
+            _viewModel1 = new MenuViewModel(this);
+            BindingContext = _viewModel1;
+            //    this.BindingContext = new MenuViewModel();
 
 
         }

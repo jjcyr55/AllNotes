@@ -40,7 +40,8 @@ namespace AllNotes.ViewModels
 
         private bool isFirstNoteAfterRestart = true;
 
-        //!!!!!!!!!!!!!!!!!!!!!!
+        
+
         public ObservableCollection<object> SelectedNotes
         {
             get => _selectedNotes; set
@@ -69,7 +70,16 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
+        private int _noteCount;
+        public int NoteCount
+        {
+            get => _noteCount;
+            set
+            {
+                _noteCount = value;
+                OnPropertyChanged(nameof(NoteCount));
+            }
+        }
         public bool ShowFab
         {
             get => _showFab;
@@ -186,10 +196,47 @@ namespace AllNotes.ViewModels
             }
         }
 
+        public static string StripHtmlTags(string source)
+        {
+            if (string.IsNullOrWhiteSpace(source))
+                return string.Empty;
 
+            var array = new char[source.Length];
+            int arrayIndex = 0;
+            bool inside = false;
+
+            for (int i = 0; i < source.Length; i++)
+            {
+                char let = source[i];
+                if (let == '<')
+                {
+                    inside = true;
+                    continue;
+                }
+                if (let == '>')
+                {
+                    inside = false;
+                    continue;
+                }
+                if (!inside)
+                {
+                    array[arrayIndex] = let;
+                    arrayIndex++;
+                }
+            }
+            return new string(array, 0, arrayIndex);
+        }
 
         public MainPageViewModel(AppFolder selectedFolder)
         {
+
+
+            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCount();
+            });
+
+
             selectedFolder = selectedFolder;
             _selectedNotes = new ObservableCollection<object>();
             Notes = new ObservableCollection<AppNote>();
@@ -198,7 +245,9 @@ namespace AllNotes.ViewModels
             LongPressNoteCommand = new Command<AppNote>(LongPressNote);
             _folderId = selectedFolder.Id;
             _navigationService = DependencyService.Get<INavigationService>();
-
+            MessagingCenter.Subscribe<AppNote>(this, "RefreshNotes", (sender) => {
+                RefreshNotes();
+            });
 
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RefreshNotes", (sender) => RefreshNotes());
             MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "RefreshMainPage", (sender, folderId) =>
@@ -223,7 +272,15 @@ namespace AllNotes.ViewModels
 
             // Update your UI elements to display the retrieved notes
         }
-
+        private void UpdateNoteCount()
+        {
+            // Logic to update the note count
+            // Assuming SelectedFolder is the currently selected folder in MainPage
+            if (SelectedFolder != null)
+            {
+                NoteCount = AppDatabase.Instance().GetNoteList(SelectedFolder.Id).Count;
+            }
+        }
         private async Task GetDefaultFolder()
         {
             await AppDatabase.Instance().GetFirstFolder();
@@ -333,35 +390,82 @@ namespace AllNotes.ViewModels
             }
         }
 
-       
+
+
+
+        /* public void RefreshNotes()
+         {
+             if (SelectedFolder != null)
+             {
+                 Notes.Clear();
+                 var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id); // Use AppDatabase.Instance() to access your database
+
+                 foreach (var note in notesFromDb)
+                 {
+                     note.PreviewText = StripHtmlTags(note.Text);
+                     Notes.Add(note);
+                 }
+
+             }
+             else
+             {
+                 var SelectedFolder = AppDatabase.Instance().GetFirstFolder();
+                 if (SelectedFolder != null)
+                 {
+                     Notes.Clear();
+                     var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
+                     foreach (var note in notesFromDb)
+                     {
+                         note.PreviewText = StripHtmlTags(note.Text);
+                         Notes.Add(note);
+                     }
+                 }
+             }
+         }*/
 
 
         public void RefreshNotes()
         {
             if (SelectedFolder != null)
             {
-                Notes.Clear();
+                
                 var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id); // Use AppDatabase.Instance() to access your database
-                foreach (var note in notesFromDb)
+                                                                                         
+                var sortedNotes = notesFromDb.OrderByDescending(n => n.IsFavorite).ThenBy(n => n.Date).ToList();
+                Notes.Clear();
+                foreach (var note in sortedNotes) // Use orderedNotes here
                 {
+                    note.PreviewText = StripHtmlTags(note.Text);
                     Notes.Add(note);
                 }
-
             }
             else
             {
-                var SelectedFolder = AppDatabase.Instance().GetFirstFolder();
+                var SelectedFolder = AppDatabase.Instance().GetFirstFolder(); // Make sure this variable is not redeclared if already declared in the class
                 if (SelectedFolder != null)
                 {
+                    if (Notes == null)
+                        Notes = new ObservableCollection<AppNote>();
                     Notes.Clear();
                     var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id);
-                    foreach (var note in notesFromDb)
+                    var orderedNotes = notesFromDb.OrderByDescending(n => n.IsFavorite).ThenBy(n => n.Date).ToList(); // Add this line
+                    foreach (var note in orderedNotes) // Use orderedNotes here
                     {
+                        note.PreviewText = StripHtmlTags(note.Text);
                         Notes.Add(note);
+                        OnPropertyChanged(nameof(Notes));
                     }
                 }
             }
         }
+
+
+
+
+
+
+
+
         public static string StripHtml(string htmlContent)
         {
             return Regex.Replace(htmlContent, "<.*?>", string.Empty);
@@ -421,7 +525,7 @@ namespace AllNotes.ViewModels
 
         public ICommand DeleteNotesCommand => new Command(DeleteNotes);
 
-        private async void DeleteNotes()
+        /*private async void DeleteNotes()
         {
             try
             {
@@ -433,6 +537,43 @@ namespace AllNotes.ViewModels
                     {
                         db.DeleteNote(note); // Use async version for database operations
                     }
+                }
+                // After adding a note successfully
+                MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", note.folderID);
+
+                RefreshNotes(); // Refresh the notes list after deletion
+                SelectedNotes.Clear(); // Clear the selection
+                ShowOrHideToolbar(); // Reset the UI state
+                SelectionMode = SelectionMode.None;
+            }
+            catch (Exception ex)
+            {
+                // Handle errors gracefully
+                await Application.Current.MainPage.DisplayAlert("Error Deleting Notes", "An error occurred while deleting notes. Please try again.", "OK");
+                Debug.WriteLine("Error deleting notes: " + ex.Message);
+            }
+        }*/
+        private async void DeleteNotes()
+        {
+            try
+            {
+                var db = AppDatabase.Instance(); // Get a reference to the database
+
+                int? folderId = null; // Variable to store folder ID
+
+                foreach (AppNote note in SelectedNotes)
+                {
+                    if (note is AppNote) // Ensure only AppNote objects are deleted
+                    {
+                        db.DeleteNote(note); // Use async version for database operations
+                        folderId = note.folderID; // Store the folder ID
+                    }
+                }
+
+                // Check if folder ID was set and send message
+                if (folderId.HasValue)
+                {
+                    MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", folderId.Value);
                 }
 
                 RefreshNotes(); // Refresh the notes list after deletion

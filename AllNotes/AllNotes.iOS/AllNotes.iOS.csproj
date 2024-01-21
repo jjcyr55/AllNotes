@@ -184,4 +184,10 @@
   <ItemGroup>
     <BundleResource Include="Resources\folder_options.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\heart.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\filled_heart_red.png" />
+  </ItemGroup>
 </Project>
