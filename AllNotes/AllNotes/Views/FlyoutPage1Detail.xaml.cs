@@ -82,6 +82,7 @@ namespace AllNotes.Views
             base.OnAppearing();
             var viewModel = this.BindingContext as MainPageViewModel;
             viewModel?.RefreshNotes();
+            viewModel?.InitializeNoteCount();
         }
         public FlyoutPage1Detail()
         {

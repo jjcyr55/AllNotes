@@ -235,7 +235,7 @@ namespace AllNotes.ViewModels
             {
                 UpdateNoteCount();
             });
-
+            InitializeNoteCount();
 
             selectedFolder = selectedFolder;
             _selectedNotes = new ObservableCollection<object>();
@@ -272,6 +272,16 @@ namespace AllNotes.ViewModels
 
             // Update your UI elements to display the retrieved notes
         }
+
+        public void InitializeNoteCount()
+        {
+            // Assuming you have a method to get the total note count
+            if (SelectedFolder != null)
+            {
+                NoteCount = AppDatabase.Instance().GetNoteList(SelectedFolder.Id).Count;
+            }
+        }
+
         private void UpdateNoteCount()
         {
             // Logic to update the note count
