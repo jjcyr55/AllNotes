@@ -29,6 +29,7 @@ namespace AllNotes.Models
         public string noteCount { get; set; } = "0";
         [Ignore]
         public int NoteCount { get; set; }
+        public int NoteCountForSubfolders { get; set; }
         public string EncryptedPassword { get; set; }
         public int NestingLevel { get; set; }
         public int? ParentFolderId { get; set; }

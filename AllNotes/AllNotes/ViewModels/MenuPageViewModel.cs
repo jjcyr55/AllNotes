@@ -138,8 +138,16 @@ namespace AllNotes.ViewModels
             });
 
             SelectSubfolderCommand = new Command<AppFolder>(SelectSubfolder);
+            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
 
-            
+            MessagingCenter.Subscribe<MainPageViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });
+
             MessagingCenter.Subscribe<ManageFoldersViewModel, AppFolder>(this, "SubfolderAdded", (sender, subfolder) =>
             {
                 var parentFolder = FolderList.FirstOrDefault(f => f.Id == subfolder.ParentFolderId);
@@ -250,7 +258,7 @@ namespace AllNotes.ViewModels
         {
         }
 
-        public void UpdateNoteCountForFolder(int folderId)
+        /*public void UpdateNoteCountForFolder(int folderId)
         {
             Debug.WriteLine($"Updating note count for folder {folderId}");
             var folder = FolderList.FirstOrDefault(f => f.Id == folderId);
@@ -260,7 +268,54 @@ namespace AllNotes.ViewModels
                 OnPropertyChanged(nameof(FolderList));
                 Reset();
             }
+        }*/
+
+        /*public void UpdateNoteCountForFolder(int folderId)
+        {
+            var folder = FolderList.FirstOrDefault(f => f.Id == folderId);
+            if (folder != null)
+            {
+                folder.NoteCount = AppDatabase.Instance().GetNoteList(folderId).Count;
+                foreach (var subfolder in folder.Subfolders)
+                {
+                    subfolder.NoteCountForSubfolders = AppDatabase.Instance().GetNoteList(subfolder.Id).Count;
+                }
+                OnPropertyChanged(nameof(FolderList));
+                Reset();
+            }
+        }*/
+
+
+        public void UpdateNoteCountForFolder(int folderId)
+        {
+            var folderToUpdate = FolderList.FirstOrDefault(f => f.Id == folderId);
+            if (folderToUpdate != null)
+            {
+                folderToUpdate.NoteCount = AppDatabase.Instance().GetNoteList(folderId).Count;
+
+                foreach (var subfolder in folderToUpdate.Subfolders)
+                {
+                    subfolder.NoteCountForSubfolders = AppDatabase.Instance().GetNoteList(subfolder.Id).Count;
+                }
+
+                OnPropertyChanged(nameof(FolderList));
+                Reset();
+            }
+
+            // If the updated folder is a subfolder, find its parent and update accordingly.
+            foreach (var folder in FolderList)
+            {
+                var subfolderToUpdate = folder.Subfolders.FirstOrDefault(sf => sf.Id == folderId);
+                if (subfolderToUpdate != null)
+                {
+                    subfolderToUpdate.NoteCountForSubfolders = AppDatabase.Instance().GetNoteList(folderId).Count;
+                    OnPropertyChanged(nameof(FolderList));
+                    Reset();
+                    break; // Exit the loop once the subfolder is found and updated.
+                }
+            }
         }
+
         private void HandleSubfolderAdded(AppFolder parentFolder, AppFolder newSubfolder)
         {
             var parentInList = FolderList.FirstOrDefault(f => f.Id == parentFolder.Id);
@@ -529,7 +584,7 @@ namespace AllNotes.ViewModels
         }*/
 
 
-        private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
+        /*private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
         {
             var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
             foreach (var folder in rootFolders)
@@ -546,7 +601,25 @@ namespace AllNotes.ViewModels
                               }));
                 FolderList.Add(folder);
             }
+        }*/
+        private void BuildFolderHierarchy(IEnumerable<AppFolder> allFolders)
+        {
+            var rootFolders = allFolders.Where(f => f.ParentFolderId == null).ToList();
+            foreach (var folder in rootFolders)
+            {
+                folder.NoteCount = AppDatabase.Instance().GetNoteList(folder.Id).Count;
+
+                folder.Subfolders = new ObservableCollection<AppFolder>(
+                    allFolders.Where(f => f.ParentFolderId == folder.Id)
+                              .Select(subfolder =>
+                              {
+                                  subfolder.NoteCountForSubfolders = AppDatabase.Instance().GetNoteList(subfolder.Id).Count;
+                                  return subfolder;
+                              }));
+                FolderList.Add(folder);
+            }
         }
+
 
 
 

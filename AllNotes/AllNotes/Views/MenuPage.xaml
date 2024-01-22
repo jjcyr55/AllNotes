@@ -62,7 +62,7 @@ HorizontalOptions="FillAndExpand">
                                FontSize="16"
                                FontAttributes="Bold"
                                VerticalOptions="CenterAndExpand" />
-                                <Label Text="{Binding NoteCount, StringFormat='{0} notes'}"
+                                <Label Text="{Binding NoteCount, StringFormat='{0} Notes'}"
        Grid.Column="2"
        FontSize="16"
        VerticalOptions="CenterAndExpand" />
@@ -70,7 +70,9 @@ HorizontalOptions="FillAndExpand">
                                Grid.Column="2"
                                WidthRequest="20" HeightRequest="20"
                                IsVisible="{Binding HasSubfolders}"  
-                                    VerticalOptions="Center">
+                                       Margin="10"
+                                    VerticalOptions="Center"
+                                       HorizontalOptions="End">
                                     <Image.GestureRecognizers>
                                         <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleFolderCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}"/>
                                     </Image.GestureRecognizers>
@@ -81,15 +83,20 @@ HorizontalOptions="FillAndExpand">
                             <StackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,0,0" BindableLayout.ItemsSource="{Binding Subfolders}">
                                 <BindableLayout.ItemTemplate>
                                     <DataTemplate>
-
                                         <!-- Subfolder Item -->
-                                        <Label Text="{Binding Name}"
-                                       FontSize="18"
-                                       VerticalOptions="CenterAndExpand">
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="{Binding Name}"
+                       FontSize="18"
+                       VerticalOptions="CenterAndExpand"/>
+                                            <Label Text="{Binding NoteCountForSubfolders, StringFormat='{0} Notes'}"
+                                                   Margin="25"
+                       FontSize="16"
+                       VerticalOptions="CenterAndExpand"
+                       HorizontalOptions="EndAndExpand"/>
                                             <Label.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectSubfolderCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}"/>
                                             </Label.GestureRecognizers>
-                                        </Label>
+                                        </StackLayout>
                                     </DataTemplate>
                                 </BindableLayout.ItemTemplate>
                             </StackLayout>
