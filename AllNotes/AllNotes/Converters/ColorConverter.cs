@@ -32,13 +32,13 @@ namespace AllNotes.Converters
                     return Blue;
                 if (color == (int)Colors.Purple)
                     return Purple;
-                if (color == (int)Colors.Pink)
-                    return Pink;
+                
                 if (color == (int)Colors.Red)
                     return Red;
                 if (color == (int)Colors.Orange)
                     return Orange;
-              
+                if (color == (int)Colors.Pink)
+                    return Pink;
             }
 
             return Color.White;

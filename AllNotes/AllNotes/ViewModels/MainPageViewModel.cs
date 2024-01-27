@@ -21,12 +21,16 @@ using AllNotes.Database;
 using AllNotes.Repositories;
 using Xamarin.Essentials;
 using System.Text.RegularExpressions;
+using AllNotes.Views.NewNote.Popups;
+using Xamarin.CommunityToolkit.Extensions;
+using System.Net.Http;
+using System.Xml.Linq;
 
 namespace AllNotes.ViewModels
 {
     public class MainPageViewModel : INotifyPropertyChanged
     {
-        private ObservableCollection<object> _selectedNotes;
+        // private ObservableCollection<object> _selectedNotes;
         public ObservableCollection<AppNote> Notes { get; set; }
 
         private INavigationService _navigationService;
@@ -37,19 +41,205 @@ namespace AllNotes.ViewModels
         AppFolder selectedFolder;
         private bool _multiSelectEnabled = false;
         public ICommand OpenNewNoteScreenCommand { get; private set; }
+        // public ICommand SelectAllCommand { get; private set; }
+        public ICommand OpenMenu2Command => new Command(OpenMenu);
 
+        //  public ICommand ToggleSelectionCommand { get; private set; }
+
+        // public bool IsEditMode { get; set; } // Set this based on your logic
+        public bool IsNotEditMode => !IsEditMode;
         private bool isFirstNoteAfterRestart = true;
+        //  public bool IsEditMode { get; set; }
+        //  public ICommand SelectAllCommand { get; set; }
 
-        
 
-        public ObservableCollection<object> SelectedNotes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private bool _isSelected;
+        public bool IsSelected
         {
-            get => _selectedNotes; set
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+
+                    if (_isSelected)
+                        MessagingCenter.Send(this, "AddToSelectedNotes", this);
+                    else
+                        MessagingCenter.Send(this, "RemoveFromSelectedNotes", this);
+                }
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /* private bool _isAllChecked;
+         public bool IsAllChecked
+         {
+             get => _isAllChecked;
+             set
+             {
+                 _isAllChecked = value;
+                 OnPropertyChanged(nameof(IsAllChecked));
+                 CheckUncheckAll(value);
+             }
+         }*/
+
+
+        private bool _isAllChecked;
+        public bool IsAllChecked
+        {
+            get => _isAllChecked;
+            set
+            {
+                if (_isAllChecked != value)
+                {
+                    _isAllChecked = value;
+                    OnPropertyChanged(nameof(IsAllChecked));
+                    UpdateAllNotesCheckState(value);
+                    RefreshCollectionView();
+                    foreach (var note in Notes)
+                    {
+                        note.IsSelected = _isAllChecked;
+                    }
+                }
+            }
+        }
+
+        private void RefreshCollectionView()
+        {
+            var currentNotes = Notes.ToList();
+            Notes = null;
+            Notes = new ObservableCollection<AppNote>(currentNotes);
+            OnPropertyChanged(nameof(Notes));
+        }
+        private void UpdateAllNotesCheckState(bool isSelected)
+        {
+            foreach (var note in Notes)
+            {
+                note.IsSelected = isSelected;
+            }
+            OnPropertyChanged(nameof(Notes)); // Notify UI to refresh
+        }
+
+
+
+        private void CheckUncheckAll(bool check)
+        {
+            foreach (var note in Notes)
+            {
+                note.IsSelected = check;
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+        public ICommand ToggleSelectAllCommand { get; private set; }
+
+        private void ToggleSelectAll()
+        {
+            IsAllChecked = !IsAllChecked;
+            foreach (var note in Notes)
+            {
+                note.IsSelected = IsAllChecked;
+            }
+        }
+
+
+
+
+
+
+
+
+
+        /*private bool _isSelected;
+
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                }
+            }
+        }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private ObservableCollection<AppNote> _selectedNotes = new ObservableCollection<AppNote>();
+        /*public ObservableCollection<AppNote> SelectedNotes
+        {
+            get => _selectedNotes;
+            set
             {
                 _selectedNotes = value;
                 OnPropertyChanged(nameof(SelectedNotes));
             }
-        }
+        }*/
 
         public AppFolder SelectedFolder
         {
@@ -137,31 +327,20 @@ namespace AllNotes.ViewModels
                 PerformSearch(); // Call the search method when the query changes
             }
         }
-        /*public void PerformSearch()
+
+
+
+
+
+
+
+        private void OpenMenu()
         {
-            if (string.IsNullOrWhiteSpace(SearchQuery))
-            {
-                // If the search query is empty, show all notes
-                RefreshNotes();
-            }
-            else
-            {
-                // Filter the notes based on the query
-                var filteredNotes = AppDatabase.Instance().GetNoteList(selectedFolder.Id)
-    .Where(note => note.Title.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0 ||
-                   note.Text.IndexOf(SearchQuery, StringComparison.OrdinalIgnoreCase) >= 0)
-    .ToList();
-
-                // Update the Notes collection with the search results
-                Notes.Clear();
-                foreach (var note in filteredNotes)
-                {
-                    Notes.Add(note);
-                }
-            }
-        }*/
-
-
+            var mainPagePopup = new MainPagePopup();
+            mainPagePopup.BindingContext = this;
+            //  var mainPagePopup = new MainPagePopup(this);
+            Application.Current.MainPage.Navigation.ShowPopup(mainPagePopup);
+        }
         public void PerformSearch()
         {
             if (string.IsNullOrWhiteSpace(SearchQuery))
@@ -196,6 +375,7 @@ namespace AllNotes.ViewModels
             }
         }
 
+
         public static string StripHtmlTags(string source)
         {
             if (string.IsNullOrWhiteSpace(source))
@@ -227,9 +407,216 @@ namespace AllNotes.ViewModels
             return new string(array, 0, arrayIndex);
         }
 
+
+        private ICommand _editCommand;
+        public ICommand EditCommand
+        {
+            get => _editCommand;
+            set
+            {
+                _editCommand = value;
+                OnPropertyChanged(nameof(EditCommand));
+            }
+        }
+
+        /*private void ToggleEditMode()
+        {
+            IsEditMode = !IsEditMode;
+
+            // Additional logic to handle when the edit mode is toggled
+            // For example, clearing selected items when exiting edit mode
+            if (!IsEditMode)
+            {
+                // Assuming you have a method or logic to clear selected notes
+                RefreshNotes();
+            }
+        }*/
+        private void ToggleEditMode()
+        {
+            IsEditMode = !IsEditMode;
+
+            foreach (var note in Notes)
+            {
+                note.UpdateCheckboxVisibility(IsEditMode);
+            }
+
+            // Additional logic as required...
+        }
+
+        private void LogSelectedNotes()
+        {
+            Debug.WriteLine($"Testing {SelectedNotes.Count} selected notes.");
+            foreach (var note in SelectedNotes)
+            {
+                Debug.WriteLine($"Selected Note: {note.Title}");
+            }
+        }
+
+        private bool _isEditMode;
+        public bool IsEditMode
+        {
+            get => _isEditMode;
+            set
+            {
+                _isEditMode = value;
+                OnPropertyChanged(nameof(IsEditMode));
+                // Update selection mode based on edit mode state
+                SelectionMode = _isEditMode ? SelectionMode.Multiple : SelectionMode.None;
+            }
+        }
+        /* public void ToggleNoteSelection(AppNote note)
+         {
+             if (!IsEditMode)
+                 return;
+
+             if (note.IsSelected)
+                 DeselectNote(note);
+             else
+                 SelectNote(note);
+         }*/
+
+        public void ToggleNoteSelection(AppNote selectedNote)
+        {
+            if (!IsEditMode)
+                return;
+            if (selectedNote != null)
+            {
+                if (_isEditMode == IsEditMode)
+                {
+                    ShowOrHideToolbar();
+                    SelectionMode = SelectionMode.Multiple;
+                    SelectedNotes.Add(selectedNote);
+                }
+            }
+
+        }
+        
+
+        /* private void LongPressNote(Note selectedNote)
+         {
+             if (selectedNote != null)
+             {
+                 if (_selectionMode == SelectionMode.None)
+                 {
+                     ShowOrHideToolbar();
+                     SelectionMode = SelectionMode.Multiple;
+                     SelectedNotes.Add(selectedNote);
+                 }
+             }
+         }*/
+
+
+
+
+
+
+
+
+
+
+        public void SelectNote(AppNote note)
+        {
+            if (note != null && !SelectedNotes.Contains(note))
+            {
+                note.IsSelected = true;
+                SelectedNotes.Add(note);
+            }
+        }
+
+        public void DeselectNote(AppNote note)
+        {
+            if (note != null && SelectedNotes.Contains(note))
+            {
+                note.IsSelected = false;
+                SelectedNotes.Remove(note);
+            }
+        }
+
+
+        public void DeleteSelectedNotes()
+        {
+            if (!IsEditMode)
+                return;
+
+            foreach (var note in SelectedNotes.ToList())
+            {
+                // Delete logic here
+                Debug.WriteLine($"Deleting note: {note.Title}");
+            }
+
+            SelectedNotes.Clear();
+            RefreshNotes(); // Update UI
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public ICommand TestSelectedNotesCommand { get; private set; }
         public MainPageViewModel(AppFolder selectedFolder)
         {
 
+            MessagingCenter.Subscribe<AppNote, AppNote>(this, "AddToSelectedNotes", (sender, note) =>
+            {
+                if (!SelectedNotes.Contains(note))
+                    SelectedNotes.Add(note);
+            });
+
+            MessagingCenter.Subscribe<AppNote, AppNote>(this, "RemoveFromSelectedNotes", (sender, note) =>
+            {
+                if (SelectedNotes.Contains(note))
+                    SelectedNotes.Remove(note);
+            });
+
+
+
+
+
+            TestSelectedNotesCommand = new Command(LogSelectedNotes);
+            SelectedNotes = new ObservableCollection<AppNote>();
+            Notes = new ObservableCollection<AppNote>();
+
+            // Example of creating AppNote instances
+            SelectedNotes = new ObservableCollection<AppNote>();
+            // Load notes...
+            foreach (var note in Notes)
+            {
+                note.PropertyChanged += Note_PropertyChanged;
+            }
+
+            MessagingCenter.Subscribe<AppNote>(this, "AddToSelectedNotes", note =>
+            {
+                if (!SelectedNotes.Contains(note))
+                    SelectedNotes.Add(note);
+            });
+
+            MessagingCenter.Subscribe<AppNote>(this, "RemoveFromSelectedNotes", note =>
+            {
+                if (SelectedNotes.Contains(note))
+                    SelectedNotes.Remove(note);
+            });
+
+
+            ToggleSelectAllCommand = new Command(ToggleSelectAll);
+            EditCommand = new Command(ToggleEditMode);
+
+
+            Notes = new ObservableCollection<AppNote>();
+
+
+
+            /* MessagingCenter.Subscribe<MainPagePopupViewModel>(this, "ToggleEdit", (sender) =>
+             {
+                 IsSelectAllVisible = !IsSelectAllVisible;
+             });*/
 
             MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
             {
@@ -238,9 +625,9 @@ namespace AllNotes.ViewModels
             InitializeNoteCount();
 
             selectedFolder = selectedFolder;
-            _selectedNotes = new ObservableCollection<object>();
-            Notes = new ObservableCollection<AppNote>();
 
+            Notes = new ObservableCollection<AppNote>();
+            SelectedNotes = new ObservableCollection<AppNote>();
             TapNoteCommand = new Command<AppNote>(TapNote);
             LongPressNoteCommand = new Command<AppNote>(LongPressNote);
             _folderId = selectedFolder.Id;
@@ -265,14 +652,84 @@ namespace AllNotes.ViewModels
             InitializeWithDefaultFolder();
             LoadNotesForFolder(selectedFolder);
         }
-        public void LoadNotesForFolder(int folderId)
+        private void Note_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            // Retrieve notes from the database based on folderId
-            var notes = AppDatabase.Instance().GetNoteList(folderId);
+            if (e.PropertyName == nameof(AppNote.IsSelected))
+            {
+                var note = sender as AppNote;
+                if (note != null)
+                {
+                    if (note.IsSelected && !SelectedNotes.Contains(note))
+                    {
+                        SelectedNotes.Add(note);
+                        Debug.WriteLine($"Added to SelectedNotes: {note.Title}");
+                    }
+                    else if (!note.IsSelected && SelectedNotes.Contains(note))
+                    {
+                        SelectedNotes.Remove(note);
+                        Debug.WriteLine($"Removed from SelectedNotes: {note.Title}");
+                    }
+                }
+            }
+        }
+        private void LoadNotes()
+        {
+            var notesFromDb = AppDatabase.Instance().GetNoteList(selectedFolder.Id); // Replace with your actual data fetching logic
 
-            // Update your UI elements to display the retrieved notes
+            foreach (var noteData in notesFromDb)
+            {
+                var note = new AppNote(); // Use parameterless constructor
+                                          // Set properties of note from noteData...
+                note.Initialize(SelectedNotes, RefreshNotes); // Initialize the note
+                note.PropertyChanged += Note_PropertyChanged;
+                Notes.Add(note);
+            }
         }
 
+
+
+        bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
+        {
+            if (Object.Equals(storage, value))
+                return false;
+
+            storage = value;
+            OnPropertyChanged(propertyName);
+            return true;
+        }
+
+
+
+
+
+        public void LoadNotesForFolder(int folderId)
+        {
+            var notesFromDb = AppDatabase.Instance().GetNoteList(selectedFolder.Id);
+            foreach (var note in notesFromDb)
+            {
+                // Retrieve notes from the database based on folderId
+                note.SelectionChanged += Note_SelectionChanged;
+                Notes.Add(note);
+                var notes = AppDatabase.Instance().GetNoteList(folderId);
+
+                // Update your UI elements to display the retrieved notes
+            }
+        }
+        private void Note_SelectionChanged(object sender, EventArgs e)
+        {
+            var note = sender as AppNote;
+            if (note != null)
+            {
+                if (note.IsSelected && !SelectedNotes.Contains(note))
+                {
+                    SelectedNotes.Add(note);
+                }
+                else if (!note.IsSelected && SelectedNotes.Contains(note))
+                {
+                    SelectedNotes.Remove(note);
+                }
+            }
+        }
         public void InitializeNoteCount()
         {
             // Assuming you have a method to get the total note count
@@ -365,9 +822,27 @@ namespace AllNotes.ViewModels
             return 0; // Default value if no folder ID is stored
         }
 
-
+        public ObservableCollection<AppNote> SelectedNotes { get; set; }
         public MainPageViewModel()
         {
+            //may have to remove it was a test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+            /*foreach (var note in Notes)
+            {
+                note.PropertyChanged += Note_PropertyChanged;
+            }*/
+
+            MessagingCenter.Subscribe<AppNote>(this, "AddToSelectedNotes", note =>
+            {
+                if (!SelectedNotes.Contains(note))
+                    SelectedNotes.Add(note);
+            });
+
+            MessagingCenter.Subscribe<AppNote>(this, "RemoveFromSelectedNotes", note =>
+            {
+                if (SelectedNotes.Contains(note))
+                    SelectedNotes.Remove(note);
+            });
 
             //  _selectedNotes = new ObservableCollection<AppNote>();
 
@@ -399,7 +874,7 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
+        
 
 
 
@@ -438,9 +913,9 @@ namespace AllNotes.ViewModels
         {
             if (SelectedFolder != null)
             {
-                
+
                 var notesFromDb = AppDatabase.Instance().GetNoteList(SelectedFolder.Id); // Use AppDatabase.Instance() to access your database
-                                                                                         
+
                 var sortedNotes = notesFromDb.OrderByDescending(n => n.IsFavorite).ThenBy(n => n.Date).ToList();
                 Notes.Clear();
                 foreach (var note in sortedNotes) // Use orderedNotes here
@@ -482,113 +957,142 @@ namespace AllNotes.ViewModels
         }
 
 
-        public Command<AppNote> TapNoteCommand { get; set; }
        
+
+        
+       
+
+        public Command<AppNote> TapNoteCommand { get; set; }
+
         private async void TapNote(AppNote selectedNote)
         {
-            if (selectedNote != null)
+
+            if (!IsEditMode && selectedNote != null)
             {
-                if (_selectionMode == SelectionMode.None)
+                if (selectedNote != null)
                 {
-                    var newNoteVM = new NewNoteViewModel(this, selectedNote);
-                    var newNotePage = new NewNotePage(newNoteVM);
-                    newNotePage.BindingContext = newNoteVM;
-                    if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+                    if (_selectionMode == SelectionMode.None)
                     {
-                        var navigationPage = mainFlyoutPage.Detail as NavigationPage;
-                        await navigationPage?.PushAsync(newNotePage);
-                        //  await newNoteVM.OpenTEditor(); // Open TEditor with the selected note
+                        var newNoteVM = new NewNoteViewModel(this, selectedNote);
+                        var newNotePage = new NewNotePage(newNoteVM);
+                        newNotePage.BindingContext = newNoteVM;
+                        if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+                        {
+                            var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                            await navigationPage?.PushAsync(newNotePage);
+
+                        }
                     }
                 }
             }
         }
+       
+
+
+        private bool _isLongPressMode;
+        public bool IsLongPressMode
+        {
+            get => _isLongPressMode;
+            set
+            {
+                if (_isLongPressMode != value)
+                {
+                    _isLongPressMode = value;
+                    OnPropertyChanged(nameof(IsLongPressMode));
+                    // Additional logic if needed
+                }
+            }
+        }
+
+
+
+
+
         public Command<AppNote> LongPressNoteCommand { get; set; }
+       
+        public bool IsEditModeOrLongPressMode => IsEditMode || IsLongPressMode;
         private void LongPressNote(AppNote selectedNote)
         {
             if (selectedNote != null)
             {
+                selectedNote.IsLongPressed = !selectedNote.IsLongPressed;
                 if (_selectionMode == SelectionMode.None)
                 {
-                    ShowOrHideToolbar();
+                    IsEditMode = true; // Assuming IsEditMode controls the toolbar visibility
                     SelectionMode = SelectionMode.Multiple;
                     SelectedNotes.Add(selectedNote);
                 }
             }
         }
-        /*public void ShowOrHideToolbar()
-        {
-            MultiSelectEnabled = !MultiSelectEnabled;
-            ShowFab = !ShowFab;
-            if (MultiSelectEnabled)
-                SelectionMode = SelectionMode.Multiple;
-            else
-                SelectionMode = SelectionMode.None;
-        }*/
         public void ShowOrHideToolbar()
         {
             MultiSelectEnabled = !MultiSelectEnabled;
-            ShowFab = !ShowFab;
-            IsInMultiSelectMode = MultiSelectEnabled;
+            ShowFab = !ShowFab; // Assuming this controls the visibility of a floating action button
 
-            // Rest of your method...
+            if (MultiSelectEnabled)
+            {
+                SelectionMode = SelectionMode.Multiple;
+                IsLongPressMode = true; // Enable long press mode
+            }
+            else
+            {
+                SelectionMode = SelectionMode.None;
+                IsLongPressMode = false; // Disable long press mode
+            }
         }
 
         public ICommand DeleteNotesCommand => new Command(DeleteNotes);
 
-        /*private async void DeleteNotes()
-        {
-            try
-            {
-                var db = AppDatabase.Instance(); // Get a reference to the database
 
-                foreach (AppNote note in SelectedNotes)
-                {
-                    if (note is AppNote) // Ensure only AppNote objects are deleted
-                    {
-                        db.DeleteNote(note); // Use async version for database operations
-                    }
-                }
-                // After adding a note successfully
-                MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", note.folderID);
-
-                RefreshNotes(); // Refresh the notes list after deletion
-                SelectedNotes.Clear(); // Clear the selection
-                ShowOrHideToolbar(); // Reset the UI state
-                SelectionMode = SelectionMode.None;
-            }
-            catch (Exception ex)
-            {
-                // Handle errors gracefully
-                await Application.Current.MainPage.DisplayAlert("Error Deleting Notes", "An error occurred while deleting notes. Please try again.", "OK");
-                Debug.WriteLine("Error deleting notes: " + ex.Message);
-            }
-        }*/
-        private async void DeleteNotes()
+        public async void DeleteNotes()
         {
+            if (!IsEditMode)
+                return;
+            if (!SelectedNotes.Any(n => n.IsSelected))
+            {
+                Debug.WriteLine("No notes selected for deletion.");
+                return; // Exit if no notes are selected
+            }
+
             try
             {
                 var db = AppDatabase.Instance(); // Get a reference to the database
 
                 int? folderId = null; // Variable to store folder ID
 
+                var notesToDelete = SelectedNotes.ToList();
                 foreach (AppNote note in SelectedNotes)
                 {
+                    Debug.WriteLine($"Note: {note.Title}, IsSelected: {note.IsSelected}");
                     if (note is AppNote) // Ensure only AppNote objects are deleted
                     {
                         db.DeleteNote(note); // Use async version for database operations
                         folderId = note.folderID; // Store the folder ID
+                        Debug.WriteLine($"Deleting note: {note.Title}");
                     }
                 }
 
+                foreach (AppNote note in SelectedNotes.ToList())
+                {
+                    Debug.WriteLine($"Note: {note.Title}, IsSelected: {note.IsSelected}");
+                    if (note is AppNote) // Ensure only AppNote objects are deleted
+                    {
+                        db.DeleteNote(note); // Use async version for database operations
+                        folderId = note.folderID; // Store the folder ID
+                        Debug.WriteLine($"Deleting note: {note.Title}");
+                    }
+                }
                 // Check if folder ID was set and send message
                 if (folderId.HasValue)
                 {
                     MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", folderId.Value);
                 }
 
-                RefreshNotes(); // Refresh the notes list after deletion
+
                 SelectedNotes.Clear(); // Clear the selection
+                RefreshNotes(); // Refresh the notes list after deletion
                 ShowOrHideToolbar(); // Reset the UI state
+
                 SelectionMode = SelectionMode.None;
             }
             catch (Exception ex)
@@ -598,17 +1102,19 @@ namespace AllNotes.ViewModels
                 Debug.WriteLine("Error deleting notes: " + ex.Message);
             }
         }
-
-
-
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
+       
 
 
 
         public event PropertyChangedEventHandler PropertyChanged;
+
+        protected virtual void OnPropertyChanged(string propertyName)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            if (propertyName == nameof(SelectedNotes))
+            {
+                Debug.WriteLine("SelectedNotes collection changed.");
+            }
+        }
     }
 }

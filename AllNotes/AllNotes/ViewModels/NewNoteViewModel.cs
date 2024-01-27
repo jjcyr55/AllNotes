@@ -160,7 +160,14 @@ namespace AllNotes.ViewModels
         public NewNotePage BindingContext { get; private set; }
 
         public ICommand MenuItemSelectedCommandd { get; }
-        public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
+
+
+        public NewNoteViewModel()
+        {
+        }
+
+
+            public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
             //    BackgroundColorAction = () => { /* Logic for Background Color */ };
@@ -170,12 +177,12 @@ namespace AllNotes.ViewModels
 
 
             //  InitializeMenuItems();
+            //THE UNSELECT AND DEVICE BACK BUTTON NEED TO BE HANDLED TO STOP NULL REFERENCE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-
-            MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            /*MessagingCenter.Subscribe<NewNoteViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
             {
                 _menuPageViewModel.UpdateNoteCountForFolder(folderId);
-            });
+            });*/
 
 
 
@@ -449,10 +456,14 @@ namespace AllNotes.ViewModels
             _menuPageViewModel = menuPageViewModel;
         }
 
-        public NewNoteViewModel()
+        public NewNoteViewModel(NavigationService navigationService, AppNote note)
         {
         }
 
+        /*public NewNoteViewModel()
+        {
+        }
+*/
 
 
 

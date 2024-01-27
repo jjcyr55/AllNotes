@@ -16,6 +16,8 @@ using AllNotes.Services;
 using AllNotes.Interfaces;
 using AllNotes.ViewModels;
 using AllNotes.Views.NewNote;
+using Syncfusion.XForms.Buttons;
+using CheckedChangedEventArgs = Xamarin.Forms.CheckedChangedEventArgs;
 
 namespace AllNotes.Views
 {
@@ -43,14 +45,14 @@ namespace AllNotes.Views
 
         private FolderRepository _folderRepository = new FolderRepository();
 
-        
 
-        
+
+
 
         public NavigationPage Detail { get; internal set; }
 
 
-       
+
 
         public FlyoutPage1Detail(MainPageViewModel mainPageViewModel)
         {
@@ -59,19 +61,28 @@ namespace AllNotes.Views
             _notes = new ObservableCollection<AppNote>();
 
             InitializeComponent();
-         
+
             _mainPageViewModel = new MainPageViewModel();
-           
+
             BindingContext = _mainPageViewModel;
             _currentFolder = selectedFolder;
             _menuPageViewModel = new MenuPageViewModel();
             BindingContext = _menuPageViewModel;
             MessagingCenter.Subscribe<ParentFolderPopupViewModel>(this, "FolderUpdated", (sender) => _menuPageViewModel.Reset());
-            MessagingCenter.Subscribe<AppNote>(this, "RefreshNotes", (sender) => {
+            MessagingCenter.Subscribe<AppNote>(this, "RefreshNotes", (sender) =>
+            {
                 _mainPageViewModel.RefreshNotes();
             });
 
         }
+
+
+
+
+
+
+
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -108,54 +119,38 @@ namespace AllNotes.Views
 
 
 
-        /*private async void GoToNewNotePage()
+        /*private void SelectAllCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
-            int folderId = GetSelectedFolderId();
-            if (folderId == 0)
+            // Assuming you have a ViewModel instance named ViewModel
+            if (e.Value)
             {
-                // No folder is selected, prompt the user
-                PromptUserToSelectFolder();
-                if (folderId == 0)
-                {
-                    // User didn't select a folder, return without navigating
-                    return;
-                }
+                _mainPageViewModel.SelectAllNotes();
             }
-              var newNoteViewModel = new NewNoteViewModel(folderId); // Pass the correct folder ID
-              await Navigation.PushAsync(new NewNotePage(newNoteViewModel));
-            // Create an instance of NewNoteViewModel with the selected folder ID
-        //    var newNoteViewModel = new NewNoteViewModel(folderId);
-          //  await Navigation.PushAsync(new NewNotePage());
-          //  MessagingCenter.Send(this, "OpenFullScreenEditor");
-
-            // Instead of navigating to NewNotePage, open TEditor directly
-          //  await newNoteViewModel.OpenTEditor(); // Open TEditor for a new note
+            else
+            {
+                _mainPageViewModel.DeselectAllNotes();
+            }
         }*/
 
-        /*private async void GoToNewNotePage()
+
+        /*private void IndividualCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
         {
-            int folderId = GetSelectedFolderId();
-            if (folderId == 0)
+            var checkBox = sender as CheckBox;
+            var note = checkBox?.BindingContext as AppNote;
+            if (note != null)
             {
-                // No folder is selected, prompt the user
-                PromptUserToSelectFolder();
-                if (folderId == 0)
-                {
-                    // User didn't select a folder, return without navigating
-                    return;
-                }
+                _mainPageViewModel.ToggleNoteSelection(note);
             }
+        }*/
 
-
-            // Create an instance of NewNoteViewModel with the selected folder ID
-            var newNoteViewModel = new NewNoteViewModel(folderId);
-
-            // Pass the ViewModel to NewNotePage
-            var newNotePage = new NewNotePage(newNoteViewModel);
-
-            await Navigation.PushAsync(new NewNotePage(folderId));
-            // Use Xamarin.Forms navigation to push the new page
-            //await Navigation.PushAsync(newNotePage);
+        /*private void IndividualCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+        {
+            var checkBox = sender as CheckBox;
+            if (checkBox == null)
+            {
+                Debug.WriteLine("Sender is not a CheckBox");
+                return;
+            }
         }*/
         private async void GoToNewNotePage()
         {
@@ -179,19 +174,6 @@ namespace AllNotes.Views
             // Use Xamarin.Forms navigation to push the new page
             await Navigation.PushAsync(newNotePage);
         }
-        /*private async void GoToNewNotePage()
-        {
-            int folderId = GetSelectedFolderId();
-            if (folderId == 0)
-            {
-                PromptUserToSelectFolder();
-                return;
-            }
-
-            var newNoteViewModel = new NewNoteViewModel(folderId);
-            await Navigation.PushAsync(new NewNotePage(newNoteViewModel));
-        }*/
-
 
         // Method to get the currently selected folder ID
         private int GetSelectedFolderId()
@@ -204,40 +186,9 @@ namespace AllNotes.Views
             return 0;
         }
 
-        /* private async void GoToNewNotePage()
-         {
-             int folderId = GetSelectedFolderId();
-             if (folderId == 0)
-             {
-                 // No folder is selected, prompt the user
-                 PromptUserToSelectFolder();
-                 if (folderId == 0)
-                 {
-                     // User didn't select a folder, return without navigating
-                     return;
-                 }
-             }
 
-             // Create an instance of NewNoteViewModel with the selected folder ID
-           //  var newNoteViewModel = new NewNoteViewModel(folderId);
-             MessagingCenter.Send(this, "OpenFullScreenEditor");
 
-             var editorPage = new FullScreenEditorPage("<p>Initial content</p>");
-             await Navigation.PushModalAsync(editorPage);
-         }*/
 
-        // Method to get the currently selected folder ID
-        /*private int GetSelectedFolderId()
-        {
-            var mainPageViewModel = BindingContext as MainPageViewModel;
-            if (mainPageViewModel != null && mainPageViewModel.SelectedFolder != null)
-            {
-                return mainPageViewModel.SelectedFolder.Id;
-            }
-            return 0;
-        }*/
-
-       
         private async void PromptUserToSelectFolder()
         {
             var userResponse = await Application.Current.MainPage.DisplayAlert(
@@ -268,40 +219,36 @@ namespace AllNotes.Views
         }
 
 
+        private void OnSelectAllTapped(object sender, EventArgs e)
+        {
+            var viewModel = this.BindingContext as MainPageViewModel;
+            if (viewModel != null)
+            {
+                viewModel.IsAllChecked = !viewModel.IsAllChecked;
+            }
+        }
+
+        /*private void CheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+
+        {
+            var viewModel = this.BindingContext as MainPageViewModel;
+            if (sender is CheckBox checkBox && checkBox.BindingContext is AppNote note)
+            {
+                viewModel.ToggleNoteSelection(note);
+            }
+        }*/
+
 
 
 
 
         /*protected override bool OnBackButtonPressed()
         {
-            // Check if the app is in multi-select mode
-            if (_mainPageViewModel.IsInMultiSelectMode)
-            {
-                // Disable multi-select mode
-                _mainPageViewModel.ShowOrHideToolbar();
-
-                // Intercept the back button press to prevent app exit
-                return true;
-            }
-
-            // Allow default back button behavior
-            return base.OnBackButtonPressed();
-        }*/
-        /* protected override bool OnBackButtonPressed()
-         {
-             if (_mainPageViewModel != null && _mainPageViewModel.MultiSelectEnabled)
-                 _mainPageViewModel.MultiSelectEnabled = false;
-           //  _mainPageViewModel.ShowOrHideToolbar();
-
-             return true;
-         }*/
-        protected override bool OnBackButtonPressed()
-        {
             if (_mainPageViewModel.MultiSelectEnabled)
-                _mainPageViewModel.ShowOrHideToolbar();
+              //  _mainPageViewModel.ShowOrHideToolbar();
 
             return true;
-        }
+        }*/
 
         private async void SearchBar_TextChanged(object sender, TextChangedEventArgs e)
         {
@@ -311,6 +258,14 @@ namespace AllNotes.Views
 
         }
 
-        
+        private void SelectAllCheckBox_CheckedChanged(object sender, CheckedChangedEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine("Checkbox CheckedChanged triggered");
+
+            if (BindingContext is MainPageViewModel viewModel)
+            {
+                viewModel.IsAllChecked = e.Value; // e.Value gives the boolean state of the checkbox
+            }
+        }
     }
 }

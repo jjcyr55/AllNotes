@@ -25,6 +25,8 @@ namespace AllNotes.iOS
         {
             SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ=");
             Syncfusion.XForms.iOS.RichTextEditor.SfRichTextEditorRenderer.Init();
+            Syncfusion.XForms.iOS.Buttons.SfCheckBoxRenderer.Init();
+            Syncfusion.SfDataGrid.XForms.iOS.SfDataGridRenderer.Init();
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 

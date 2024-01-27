@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="AllNotes.Views.NewNote.Popups.MainPagePopup"
+           
+             x:Name="Popup"
+             Size="300,500"
+           VerticalOptions="Start"
+HorizontalOptions="End"
+             Color="Transparent"
+             BackgroundColor="Transparent"
+             xct:ShadowEffect.Color="Transparent">
+
+    <Frame CornerRadius="15"
+           HasShadow="True"
+           IsClippedToBounds="True"
+           Padding="20"
+           Margin="20"
+           x:Name="MainPagePopupControl">
+
+        <StackLayout>
+            <!-- Edit Menu Item -->
+            <Label Text="Edit" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EditCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <!-- Create Folder Menu Item -->
+            <Label Text="Create Folder" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding CreateFolderCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <!-- Unfavorite Menu Item -->
+            <Label Text="Unfavorite" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding UnfavoriteCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <!-- Notes Template Menu Item -->
+            <Label Text="Notes Template" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NotesTemplateCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Button Command="{Binding EditCommand}" Text="Edit" />
+        </StackLayout>
+    </Frame>
+</xct:Popup>

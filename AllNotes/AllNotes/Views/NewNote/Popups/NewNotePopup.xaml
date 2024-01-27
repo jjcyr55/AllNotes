@@ -5,22 +5,30 @@
            xmlns:converters="clr-namespace:AllNotes.Converters"
            x:Class="AllNotes.Views.NewNote.Popups.NewNotePopup"
            Size="300,475"
-           BackgroundColor="White"
+          
            xmlns:local="clr-namespace:AllNotes.ViewModels"
            VerticalOptions="Start"
            HorizontalOptions="End"
+            Color="Transparent"
+           BackgroundColor="Transparent"
            xct:ShadowEffect.Color="Transparent"
            x:Name="MyPopup">
     <xct:Popup.BindingContext>
         <local:NewNoteViewModel />
     </xct:Popup.BindingContext>
 
+
+  
+
+
+
     <Frame CornerRadius="15"
            HasShadow="True"
            IsClippedToBounds="True"
            Padding="20"
            Margin="20"
-           BackgroundColor="White">
+           BackgroundColor="White"
+           x:Name="MainPagePopupControl">
         <StackLayout>
             <!-- Static Menu Items -->
             <Label Text="Share">

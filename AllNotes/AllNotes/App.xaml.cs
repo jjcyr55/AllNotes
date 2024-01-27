@@ -79,7 +79,7 @@ namespace AllNotes
         }
         private async Task InitializeApplicationAsync()
         {
-            int defaultFolderId = await GetDefaultFolderId();
+            /*int defaultFolderId = await GetDefaultFolderId();
 
             AppFolder defaultFolder = AppDatabase.Instance().GetFolder(defaultFolderId);
             if (defaultFolder != null)
@@ -91,7 +91,7 @@ namespace AllNotes
             else
             {
                 // Handle the case where the default folder is not found
-            }
+            }*/
         }
 
         private async Task<int> GetDefaultFolderId()

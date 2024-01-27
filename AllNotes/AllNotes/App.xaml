@@ -18,8 +18,15 @@
             <x:String x:Key="Check">&#xf00c;</x:String>
             <x:String x:Key="Lock">&#xf023;</x:String>
             <Color x:Key="LightGray">#f7f7f7</Color>
+            <converters:ColorConverter x:Key="colorConverter" />
+            <converters:TextAlignmentConverter x:Key="textAlignmentConverter"/>
+            <converters:BoolToVisibilityConverter x:Key="boolToVisibilityConverter" />
+            <converters:SelectionToColorConverter x:Key="SelectionToColorConverter"/>
             <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" TrueColor="LightGray" FalseColor="Transparent"/>
             <converters:FavoriteIconConverter x:Key="FavoriteIconConverter"/>
+            <converters:BooleanToColorConverter x:Key="BoolToColorConverter" 
+                                       TrueColor="Green" 
+                                       FalseColor="Transparent"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

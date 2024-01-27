@@ -5,9 +5,10 @@
              xmlns:local="clr-namespace:AllNotes.ViewModels"
              xmlns:fab="clr-namespace:Refractored.FabControl;assembly=Refractored.FabControl"
              xmlns:converters="clr-namespace:AllNotes.Converters"
-             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:views="clr-namespace:AllNotes.Views"
              BindingContext="{StaticResource mainPageViewModel}"
-              Title="{Binding SelectedFolder.Name}">
+              Title="{Binding SelectedFolder.Name}"
+             xmlns:syncfusion="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms">
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:ColorConverter x:Key="colorConverter" />
@@ -15,14 +16,14 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-    
+
     <AbsoluteLayout>
         <ScrollView AbsoluteLayout.LayoutBounds = "0,0,1,1" AbsoluteLayout.LayoutFlags = "All">
             <StackLayout>
                 <FlexLayout JustifyContent="End" AlignContent="End" Margin="10">
-                 
+
                     <ImageButton
-Command="{Binding OpenMenuCommand}"
+Command="{Binding OpenMenu2Command}"
 Source="menuDots.png"
 HeightRequest="50"
 WidthRequest="50"
@@ -32,12 +33,12 @@ CornerRadius="30"
 xct:TouchEffect.NativeAnimation="True" />
 
                 </FlexLayout>
-                
+
                 <Frame x:Name="frameTop" BackgroundColor="Transparent"  Margin="20,0,20,0" Padding="0,10,0,0" IsVisible="true">
                     <ImageButton Clicked="BtnOption_Clicked" VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand" Source="dotsBlack.png" WidthRequest="30" 
   HeightRequest="30" BackgroundColor="#f3f2f3" />
                 </Frame>
-                
+
                 <StackLayout x:Name="stackTop" Margin="20,0,20,0" IsVisible="true">
                     <Label Text="All notes" FontAttributes="Bold" FontSize="30" TextColor="Black"/>
 
@@ -62,8 +63,28 @@ xct:TouchEffect.NativeAnimation="True" />
                     </SearchBar>
                 </Frame>
 
-                <Grid x:Name="NotesGrid" RowDefinitions="Auto" Padding="0" Margin="20,0" RowSpacing="0">
+                
+
+
+                <Grid x:Name="NotesGrid" Padding="0" Margin="20,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <!-- Row for 'Select All' Checkbox -->
+                        <RowDefinition Height="*"/>
+                        <!-- Row for CollectionView -->
+                    </Grid.RowDefinitions>
+
+                    <!-- 'Select All' Checkbox -->
+                  
+                    <!-- Event handler for check state change -->
+
                     <CollectionView x:Name="NotesCV" SelectionMode="{Binding SelectionMode}" SelectedItems="{Binding SelectedNotes}" ItemsSource="{Binding Notes}">
+                        <CollectionView.Header>
+                            <CheckBox Text="Select All"
+                           IsChecked="{Binding IsAllChecked, Mode=TwoWay}"
+                           IsVisible="{Binding IsEditMode}"
+                           CheckedChanged="SelectAllCheckBox_CheckedChanged"/>
+                        </CollectionView.Header>
                         <CollectionView.ItemsLayout>
                             <GridItemsLayout Orientation="Vertical" Span="3" HorizontalItemSpacing="0" VerticalItemSpacing="30" />
                         </CollectionView.ItemsLayout>
@@ -73,8 +94,30 @@ xct:TouchEffect.NativeAnimation="True" />
                         </CollectionView.EmptyView>
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
+                                
+
                                 <FlexLayout Direction="Column" AlignItems="Center">
-                                    <VisualStateManager.VisualStateGroups x:Name="CommonStates">
+
+
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              
+                      IsVisible="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.IsEditMode}" />
+
+                                 
+                                       
+                                            <FlexLayout.Style>
+                                                <Style TargetType="FlexLayout">
+                                                    <Setter Property="BackgroundColor" Value="Transparent" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger TargetType="FlexLayout" Binding="{Binding IsLongPressed}" Value="True">
+                                                            <Setter Property="BackgroundColor" Value="#FFD4DB" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </FlexLayout.Style>
+
+
+                                            <!-- <VisualStateManager.VisualStateGroups x:Name="CommonStates">
                                         <VisualStateGroup>
                                             <VisualState Name="Normal">
                                                 <VisualState.Setters>
@@ -87,7 +130,7 @@ xct:TouchEffect.NativeAnimation="True" />
                                                 </VisualState.Setters>
                                             </VisualState>
                                         </VisualStateGroup>
-                                    </VisualStateManager.VisualStateGroups>
+                                    </VisualStateManager.VisualStateGroups>-->
 
                                     <Frame CornerRadius="15"
                                    HorizontalOptions="Center"
@@ -95,14 +138,14 @@ xct:TouchEffect.NativeAnimation="True" />
                                    HasShadow="True"
                                    IsClippedToBounds="True"
                                    Padding="0">
-                                       <!-- <Label Text="{Binding Text}" 
+                                        <!-- <Label Text="{Binding Text}" 
                                             MaxLines="5" 
                                             LineBreakMode="TailTruncation" 
                                             Padding="15" 
                                             FontSize="{Binding FontSize}" 
                                             HorizontalTextAlignment="{Binding TextAlignment, Converter={StaticResource textAlignmentConverter}}" /> -->
                                         <!-- Other labels and elements -->
-                                        
+
 
                                         <AbsoluteLayout HeightRequest="100"
                                                     WidthRequest="100"
@@ -112,8 +155,16 @@ xct:TouchEffect.NativeAnimation="True" />
                                                     xct:TouchEffect.CommandParameter="{Binding .}"
                                                     xct:TouchEffect.LongPressCommand="{Binding Source={x:Reference NotesGrid}, Path=BindingContext.LongPressNoteCommand}"
                                                     xct:TouchEffect.LongPressCommandParameter="{Binding .}">
-
-                                            
+                                     
+                                    <!--  <Image
+    x:Name="Check"
+    Source="check.png"
+    HeightRequest="20"
+    WidthRequest="20"
+    BackgroundColor="Transparent"
+    Margin="5"
+    IsVisible="false"
+    xct:IconTintColorEffect.TintColor="Orange" />-->
 
                                             <Image Source="{Binding IsFavorite, Converter={StaticResource FavoriteIconConverter}}"
                                                    Margin="10,5,10,5"
@@ -121,21 +172,17 @@ xct:TouchEffect.NativeAnimation="True" />
            HeightRequest="15"
            IsVisible="{Binding IsFavorite}" />
 
-                                            <Image
-                                                x:Name="Check"
-                                                Source="check.png"
-                                                HeightRequest="20"
-                                                WidthRequest="20"
-                                                BackgroundColor="Transparent"
-                                                Margin="5"
-                                                IsVisible="false"
-                                                xct:IconTintColorEffect.TintColor="Orange" />
+                                            
                                             <Label Text="{Binding Text}" MaxLines="5" LineBreakMode="TailTruncation" Padding="15" FontSize="12" />
-                                        </AbsoluteLayout>
+                                       
+    </AbsoluteLayout>
                                     </Frame>
                                     <Label Text="{Binding Title}" MaxLines="1"  WidthRequest="95" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
                                     <Label Text="{Binding Date}" MaxLines="1" WidthRequest="80" HorizontalTextAlignment="Center" LineBreakMode="TailTruncation" />
-                                </FlexLayout>
+                                        </FlexLayout>
+                                    
+                            
+                                        
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
@@ -153,7 +200,7 @@ xct:TouchEffect.NativeAnimation="True" />
             IsVisible="{Binding ShowFab}"
             AbsoluteLayout.LayoutFlags="PositionProportional"
 			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" />-->
-        
+
         <Button Grid.Row="0"
         BackgroundColor="Blue"
         Command="{Binding OpenNewNoteScreenCommand}"
@@ -177,16 +224,16 @@ AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" >
     </Button.Shadow>-->
         </Button>
 
-        <FlexLayout
+       <!-- <FlexLayout
             AbsoluteLayout.LayoutFlags="PositionProportional"
 			AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
             Direction="Row"
             HeightRequest="60"
             AlignItems="Center"
             JustifyContent="Center"
-            IsVisible="{Binding MultiSelectEnabled}">
+            IsVisible="{Binding MultiSelectEnabled}">-->
 
-            <FlexLayout
+           <!-- <FlexLayout
                 HeightRequest="60"
                 WidthRequest="60"
                 Direction="Column"
@@ -195,16 +242,17 @@ AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" >
                 AlignContent="Center"
                 xct:CornerRadiusEffect.CornerRadius="20"
                 xct:TouchEffect.NativeAnimation="True"
-                xct:TouchEffect.Command="{Binding DeleteNotesCommand}">
-                
-                <Image
-                    Source="trash.png"
-                    HeightRequest="20"
-                    WidthRequest="20"
-                    BackgroundColor="Transparent" />
-                <Label Text="Delete" FontSize="10" HorizontalTextAlignment="Center" />
-                
+                xct:TouchEffect.Command="{Binding DeleteNotesCommand}">-->
+
+            <FlexLayout AbsoluteLayout.LayoutFlags="PositionProportional"
+            AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize"
+            HorizontalOptions="FillAndExpand"
+            Direction="Row"
+            HeightRequest="60"
+            JustifyContent="Center"
+                       IsVisible="{Binding IsEditMode}">
+                <views:CustomToolbar IsVisible="{Binding IsEditMode}" />
             </FlexLayout>
-        </FlexLayout>
+        
     </AbsoluteLayout>
 </ContentPage>

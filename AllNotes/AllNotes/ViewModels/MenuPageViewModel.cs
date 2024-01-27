@@ -1004,12 +1004,12 @@ namespace AllNotes.ViewModels
 
 
         //  public ICommand EditFolderCommand => new Command(ShowEditFolderPopup);
-        private void ShowEditFolderPopup()
+        /*private void ShowEditFolderPopup()
         {
             _selectedFolder = SelectedFolder;
             var editFolderPopup = new EditFolderPopup(this);
             Application.Current.MainPage.Navigation.ShowPopup(editFolderPopup);
-        }
+        }*/
 
 
 

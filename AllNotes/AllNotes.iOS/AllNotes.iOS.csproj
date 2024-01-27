@@ -190,4 +190,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\filled_heart_red.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\empty_circle.jpg" />
+  </ItemGroup>
 </Project>

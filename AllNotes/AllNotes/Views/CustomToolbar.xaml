@@ -3,12 +3,15 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
              x:Class="AllNotes.Views.CustomToolbar">
-    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-        <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="5">
-            <Button Text="B" Command="{Binding BoldTextCommand}" Margin="2"/>
-            <Button Text="I" Command="{Binding ItalicCommand}" Margin="2"/>
-            <Button Text="U" Command="{Binding UnderlineCommand}" Margin="2"/>
-         <!--   <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />-->
+    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="FillAndExpand">
+        <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="5" WidthRequest="1000" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsEditMode}">
+            <Button Text="Delete"
+                Command="{Binding DeleteNotesCommand}" />
+            <Button Text="Test Selected Notes"
+        Command="{Binding TestSelectedNotesCommand}" />
+            <Button Text="Share"
+                Command="{Binding ShareSelectedNotesCommand}" />
+            <!--   <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />-->
 
             <!-- Add other buttons as needed, with Margin for spacing -->
         </StackLayout>

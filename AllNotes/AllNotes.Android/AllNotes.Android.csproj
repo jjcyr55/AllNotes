@@ -143,5 +143,8 @@
   <ItemGroup>
     <AndroidResource Include="Resources\drawable\filled_heart_red.png" />
   </ItemGroup>
+  <ItemGroup>
+    <AndroidResource Include="Resources\drawable\empty_circle.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>

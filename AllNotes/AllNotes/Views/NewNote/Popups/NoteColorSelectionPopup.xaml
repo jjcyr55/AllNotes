@@ -2,7 +2,7 @@
 <xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
-             xmlns:converters="clr-namespace:XamarinNoteApp.Converters"
+             xmlns:converters="clr-namespace:AllNotes.Converters"
              x:Class="AllNotes.Views.NewNote.Popups.NoteColorSelectionPopup"
            x:Name="Popup"
              Size="300,175"

@@ -41,6 +41,10 @@
    
 	  <PackageReference Include="Refractored.FloatingActionButtonForms" Version="2.1.0" />
    
+	  <PackageReference Include="Syncfusion.Xamarin.Buttons" Version="24.1.47" />
+   
+	  <PackageReference Include="Syncfusion.Xamarin.GridCommon" Version="24.1.47" />
+   
 	  <PackageReference Include="Syncfusion.Xamarin.SfRichTextEditor" Version="24.1.46" />
    
 	  
@@ -51,6 +55,9 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Views\NewNote\Popups\MainPagePopup.xaml.cs">
+		  <DependentUpon>MainPagePopup.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\ManageFolders.xaml.cs">
 		  <DependentUpon>ManageFolders.xaml</DependentUpon>
 		</Compile>
@@ -78,7 +85,7 @@
     <EmbeddedResource Update="Views\CustomToolbar.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="Views\EditFolderPopup.xaml">
+    <EmbeddedResource Update="Views\NewNote\Popups\MainPagePopup.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\FullScreenEditorPage.xaml">
@@ -103,9 +110,6 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\FontSizeSelectionPopup.xaml">
-		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-	</EmbeddedResource>
-	<EmbeddedResource Update="Views\NewNote\Popups\JustifyTextSelectionPopup.xaml">
 		<Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\NewNotePopup.xaml">
