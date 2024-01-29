@@ -16,5 +16,9 @@ namespace AllNotes.Views
 		{
 			InitializeComponent ();
 		}
-	}
+        private void OnMoreTapped(object sender, EventArgs e)
+        {
+            // Implement the action to be performed when the 'More' label is tapped
+        }
+    }
 }

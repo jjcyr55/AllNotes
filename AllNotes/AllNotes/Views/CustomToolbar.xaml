@@ -5,12 +5,28 @@
              x:Class="AllNotes.Views.CustomToolbar">
     <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="FillAndExpand">
         <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="5" WidthRequest="1000" HorizontalOptions="FillAndExpand" IsVisible="{Binding IsEditMode}">
+            <FlexLayout Direction="Column" JustifyContent="Start" AlignItems="Center" Margin="10, 5" Padding="5">
+                <ImageButton Source="menuDots.png"
+                     HeightRequest="20"
+                     WidthRequest="20"
+                     BackgroundColor="Transparent"
+                     Command="{Binding OpenToolBarMenuCommand}"/>
+                <Label Text="More"
+               VerticalOptions="Center"
+               Margin="5,0,0,0">
+                    
+                </Label>
+            </FlexLayout>
             <Button Text="Delete"
                 Command="{Binding DeleteNotesCommand}" />
             <Button Text="Test Selected Notes"
         Command="{Binding TestSelectedNotesCommand}" />
             <Button Text="Share"
                 Command="{Binding ShareSelectedNotesCommand}" />
+            <Button Text="Add to Home"
+     Command="{Binding AddToHomeCommand}" />
+            <Button Text="Archive"
+     Command="{Binding ArchiveNotesCommand}" />
             <!--   <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />-->
 
             <!-- Add other buttons as needed, with Margin for spacing -->

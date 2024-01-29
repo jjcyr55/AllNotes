@@ -457,7 +457,7 @@ namespace AllNotes.ViewModels
              OnPropertyChanged(nameof(FolderList));
          }*/
         //THIS REFRESH METHOD WORKS SO UNCOMMENT IT IF OTHER METHODS DONT WORK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        public void RefreshFolderList()
+        /*public void RefreshFolderList()
         {
             var allFolders = AppDatabase.Instance().GetFolderList();
             var folderDict = FolderList.ToDictionary(f => f.Id, f => f);
@@ -498,7 +498,69 @@ namespace AllNotes.ViewModels
             }
 
             OnPropertyChanged(nameof(FolderList));
+        }*/
+       /* public void RefreshFolderList()
+        {
+            var allFolders = AppDatabase.Instance().GetFolderList();
+
+            // Handle the case when FolderList is not initialized
+            if (FolderList == null)
+            {
+                FolderList = new ObservableCollection<AppFolder>(allFolders);
+                return;
+            }
+
+            // Remove folders that no longer exist
+            var allFolderIds = allFolders.Select(f => f.Id).ToList();
+            for (int i = FolderList.Count - 1; i >= 0; i--)
+            {
+                if (!allFolderIds.Contains(FolderList[i].Id))
+                {
+                    FolderList.RemoveAt(i);
+                }
+            }
+
+            // Add new folders or update existing ones
+            foreach (var folder in allFolders)
+            {
+                var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
+                if (existingFolder != null)
+                {
+                    UpdateFolderProperties(existingFolder, folder);
+                }
+                else
+                {
+                    FolderList.Add(folder);
+                }
+            }
+
+            // Update subfolders for each folder
+            foreach (var folder in FolderList)
+            {
+                UpdateSubfolders(folder, allFolders);
+            }
+
+            OnPropertyChanged(nameof(FolderList));
+        }*/
+
+        //  TO DO FIX FOLDER SEARCH HIERARCHY REFRESH WHERE SEARCH BREAKS IT/ MANAGE FOLDERS SEARCH HIERACHY BUILD WORKS BETTER SO GET CODE THERE IF POSSIBLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+
+        public void RefreshFolderList()
+        {
+            var allFolders = AppDatabase.Instance().GetFolderList();
+            foreach (var folder in allFolders)
+            {
+                var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
+                if (existingFolder != null)
+                {
+                    // Update existing folder
+                    existingFolder.Subfolders = new ObservableCollection<AppFolder>(
+                        allFolders.Where(f => f.ParentFolderId == existingFolder.Id));
+                }
+            }
+            OnPropertyChanged(nameof(FolderList));
         }
+
 
         private void UpdateFolderProperties(AppFolder existingFolder, AppFolder newFolderData)
         {

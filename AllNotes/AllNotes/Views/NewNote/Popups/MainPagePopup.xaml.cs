@@ -30,10 +30,12 @@ namespace AllNotes.Views.NewNote.Popups
 
         }
 
-       /* void OnRenameClicked(object sender, EventArgs e) => Dismiss("rename");
+       
 
-        void OnDeleteClicked(object sender, EventArgs e) => Dismiss("delete");
+        void Edit_Tapped(object sender, EventArgs e) => Dismiss("edit");
 
-        void OnCancelClicked(object sender, EventArgs e) => Dismiss("cancel");*/
+        /*  void OnDeleteClicked(object sender, EventArgs e) => Dismiss("delete");
+
+         void OnCancelClicked(object sender, EventArgs e) => Dismiss("cancel");*/
     }
 }

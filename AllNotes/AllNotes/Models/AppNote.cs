@@ -28,7 +28,7 @@ namespace AllNotes.Models
         public string Date { get; set; }
         public int Color { get; set; }
 
-        public bool IsFavorite { get; set; }
+        // public bool IsFavorite { get; set; }
 
 
         public string PreviewText { get; set; }
@@ -36,31 +36,8 @@ namespace AllNotes.Models
         public string FontAttributes { get; set; } // Example: "Bold, Italic"
         public string TextAlignment { get; set; } // Example: "Left", "Center", "Right"
                                                   //public int Color { get; set; } // Assuming color is stored as an integer
-        /* private bool _isSelected;
-         public bool IsSelected
-         {
-             get => _isSelected;
-             set
-             {
-                 _isSelected = value;
-                 OnPropertyChanged(nameof(IsSelected));
-             }
-         }          */                  //  public bool IsSelected { get; set; }
-
-
-        /*private bool _isSelected = false;
-        public bool IsSelected
-        {
-            get => _isSelected;
-            set
-            {
-                _isSelected = value;
-                OnPropertyChanged(nameof(IsSelected));
-                OnPropertyChanged(nameof(ShouldShowCheckmark));
-            }
-        }*/
-        //   public bool IsSelected { get; set; }
-        private bool isChecked;
+    
+       /* private bool isChecked;
         public bool IsChecked
         {
             get { return isChecked; }
@@ -70,13 +47,26 @@ namespace AllNotes.Models
                 {
                     isChecked = value;
                     OnPropertyChanged(nameof(IsChecked));
+                    OnIsCheckedChanged?.Invoke(this, EventArgs.Empty);
+                }
+            }
+        }*/
+        private bool _isFavorite;
+        public bool IsFavorite
+        {
+            get => _isFavorite;
+            set
+            {
+                if (_isFavorite != value)
+                {
+                    _isFavorite = value;
+                    OnPropertyChanged(nameof(IsFavorite));
+                   MessagingCenter.Send(this, "NoteFavoriteStatusChanged", this);
                 }
             }
         }
 
 
-
-        
 
 
         private ObservableCollection<AppNote> _selectedNotes;
@@ -119,6 +109,34 @@ namespace AllNotes.Models
          }*/
 
 
+        /* private bool _isSelected;
+         public bool IsSelected
+         {
+             get => _isSelected;
+             set
+             {
+                 if (_isSelected != value)
+                 {
+                     _isSelected = value;
+                     OnPropertyChanged(nameof(IsSelected));
+
+                     Debug.WriteLine($"Note {Title} IsSelected changed to {value}");
+                     OnIsCheckedChanged?.Invoke(this, EventArgs.Empty);
+                     MessagingCenter.Send(this, "NoteSelectionChanged", this);
+
+                     if (_isSelected)
+                         MessagingCenter.Send(this, "AddToSelectedNotes", this);
+                     else
+                         MessagingCenter.Send(this, "RemoveFromSelectedNotes", this);
+                 }
+             }
+         }*/
+
+      
+
+        [Ignore]
+        public bool IsChecked { get; set; }
+
         private bool _isSelected;
         public bool IsSelected
         {
@@ -129,7 +147,9 @@ namespace AllNotes.Models
                 {
                     _isSelected = value;
                     OnPropertyChanged(nameof(IsSelected));
-
+                 //   OnIsCheckedChanged?.Invoke(this, EventArgs.Empty);
+                 //   Debug.WriteLine($"Note {Title} IsSelected changed to {value}");
+                 //   MessagingCenter.Send(this, "NoteSelectionChanged", this);
                     if (_isSelected)
                         MessagingCenter.Send(this, "AddToSelectedNotes", this);
                     else
@@ -137,11 +157,33 @@ namespace AllNotes.Models
                 }
             }
         }
+        public event EventHandler OnIsCheckedChanged;
+
+
+        /*private bool _isSelected;
+        public bool IsSelected
+        {
+            get => _isSelected;
+            set
+            {
+                if (_isSelected != value)
+                {
+                    _isSelected = value;
+                    OnPropertyChanged(nameof(IsSelected));
+                    Debug.WriteLine($"Note {Title} IsSelected changed to {value}");
+
+                    // Notify the ViewModel about the selection change
+                    MessagingCenter.Send(this, "NoteSelectionChanged", this);
+                }
+            }
+        }*/
+
+
         public AppNote()
         {
             // Parameterless constructor for SQLite
         }
-       
+
 
 
         /*public bool IsSelected
@@ -193,7 +235,7 @@ namespace AllNotes.Models
             {
                 _isEditMode = value;
                 OnPropertyChanged(nameof(IsEditMode));
-                OnPropertyChanged(nameof(ShowSelectionCircle));
+                //  OnPropertyChanged(nameof(ShowSelectionCircle));
             }
         }
         private bool _isInEditMode;
@@ -210,7 +252,7 @@ namespace AllNotes.Models
             }
         }
         public bool IsNotEditMode => !IsEditMode;
-        public bool ShowSelectionCircle => IsEditMode;
+        // public bool ShowSelectionCircle => IsEditMode;
 
         public bool ShouldShowCheckmark => IsSelected && IsEditMode;
 
@@ -265,6 +307,8 @@ namespace AllNotes.Models
             });
         }
         private bool _isCheckboxVisible;
+
+
         public bool IsCheckboxVisible
         {
             get => _isCheckboxVisible;

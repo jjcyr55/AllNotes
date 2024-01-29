@@ -126,6 +126,7 @@ namespace AllNotes.Database
             // Assuming note is an instance of AppNote with all the updated properties
             return dbConnection.Update(note); // Use UpdateAsync if using async
         }
+        
 
         /*public async Task<int> InsertNote(int folderId, string title, string text, string date, int color)
         {
@@ -174,7 +175,10 @@ namespace AllNotes.Database
                 dbConnection.Delete(note);
             }
         }
+        public AppNote GetNoteById(int noteId)
+        {
+            return dbConnection.Find<AppNote>(noteId); // Synchronously finds an AppNote with the specified ID
+        }
 
-       
     }
 }

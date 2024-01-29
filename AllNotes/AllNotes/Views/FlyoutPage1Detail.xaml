@@ -15,9 +15,12 @@
             <converters:TextAlignmentConverter x:Key="textAlignmentConverter"/>
         </ResourceDictionary>
     </ContentPage.Resources>
-
+    
 
     <AbsoluteLayout>
+
+        
+
         <ScrollView AbsoluteLayout.LayoutBounds = "0,0,1,1" AbsoluteLayout.LayoutFlags = "All">
             <StackLayout>
                 <FlexLayout JustifyContent="End" AlignContent="End" Margin="10">
@@ -51,19 +54,21 @@ xct:TouchEffect.NativeAnimation="True" />
 
                 <Frame Margin="20,30,20,0" Padding="0" CornerRadius="20" BackgroundColor="#e6e7e7">
                     <SearchBar x:Name="searchBarElement"
-                               Text="{Binding SearchQuery, Mode=TwoWay}"
-               Placeholder="Search Notes"
-               TextChanged="SearchBar_TextChanged"
-               FontSize="Small"
-               TextColor="Black"
-               HorizontalOptions="FillAndExpand">
+                Text="{Binding SearchQuery, Mode=TwoWay}"
+Placeholder="Search Notes"
+TextChanged="SearchBar_TextChanged"
+FontSize="Small"
+TextColor="Black"
+HorizontalOptions="FillAndExpand">
                         <SearchBar.GestureRecognizers>
                             <TapGestureRecognizer Tapped="SearchBar_Tapped" />
                         </SearchBar.GestureRecognizers>
                     </SearchBar>
                 </Frame>
 
-                
+
+
+
 
 
                 <Grid x:Name="NotesGrid" Padding="0" Margin="20,0">
@@ -77,8 +82,11 @@ xct:TouchEffect.NativeAnimation="True" />
                     <!-- 'Select All' Checkbox -->
                   
                     <!-- Event handler for check state change -->
-
+                
+                
+                  
                     <CollectionView x:Name="NotesCV" SelectionMode="{Binding SelectionMode}" SelectedItems="{Binding SelectedNotes}" ItemsSource="{Binding Notes}">
+                    
                         <CollectionView.Header>
                             <CheckBox Text="Select All"
                            IsChecked="{Binding IsAllChecked, Mode=TwoWay}"
@@ -105,7 +113,7 @@ xct:TouchEffect.NativeAnimation="True" />
 
                                  
                                        
-                                            <FlexLayout.Style>
+                                           <!-- <FlexLayout.Style>
                                                 <Style TargetType="FlexLayout">
                                                     <Setter Property="BackgroundColor" Value="Transparent" />
                                                     <Style.Triggers>
@@ -114,7 +122,7 @@ xct:TouchEffect.NativeAnimation="True" />
                                                         </DataTrigger>
                                                     </Style.Triggers>
                                                 </Style>
-                                            </FlexLayout.Style>
+                                            </FlexLayout.Style>-->
 
 
                                             <!-- <VisualStateManager.VisualStateGroups x:Name="CommonStates">
@@ -186,10 +194,14 @@ xct:TouchEffect.NativeAnimation="True" />
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>
-                </Grid>
-            </StackLayout>
+               
+       
+                
+            </Grid>
+           
+           
+        </StackLayout>
         </ScrollView>
-
         <!--<fab:FloatingActionButtonView
              Command="{Binding OpenNewNoteScreenCommand}"
             Margin="10"
@@ -256,3 +268,4 @@ AbsoluteLayout.LayoutBounds="1, 1, AutoSize, AutoSize" >
         
     </AbsoluteLayout>
 </ContentPage>
+        
