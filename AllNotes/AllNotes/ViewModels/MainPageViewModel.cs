@@ -151,7 +151,7 @@ namespace AllNotes.ViewModels
                     FavoriteAllSelectedNotes();
                     break;
             }
-            RefreshNotes(); // Refresh to show the updated favorite status
+            RefreshNotes(); 
         
             ResetSelectionStates();
         }
