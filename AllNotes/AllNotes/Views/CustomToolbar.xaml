@@ -17,7 +17,7 @@
                     
                 </Label>
             </FlexLayout>
-            <Button Text="Delete"
+        <!--    <Button Text="Delete"
                 Command="{Binding DeleteNotesCommand}" />
             <Button Text="Test Selected Notes"
         Command="{Binding TestSelectedNotesCommand}" />
@@ -26,9 +26,13 @@
             <Button Text="Add to Home"
      Command="{Binding AddToHomeCommand}" />
             <Button Text="Archive"
-     Command="{Binding ArchiveNotesCommand}" />
-            <!--   <Button Text="Edit in TEditor" Command="{Binding OpenTEditorCommand}" />-->
-
+     Command="{Binding ArchiveNotesCommand}" />-->
+           
+            <Button Text="Back" 
+        Command="{Binding ExitEditModeCommand}"
+        IsVisible="{Binding IsEditMode}"
+        HorizontalOptions="Start"
+        VerticalOptions="Center" />
             <!-- Add other buttons as needed, with Margin for spacing -->
         </StackLayout>
     </ScrollView>

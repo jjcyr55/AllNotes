@@ -28,30 +28,32 @@ namespace AllNotes
         {
             InitializeComponent();
             // MainPage = new NavigationPage(new FlyoutPage1());
-          //  Ngo9BigBOggjHTQxAR8 / V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ =
-             AppDatabase.Instance().Init();
+            //  Ngo9BigBOggjHTQxAR8 / V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ =
+            AppDatabase.Instance().Init();
             DependencyService.Register<INavigationService, NavigationService>();
 
 
-            /* var mainPage = new FlyoutPage1
+             var mainPage = new FlyoutPage1
              {
                  Flyout = new MenuPage(), // Replace with your actual menu page
                  Detail = new NavigationPage(new MenuPage()) // Replace with your actual detail page
              };
 
-             MainPage = mainPage;*/
-            var mainPageViewModel = new MainPageViewModel();
-            var detailPage = new FlyoutPage1Detail
-            {
-                BindingContext = mainPageViewModel
-            };
+             MainPage = mainPage;
+             var mainPageViewModel = new MainPageViewModel();
+             var detailPage = new FlyoutPage1Detail
+             {
+                 BindingContext = mainPageViewModel
+             };
 
-            MainPage = new FlyoutPage
-            {
-                Detail = new NavigationPage(detailPage),
-                Flyout = new MenuPage()
-            };
-        }
+             MainPage = new FlyoutPage
+             {
+                 Detail = new NavigationPage(detailPage),
+                 Flyout = new MenuPage()
+             };
+         }
+           // MainPage = new NavigationPage(new FlyoutPage1Detail());
+        
         protected override async void OnStart()
         {
             

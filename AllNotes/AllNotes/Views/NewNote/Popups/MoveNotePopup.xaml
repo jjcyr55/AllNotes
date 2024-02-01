@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+         xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+         xmlns:xct="http://xamarin.com/schemas/2020/toolkit" xmlns:local="clr-namespace:AllNotes.ViewModels"
+           x:Class="AllNotes.Views.NewNote.Popups.MoveNotePopup"
+                        x:Name="MovePopup"
+                         Size="300,400"
+          Padding="20"
+             
+             Color="Gray"
+             BackgroundColor="Transparent"
+          
+>
+
+
+
+    <ContentPage.BindingContext>
+        <local:MoveNotePopupViewModel />
+    </ContentPage.BindingContext>
+
+    <Frame Padding="15" Margin="20" CornerRadius="10" BackgroundColor="White" VerticalOptions="Center" HorizontalOptions="Center">
+        <!-- Frame with padding and margin -->
+        <StackLayout>
+            <!-- Folder Collection -->
+        <ListView x:Name="foldersListView"
+                  ItemsSource="{Binding FolderList}"
+                  SelectedItem="{Binding SelectedFolder, Mode=TwoWay}"
+                  
+                  ItemSelected="OnFolderSelected"
+                  HasUnevenRows="True">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <ViewCell>
+                        <StackLayout>
+                            <!-- Main Folder Item -->
+                            <Grid Padding="5,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Image Source="{Binding IconPath}" Grid.Column="0" WidthRequest="30" HeightRequest="30"/>
+                                <Label Text="{Binding Name}"
+                                       Grid.Column="1"
+                                       FontSize="16"
+                                       FontAttributes="Bold"
+                                       VerticalOptions="CenterAndExpand" />
+                                <Image Source="{Binding ExpandCollapseIcon}"
+                                       Grid.Column="2"
+                                       WidthRequest="20" HeightRequest="20"
+                                       IsVisible="{Binding HasSubfolders}"  
+                                       Margin="10"
+                                       VerticalOptions="Center"
+                                       HorizontalOptions="End">
+                                    <Image.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.ToggleFolderCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}"/>
+                                    </Image.GestureRecognizers>
+                                </Image>
+                            </Grid>
+
+                            <!-- Subfolder StackLayout (Nested) -->
+                            <StackLayout IsVisible="{Binding IsExpanded}" Padding="20,0,0,0" BindableLayout.ItemsSource="{Binding Subfolders}">
+                                <BindableLayout.ItemTemplate>
+                                    <DataTemplate>
+                                        <!-- Subfolder Item -->
+                                        <StackLayout Orientation="Horizontal">
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="18"
+                                                   VerticalOptions="CenterAndExpand"/>
+                                            <Label.GestureRecognizers>
+                                                <TapGestureRecognizer Command="{Binding Path=BindingContext.SelectSubfolderCommand, Source={x:Reference ParentPage}}" CommandParameter="{Binding .}"/>
+                                            </Label.GestureRecognizers>
+                                        </StackLayout>
+                                    </DataTemplate>
+                                </BindableLayout.ItemTemplate>
+                            </StackLayout>
+                        </StackLayout>
+                    </ViewCell>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+            <Button Text="Test Notes Data" Command="{Binding TestCommand}" />
+    </StackLayout>
+
+    </Frame>
+
+
+
+
+</ContentPage>

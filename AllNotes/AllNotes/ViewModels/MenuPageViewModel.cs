@@ -127,6 +127,17 @@ namespace AllNotes.ViewModels
 
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
+            MessagingCenter.Subscribe<MoveNotePopupViewModel, int>(this, "NotesMoved", (sender, folderId) =>
+            {
+                // Call method to update the UI based on the moved note
+                RefreshFolderList(); // Or any other method that updates the folder list
+            });
+            MessagingCenter.Subscribe<MoveNotePopupViewModel, int>(this, "NotesMoved", (sender, folderId) =>
+            {
+                // Call method to update the UI based on the moved note
+                Reset(); // Or any other method that updates the folder list
+            });
+
             MessagingCenter.Subscribe<ParentFolderPopupViewModel, AppFolder>(this, "FolderUpdated", (sender, updatedFolder) =>
             {
                 // Update logic for MenuPage's folder list
@@ -178,8 +189,12 @@ namespace AllNotes.ViewModels
                 Reset();
               // Method to update the folder list in MenuPageViewModel
             });
-           
 
+            MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FoldersUpdated", (sender) =>
+            {
+                RefreshFolderList();
+                Reset();
+            });
 
             ToggleFolderCommand = new Command<AppFolder>(ToggleFolder);
 

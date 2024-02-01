@@ -73,41 +73,7 @@ namespace AllNotes.ViewModels
         }
 
 
-       /* public ICommand FavoriteCommand { get; private set; }
-
-        
-
-        private void ExecuteFavoriteCommand()
-        {
-            // Logic to favorite/unfavorite the selected notes
-            // Update the database and refresh the UI as necessary
-        }*/
-
-        
-        /*private void UpdateFavoriteActionText()
-        {
-            if (!SelectedNotes.Any())
-            {
-                FavoriteActionText = "No Notes Selected";
-                return;
-            }
-
-            bool allFavorites = SelectedNotes.All(note => note.IsFavorite);
-            bool noFavorites = SelectedNotes.All(note => !note.IsFavorite);
-
-            if (allFavorites)
-            {
-                FavoriteActionText = "Unfavorite"; // or "Unfavorite Selected" for clarity
-            }
-            else if (noFavorites)
-            {
-                FavoriteActionText = "Add to Favorites"; // or "Favorite Selected"
-            }
-            else
-            {
-                FavoriteActionText = "Favorite/Unfavorite"; // Mixed state
-            }
-        }*/
+      
         private void UpdateFavoriteActionText()
         {
             if (!SelectedNotes.Any())
@@ -172,25 +138,7 @@ namespace AllNotes.ViewModels
                 UpdateFavoriteActionText();
             }
         }
-        /*private void AddSelectedNotesToFavorites()
-        {
-            foreach (var note in SelectedNotes.Where(n => !n.IsFavorite))
-            {
-                note.IsFavorite = true;
-                UpdateNoteInDatabase(note);
-                MessagingCenter.Send(this, "NoteUpdated", note.folderID);
-                MessagingCenter.Send(this, "RefreshNotes");
-            }
-        }*/
-        /* private void AddSelectedNotesToFavorites()
-         {
-             foreach (var note in SelectedNotes)
-             {
-                 note.IsFavorite = !note.IsFavorite;
-                 UpdateNoteInDatabase(note);
-             }
-             UpdateFavoriteActionText();
-         }*/
+        
         private void AddSelectedNotesToFavorites()
         {
             foreach (var note in SelectedNotes)
@@ -233,11 +181,7 @@ namespace AllNotes.ViewModels
             UpdateFavoriteActionText();
         }
 
-        /*private void UpdateNoteInDatabase(AppNote note)
-        {
-            // Update the note in the database
-            AppDatabase.Instance().UpdateNote(note);
-        }*/
+      
         private void UpdateNoteInDatabase(AppNote note)
         {
             var dbNote = AppDatabase.Instance().GetNoteById(note.id);
@@ -276,140 +220,8 @@ namespace AllNotes.ViewModels
                 note.IsFavorite = refreshedNote?.IsFavorite ?? note.IsFavorite;
             }
         }
-
-        /*private void ToggleEditMode()
-        {
-            IsEditMode = !IsEditMode;
-            if (IsEditMode)
-            {
-                // Call when entering edit mode
-                OnSelectedNotesChanged();
-            }
-            else
-            {
-                // Resetting UI state when exiting edit mode
-                foreach (var note in Notes)
-                {
-                    note.IsSelected = false;
-                }
-                SelectedNotes.Clear();
-                // Other UI refresh logic if necessary
-            }
-        }*/
-        /*private void ToggleEditMode()
-        {
-            IsEditMode = !IsEditMode;
-            if (!IsEditMode)
-            {
-                // Reset selections when exiting edit mode
-                foreach (var note in Notes)
-                {
-                    note.IsSelected = false;
-                }
-                SelectedNotes.Clear();
-            }
-            else
-            {
-                // Debug log to verify entering edit mode
-                Debug.WriteLine("Entered Edit Mode");
-                OnSelectedNotesChanged(); // Ensure this is called when entering edit mode
-            }
-        }*/
-        /*public void ExitEditMode()
-        {
-            IsEditMode = false;
-            foreach (var note in Notes)
-            {
-                note.IsSelected = false; // Reset the selection state
-            }
-            SelectedNotes.Clear(); // Clear the selection collection
-        }
-        private void ToggleEditMode()
-        {
-            IsEditMode = !IsEditMode;
-            if (IsEditMode)
-            {
-                // Update label when entering edit mode
-               
-                OnSelectedNotesChanged();
-               
-
-
-            }
-            else
-            {
-                // Reset UI state when exiting edit mode
-                foreach (var note in Notes)
-                {
-                    note.IsSelected = false;
-                }
-             
-                SelectedNotes.Clear();
-                ResetEditModeState();
-            }
-        }
-
-
-        public Command<AppNote> LongPressNoteCommand { get; set; }
-
-        public bool IsEditModeOrLongPressMode => IsEditMode || IsLongPressMode;
-        private void LongPressNote(AppNote selectedNote)
-        {
-            IsEditMode = !IsEditMode;
-            if (IsEditMode)
-            {
-                // Update label when entering edit mode
-
-                OnSelectedNotesChanged();
-                ResetEditModeState();
-
-            }
-            if (selectedNote != null)
-            {
-                selectedNote.IsLongPressed = !selectedNote.IsLongPressed;
-                if (_selectionMode == SelectionMode.None)
-                {
-                    IsEditMode = true; // Assuming IsEditMode controls the toolbar visibility
-                    SelectionMode = SelectionMode.Multiple;
-                    SelectedNotes.Add(selectedNote);
-                }
-                else
-                {
-                    // Reset UI state when exiting edit mode
-                    foreach (var note in Notes)
-                    {
-                        note.IsSelected = false;
-                    }
-
-                    SelectedNotes.Clear();
-                 //   ResetEditModeState();
-                }
-            }
-        }*/
-        /*private void ToggleEditMode()
-        {
-            IsEditMode = !IsEditMode;
-            if (IsEditMode)
-            {
-                // Update label when entering edit mode
-
-                OnSelectedNotesChanged();
-
-
-
-            }
-            else
-            {
-                // Reset UI state when exiting edit mode
-                foreach (var note in Notes)
-                {
-                    note.IsSelected = false;
-                }
-
-                SelectedNotes.Clear();
-                ResetEditModeState();
-            }
-        }*/
+        
+       
         private void ToggleEditMode()
         {
             if (IsEditMode)
@@ -429,23 +241,7 @@ namespace AllNotes.ViewModels
             IsEditMode = true;
            
             OnSelectedNotesChanged();
-            /*if (!IsEditMode)
-            {
-                EnterEditMode();
-               
-            }
-
-            if (selectedNote != null)
-            {
-                selectedNote.IsLongPressed = !selectedNote.IsLongPressed;
-                SelectionMode = SelectionMode.Multiple;
-                SelectedNotes.Add(selectedNote);
-            }
-            else
-            {
-                ExitEditMode();
-                ResetEditModeState();
-            }*/
+           
         }
         private void EnterEditMode()
         {
@@ -455,7 +251,7 @@ namespace AllNotes.ViewModels
           
             // Other logic specific to entering edit mode
         }
-        private void ExitEditMode()
+        public void ExitEditMode()
         {
             IsEditMode = false;
             foreach (var note in Notes)
@@ -504,31 +300,7 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-        //  TRY RESET METHOD CALL IN OPENTOOLBAR MENU ALSO, CHECK IN ON IF LONG PRESS AND EDIT PRESS BOTH PUTS IN EDIT MODE AS THE BEHAVIOR IS DIFFERENT
-
-        /*public void OnSelectedNotesChanged()
-        {
-            // Debug log to verify method is called
-            Debug.WriteLine("OnSelectedNotesChanged called");
-            UpdateFavoriteActionText();
-            // Additional logic if needed when selection changes
-        }*/
-        /*private void ToggleEditMode()
-        {
-            IsEditMode = !IsEditMode;
-
-            foreach (var note in Notes)
-            {
-                note.UpdateCheckboxVisibility(IsEditMode);
-            }
-
-            // Additional logic as required...
-        }*/
-
-
-
-        // Call this method whenever the selection changes
-
+       
 
 
 
@@ -576,44 +348,7 @@ namespace AllNotes.ViewModels
         public event EventHandler OnIsCheckedChanged;
 
 
-        /*private void ClearSelectionState()
-        {
-            foreach (var note in Notes)
-            {
-                note.IsSelected = false;
-            }
-            // Update any related UI elements or internal states as necessary
-            // For example, clear the SelectedNotes collection
-            SelectedNotes.Clear();
-            UpdateFavoriteActionText(); // Reset or update action text if needed
-            OnPropertyChanged(nameof(SelectedNotes)); // Notify changes
-        }*/
-
-
-
-        /*private bool _isAllChecked;
-        public bool IsAllChecked
-        {
-            get => _isAllChecked;
-            set
-            {
-                if (_isAllChecked != value)
-                {
-                    _isAllChecked = value;
-                    OnPropertyChanged(nameof(IsAllChecked));
-                    UpdateAllNotesCheckState(value);
-                   RefreshCollectionView();
-                    // RefreshNotes();
-                  //  RefreshFavoriteStatusOfSelectedNotes();
-                   //   UpdateFavoriteStatusOfSelectedNotes();
-                       OnSelectedNotesChanged();
-                    foreach (var note in Notes)
-                    {
-                        note.IsSelected = _isAllChecked;
-                    }
-                }
-            }
-        }*/
+       
         private bool _isAllChecked;
         public bool IsAllChecked
         {
@@ -696,18 +431,6 @@ namespace AllNotes.ViewModels
         }
 
 
-
-
-
-        
-
-
-
-
-
-
-
-
         public ICommand ToggleSelectAllCommand { get; private set; }
 
         private void ToggleSelectAll()
@@ -750,28 +473,6 @@ namespace AllNotes.ViewModels
                 RefreshNotes(); // Assuming this will update the UI with the new favorite status
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         private ObservableCollection<AppNote> _selectedNotes = new ObservableCollection<AppNote>();
@@ -1004,29 +705,6 @@ namespace AllNotes.ViewModels
         }
 
 
-        /*private bool _isFavorite;
-        public bool IsFavorite
-        {
-            get => _isFavorite;
-            set
-            {
-                if (_isFavorite != value)
-                {
-                    _isFavorite = value;
-                    OnPropertyChanged(nameof(IsFavorite));
-                    MessagingCenter.Send(this, "NoteFavoriteStatusChanged", this);
-                }
-            }
-        }*/
-
-
-
-
-
-
-
-
-        //POSSIBLE RESET CALLS HERE OR OTHER METHOD CALLS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         public void SelectNote(AppNote note)
         {
             if (note != null && !SelectedNotes.Contains(note))
@@ -1082,48 +760,6 @@ namespace AllNotes.ViewModels
             OnSelectedNotesChanged();
         }
 
-        /* private async void ExecuteAddToFavorites()
-         {
-             // IsFavorite = !IsFavorite;
-
-             foreach (var note in SelectedNotes)
-             {
-                 note.IsFavorite = !note.IsFavorite; // Toggle favorite status
-                 await AppDatabase.Instance().UpdateNote(note); // Update the note in the database
-             }
-             RefreshNotes();
-             // Send a message to refresh the notes list in the main view
-             MessagingCenter.Send(this, "RefreshNotes");
-         }*/
-
-
-        /* private async void ExecuteAddToFavorites()
-         {
-             foreach (var note in SelectedNotes)
-             {
-                 note.IsFavorite = !note.IsFavorite;
-                 await AppDatabase.Instance().UpdateNote(note);
-             }
-             RefreshNotes(); // Make sure this re-fetches notes from the database
-             ExitEditMode(); // Reset edit mode and selection states
-             MessagingCenter.Send(this, "RefreshNotes");
-         }*/
-
-        //POSSIBLE RESET CALLS HERE OR OTHER METHOD CALLS!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         private void ClearSelectionState()
         {
             if (Notes != null)
@@ -1138,15 +774,226 @@ namespace AllNotes.ViewModels
             }
         }
 
-
+        public ICommand ExitEditModeCommand { get; private set; }
         public ICommand FavoriteActionCommand { get; private set; }
+        public ICommand MoveToDifferentFolderCommand { get; private set; }
+
+
+        private AppNote _selectedNoteForMoving;
+        public AppNote SelectedNoteForMoving
+        {
+            get => _selectedNoteForMoving;
+            set
+            {
+                _selectedNoteForMoving = value;
+                OnPropertyChanged(nameof(SelectedNoteForMoving));
+            }
+        }
+
+        /*private async void OpenManageFoldersPage()
+        {
+            // Assuming 'SelectedNotes' is a collection in your ViewModel that holds the selected notes.
+            var selectedNotes = this.SelectedNotes.ToList();
+
+            // Check if there are any selected notes
+            if (selectedNotes.Count == 0)
+            {
+                // Optionally, show a message to the user indicating that no notes are selected
+                await Application.Current.MainPage.DisplayAlert("No Notes Selected", "Please select at least one note to move.", "OK");
+                return;
+            }
+
+            // Create an instance of ManageFoldersViewModel with the selected notes
+            var manageFoldersViewModel = new ManageFoldersViewModel(selectedNotes);
+            var manageFoldersPage = new ManageFolders(manageFoldersViewModel);
+
+            // Navigate to the ManageFolders page
+            if (Application.Current.MainPage is FlyoutPage flyoutPage)
+            {
+                if (flyoutPage.Detail is NavigationPage navigationPage)
+                {
+                    await navigationPage.Navigation.PushAsync(manageFoldersPage);
+                }
+                else
+                {
+                    // Handle other cases or log an error
+                }
+            }
+            else
+            {
+                // Handle other cases or log an error
+            }
+        }*/
+
+
+        /*public async Task OpenMoveNotePopupAsync()
+        {
+            if (SelectedNotes == null || !SelectedNotes.Any())
+            {
+                // Optionally handle the case where no notes are selected
+                await Application.Current.MainPage.DisplayAlert("No Notes Selected", "Please select at least one note to move.", "OK");
+                return;
+            }
+
+            // Initialize MoveNotePopupViewModel with the selected notes
+            var moveNotePopupViewModel = new MoveNotePopupViewModel(SelectedNotes.ToList());
+
+            // Create MoveNotePopup with its ViewModel
+            var moveNotePopupPage = new MoveNotePopup(moveNotePopupViewModel);
+
+            // Open MoveNotePopup as a modal page
+            await Application.Current.MainPage.Navigation.PushModalAsync(moveNotePopupPage);
+        }*/
+        /*private async Task OpenMoveNotePopupAsync()
+        {
+            try
+            {
+                // Simplified logic to open the modal
+                var moveNotePopupPage = new MoveNotePopup(); // Open with default constructor for testing
+
+                if (Application.Current.MainPage is FlyoutPage flyoutPage)
+                {
+                    if (flyoutPage.Detail is NavigationPage navigationPage)
+                    {
+                        System.Diagnostics.Debug.WriteLine("Attempting to open modal...");
+                        await navigationPage.Navigation.PushModalAsync(moveNotePopupPage);
+                        System.Diagnostics.Debug.WriteLine("Modal opened.");
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Current MainPage is not a NavigationPage.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error in OpenMoveNotePopupAsync: " + ex.Message);
+            }
+        }*/
+        private async Task OpenMoveNotePopupAsync()
+        {
+            try
+            {
+                if (SelectedNotes == null || !SelectedNotes.Any())
+                {
+                    await Application.Current.MainPage.DisplayAlert("No Notes Selected", "Please select at least one note to move.", "OK");
+                    return;
+                }
+
+                var moveNotePopupViewModel = new MoveNotePopupViewModel(SelectedNotes.ToList());
+                var moveNotePopupPage = new MoveNotePopup(moveNotePopupViewModel);
+                moveNotePopupViewModel.SetNotesToMove(SelectedNotes.ToList());
+
+                if (Application.Current.MainPage is FlyoutPage flyoutPage)
+                {
+                    if (flyoutPage.Detail is NavigationPage navigationPage)
+                    {
+                        await navigationPage.Navigation.PushModalAsync(moveNotePopupPage);
+                    }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine("Current MainPage is not a FlyoutPage.");
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine("Error in OpenMoveNotePopupAsync: " + ex.Message);
+            }
+        }
+        /*public async Task OpenMoveNotePopupAsync()
+        {
+            if (SelectedNotes.Any())
+            {
+                var moveNotePopupViewModel = new MoveNotePopupViewModel();
+                moveNotePopupViewModel.LoadFolders(); // Explicitly call LoadFolders if needed
+                moveNotePopupViewModel.SetNotesToMove(SelectedNotes.ToList());
+
+                var moveNotePopupPage = new MoveNotePopup();
+                moveNotePopupPage.BindingContext = moveNotePopupViewModel;
+
+                await Application.Current.MainPage.Navigation.PushModalAsync(moveNotePopupPage);
+            }
+        }*/
+
+        /* public async Task OpenMoveNotePopupAsync()
+         {
+             if (SelectedNotes.Any())
+             {
+                 //  var moveNotePopupViewModel = new MoveNotePopupViewModel(SelectedNotes.ToList());
+                 //  var moveNotePopupPage = new MoveNotePopup(moveNotePopupViewModel);
+                 // Create an instance of MoveNotePopupViewModel, passing 'this' as MainPageViewModel
+                 var moveNotePopupViewModel = new MoveNotePopupViewModel(this);
+                 var moveNotePopupPage = new MoveNotePopup(); // Assuming this is your page class
+                 moveNotePopupPage.BindingContext = moveNotePopupViewModel;
+                 await Application.Current.MainPage.Navigation.PushModalAsync(moveNotePopupPage);
+                 // Check if the MainPage is a FlyoutPage and navigate accordingly
+                 *//*if (Application.Current.MainPage is FlyoutPage flyoutPage)
+                 {
+                     if (flyoutPage.Detail is NavigationPage navigationPage)
+                     {
+                         await navigationPage.Navigation.PushModalAsync(moveNotePopupPage);
+                     }
+                 }
+                 else
+                 {
+                     System.Diagnostics.Debug.WriteLine("Current MainPage is not a FlyoutPage.");
+                 }
+             }
+             *//*
+             }
+         }*/
+
+        private void MoveNotesToFolder(List<AppNote> notesToMove, AppFolder targetFolder)
+{
+            // Implement the logic to move notesToMove to targetFolder
+            // Update the database, etc.
+
+            // Refresh the UI or navigate back as needed
+        }
+        public ICommand OpenMoveNotePopupCommand { get; private set; }
+
+        
+
+        // Other initialization code...
+        public ICommand OpenManageFoldersCommand { get; private set; }
 
 
         public ICommand TestSelectedNotesCommand { get; private set; }
         public MainPageViewModel(AppFolder selectedFolder)
         {
+            MessagingCenter.Subscribe<MoveNotePopupViewModel, AppFolder>(this, "NotesMoved", (sender, folderId) =>
+            {
+                // Refresh the notes list for the affected folder
+                LoadNotesForFolder(selectedFolder);
+            });
+            OpenMoveNotePopupCommand = new Command(async () => await OpenMoveNotePopupAsync());
+            // OpenManageFoldersCommand = new Command(OpenManageFoldersPage);
+            //  MoveToDifferentFolderCommand = new Command(ShowMoveNotePopup);
+            MessagingCenter.Subscribe<MoveNotePopupViewModel, AppNote>(this, "NoteMoved", (sender, movedNote) =>
+            {
+                // Logic to handle the UI update after a note has been moved
+                RefreshNotes(); // Update your notes list
+            });
+
+            MessagingCenter.Subscribe<App>(this, "BackButtonPressed", (sender) =>
+            {
+                if (IsEditMode)
+                {
+                    // Logic to exit edit mode
+                    ExitEditMode();
+                }
+                else
+                {
+                    // Handle other back button logic as needed
+                }
+            });
+
+
+            ExitEditModeCommand = new Command(ExitEditMode);
+
             SelectedNotes = new ObservableCollection<AppNote>();
-            //TODO.....FOLDER DELETION SUDDENLY ISNT UPDATING FOLDER MENU!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+          
             ClearSelectionState();
             MessagingCenter.Subscribe<AppNote>(this, "NoteSelectionChanged", note =>
             {
@@ -1164,23 +1011,11 @@ namespace AllNotes.ViewModels
                 OnSelectedNotesChanged();
 
             });
-           /* MessagingCenter.Subscribe<AppNote>(this, "NoteFavoriteStatusChanged", note =>
-            {
-                OnSelectedNotesChanged();
-
-            });*/
+          
 
             FavoriteActionCommand = new Command(ExecuteFavoriteAction);
 
-            /* MessagingCenter.Subscribe<AppNote>(this, "NoteFavoriteStatusChanged", note =>
-             {
-
-                 OnSelectedNotesChanged();
-             });*/
-
-
-
-
+            
 
             MessagingCenter.Subscribe<AppNote>(this, "AddToSelectedNotes", note =>
             {
@@ -1199,20 +1034,8 @@ namespace AllNotes.ViewModels
             SelectedNotes = new ObservableCollection<AppNote>();
 
 
-            /*foreach (var note in Notes)
-            {
-                note.OnIsCheckedChanged += NoteOnIsCheckedChanged;
-            }*/
-
-
-            // Other initializations...
-        //    FavoriteCommand = new Command(ExecuteFavoriteCommand);
+            
             UpdateFavoriteActionText();
-
-
-
-
-
 
             MessagingCenter.Subscribe<AppNote, AppNote>(this, "AddToSelectedNotes", (sender, note) =>
             {
@@ -1225,10 +1048,6 @@ namespace AllNotes.ViewModels
                 if (SelectedNotes.Contains(note))
                     SelectedNotes.Remove(note);
             });
-
-
-
-
 
             TestSelectedNotesCommand = new Command(LogSelectedNotes);
             SelectedNotes = new ObservableCollection<AppNote>();
@@ -1490,11 +1309,7 @@ namespace AllNotes.ViewModels
 
 
 
-        /*private int GetLastUsedFolderId()
-        {
-            // Retrieve the last used folder ID from preferences
-            return Preferences.Get("LastUsedFolderId", 0); // Default to 0 if not set
-        }*/
+       
 
         private void SetLastUsedFolderId(int folderId)
         {
@@ -1505,24 +1320,11 @@ namespace AllNotes.ViewModels
 
 
 
-       /* private int GetLastSelectedFolderId()
-        {
-            // Retrieve the last selected folder ID from local settings
-            // Example: return Preferences.Get("LastFolderId", 0);
-            // Implement this method based on how you store local settings
-            return 0; // Default value if no folder ID is stored
-        }*/
 
         public ObservableCollection<AppNote> SelectedNotes { get; set; }
         public MainPageViewModel()
         {
-            //may have to remove it was a test!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
-
-            /*foreach (var note in Notes)
-            {
-                note.PropertyChanged += Note_PropertyChanged;
-            }*/
-
+           
             MessagingCenter.Subscribe<AppNote>(this, "AddToSelectedNotes", note =>
             {
                 if (!SelectedNotes.Contains(note))

@@ -22,11 +22,12 @@ namespace AllNotes.Views
         public ManageFolders(ManageFoldersViewModel manageFoldersViewModel)
         {
             InitializeComponent();
-           BindingContext = new ManageFoldersViewModel();
+            BindingContext = new ManageFoldersViewModel();
 
-            _manageFoldersViewModel= new ManageFoldersViewModel(this);
+            _manageFoldersViewModel = new ManageFoldersViewModel(this);
             BindingContext = _manageFoldersViewModel;
-        
+            
+
         }
         private void ToggleFolderDirectly(object sender
 , EventArgs e)
@@ -49,8 +50,15 @@ namespace AllNotes.Views
             {
                 // Handle the message
             });
-        }
+            var viewModel = BindingContext as ManageFoldersViewModel;
 
+            if (viewModel != null && viewModel.IsMoveNoteContext)
+            {
+                // Show alert only in the context of moving notes
+                DisplayAlert("Move Notes", "Please select a folder to move the notes to.", "OK");
+            }
+        }
+       
         protected override void OnDisappearing()
         {
             base.OnDisappearing();

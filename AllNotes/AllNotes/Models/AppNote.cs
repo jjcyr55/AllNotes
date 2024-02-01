@@ -22,7 +22,7 @@ namespace AllNotes.Models
         public int folderID { get; set; }
 
         public string Title { get; set; }
-
+      //  public int ParentFolderId { get; set; }
         public string Text { get; set; }
         public string Text1 { get; set; }
         public string Date { get; set; }

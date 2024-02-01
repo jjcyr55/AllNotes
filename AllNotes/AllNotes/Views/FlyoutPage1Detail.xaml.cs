@@ -78,8 +78,26 @@ namespace AllNotes.Views
 
 
 
+        /*protected override bool OnBackButtonPressed()
+        {
+            if (_mainPageViewModel.MultiSelectEnabled)
+                _mainPageViewModel.ShowOrHideToolbar();
 
-
+            return true;
+        }*/
+        /*protected override bool OnBackButtonPressed()
+        {
+            if (_mainPageViewModel != null && _mainPageViewModel.IsEditMode)
+            {
+                _mainPageViewModel.ExitEditMode();
+                return true; // Handled the back button press
+            }
+            else
+            {
+                return false; // Not handled here, continue with default behavior
+            }
+        }*/
+        
 
 
 

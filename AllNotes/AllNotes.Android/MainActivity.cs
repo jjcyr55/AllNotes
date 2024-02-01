@@ -6,6 +6,8 @@ using Android.Runtime;
 using Android.OS;
 using Xamarin.Forms.PlatformConfiguration.AndroidSpecific;
 using Syncfusion.Licensing;
+using AllNotes.ViewModels;
+using Xamarin.Forms;
 
 namespace AllNotes.Droid
 {
@@ -21,11 +23,12 @@ namespace AllNotes.Droid
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             Xamarin.Forms.Forms.Init(this, savedInstanceState);
 
+
+
             
 
-         
 
-            Xamarin.Essentials.Platform.Init(this, savedInstanceState);
+        Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             LoadApplication(new App());
              Window.SetSoftInputMode(Android.Views.SoftInput.AdjustPan);
@@ -36,6 +39,10 @@ namespace AllNotes.Droid
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);
 
             base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+        public override void OnBackPressed()
+        {
+            MessagingCenter.Send<App>(Xamarin.Forms.Application.Current as App, "BackButtonPressed");
         }
     }
 }
