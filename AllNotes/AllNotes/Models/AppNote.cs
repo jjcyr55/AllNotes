@@ -177,7 +177,17 @@ namespace AllNotes.Models
                 }
             }
         }*/
+        [Ignore]
+        public List<AppNote> Notes { get; set; } = new List<AppNote>();
 
+        public string Content
+        {
+            get
+            {
+                // Directly use the Date string without conversion
+                return $"Title: {Title}\n\n{Text}\n\nDate: {Date}";
+            }
+        }
 
         public AppNote()
         {

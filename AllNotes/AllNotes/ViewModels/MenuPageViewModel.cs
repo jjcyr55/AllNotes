@@ -195,7 +195,10 @@ namespace AllNotes.ViewModels
                 RefreshFolderList();
                 Reset();
             });
-
+            /*MessagingCenter.Subscribe<MoveNotePopupViewModel, int>(this, "NoteUpdated", (sender, folderId) =>
+            {
+                UpdateNoteCountForFolder(folderId);
+            });*/
             ToggleFolderCommand = new Command<AppFolder>(ToggleFolder);
 
 
@@ -514,53 +517,53 @@ namespace AllNotes.ViewModels
 
             OnPropertyChanged(nameof(FolderList));
         }*/
-       /* public void RefreshFolderList()
-        {
-            var allFolders = AppDatabase.Instance().GetFolderList();
+        /* public void RefreshFolderList()
+         {
+             var allFolders = AppDatabase.Instance().GetFolderList();
 
-            // Handle the case when FolderList is not initialized
-            if (FolderList == null)
-            {
-                FolderList = new ObservableCollection<AppFolder>(allFolders);
-                return;
-            }
+             // Handle the case when FolderList is not initialized
+             if (FolderList == null)
+             {
+                 FolderList = new ObservableCollection<AppFolder>(allFolders);
+                 return;
+             }
 
-            // Remove folders that no longer exist
-            var allFolderIds = allFolders.Select(f => f.Id).ToList();
-            for (int i = FolderList.Count - 1; i >= 0; i--)
-            {
-                if (!allFolderIds.Contains(FolderList[i].Id))
-                {
-                    FolderList.RemoveAt(i);
-                }
-            }
+             // Remove folders that no longer exist
+             var allFolderIds = allFolders.Select(f => f.Id).ToList();
+             for (int i = FolderList.Count - 1; i >= 0; i--)
+             {
+                 if (!allFolderIds.Contains(FolderList[i].Id))
+                 {
+                     FolderList.RemoveAt(i);
+                 }
+             }
 
-            // Add new folders or update existing ones
-            foreach (var folder in allFolders)
-            {
-                var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
-                if (existingFolder != null)
-                {
-                    UpdateFolderProperties(existingFolder, folder);
-                }
-                else
-                {
-                    FolderList.Add(folder);
-                }
-            }
+             // Add new folders or update existing ones
+             foreach (var folder in allFolders)
+             {
+                 var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
+                 if (existingFolder != null)
+                 {
+                     UpdateFolderProperties(existingFolder, folder);
+                 }
+                 else
+                 {
+                     FolderList.Add(folder);
+                 }
+             }
 
-            // Update subfolders for each folder
-            foreach (var folder in FolderList)
-            {
-                UpdateSubfolders(folder, allFolders);
-            }
+             // Update subfolders for each folder
+             foreach (var folder in FolderList)
+             {
+                 UpdateSubfolders(folder, allFolders);
+             }
 
-            OnPropertyChanged(nameof(FolderList));
-        }*/
+             OnPropertyChanged(nameof(FolderList));
+         }*/
 
         //  TO DO FIX FOLDER SEARCH HIERARCHY REFRESH WHERE SEARCH BREAKS IT/ MANAGE FOLDERS SEARCH HIERACHY BUILD WORKS BETTER SO GET CODE THERE IF POSSIBLE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
 
-        public void RefreshFolderList()
+        /*public void RefreshFolderList()
         {
             var allFolders = AppDatabase.Instance().GetFolderList();
             foreach (var folder in allFolders)
@@ -573,6 +576,29 @@ namespace AllNotes.ViewModels
                         allFolders.Where(f => f.ParentFolderId == existingFolder.Id));
                 }
             }
+            OnPropertyChanged(nameof(FolderList));
+        }*/
+        public void RefreshFolderList()
+        {
+            var allFolders = AppDatabase.Instance().GetFolderList();
+
+            // Check if FolderList is null, and initialize it if necessary
+            if (FolderList == null)
+            {
+                FolderList = new ObservableCollection<AppFolder>(); // Replace Folder with your folder type
+            }
+
+            foreach (var folder in allFolders)
+            {
+                var existingFolder = FolderList.FirstOrDefault(f => f.Id == folder.Id);
+                if (existingFolder != null)
+                {
+                    // Update existing folder
+                    existingFolder.Subfolders = new ObservableCollection<AppFolder>(
+                        allFolders.Where(f => f.ParentFolderId == existingFolder.Id));
+                }
+            }
+
             OnPropertyChanged(nameof(FolderList));
         }
 

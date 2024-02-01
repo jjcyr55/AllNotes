@@ -129,6 +129,9 @@ namespace AllNotes.Models
             }
         }
         public bool LockIconVisible => IsSecure;
+        [Ignore]
+        public List<AppNote> Notes { get; set; } = new List<AppNote>();
+        // public IEnumerable<object> Notes { get; internal set; }
 
         protected virtual void OnPropertyChanged(string propertyName)
         {

@@ -137,7 +137,7 @@ namespace AllNotes.ViewModels
 
                             // Assuming you have a method in your database service to update a note
                             await AppDatabase.Instance().UpdateNote(note);
-                            MessagingCenter.Send(this, "NoteUpdated", note.folderID);
+                         //   MessagingCenter.Send(this, "NotesUpdated", note.folderID);
                         }
 
                         // Inform other parts of your app that notes have been moved
