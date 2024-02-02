@@ -35,7 +35,9 @@ namespace AllNotes.ViewModels
         public ObservableCollection<AppNote> Notes { get; set; }
 
         private INavigationService _navigationService;
-        private int _folderId;
+          private int _folderId;
+        public int folderID { get; set; }
+        int selectedFolderID = 0;
         private bool _showFab = true;
         private SelectionMode _selectionMode = SelectionMode.None;
         private AppDatabase _database;
@@ -50,15 +52,147 @@ namespace AllNotes.ViewModels
         public bool IsNotEditMode => !IsEditMode;
         private bool isFirstNoteAfterRestart = true;
 
+        private bool _isArchiveFolder;
+
+        public bool IsArchiveFolder
+        {
+            get => _isArchiveFolder;
+            set
+            {
+                if (_isArchiveFolder != value)
+                {
+                    _isArchiveFolder = value;
+                    OnPropertyChanged(nameof(IsArchiveFolder));
+                    UpdateMenuItems();
+
+                    // Re-evaluate command execution status
+                    ((Command)DeleteNoteCommand).ChangeCanExecute();
+                    ((Command)RestoreNoteCommand).ChangeCanExecute();
+                }
+            }
+        }
+        public void NavigateToFolder(AppFolder folder)
+        {
+            var viewModel = new MainPageViewModel
+            {
+                // Assuming you have a method or logic to determine if the folder is the archive folder
+                IsArchiveFolder = folder.Name == "_Archive" // or folder.IsArchive if you added that property
+            };
+
+            // Proceed with navigation, passing viewModel to the MainPage
+        }
+        public void SetCurrentFolder(AppFolder folder)
+        {
+            IsArchiveFolder = folder.Name == "_Archive"; // Adjust the name as per your naming convention
+                                                         // Any additional setup based on the current folder...
+        }
+        private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set { _canEdit = value; OnPropertyChanged(nameof(CanEdit)); }
+        }
+
+        private bool _canRestore;
+        public bool CanRestore
+        {
+            get => _canRestore;
+            set { _canRestore = value; OnPropertyChanged(nameof(CanRestore)); }
+        }
+
+        private bool _canDelete;
+        public bool CanDelete
+        {
+            get => _canDelete;
+            set { _canDelete = value; OnPropertyChanged(nameof(CanDelete)); }
+
+        }
+        private bool _canCreateFolder;
+        public bool CanCreateFolder
+        {
+            get => _canCreateFolder;
+            set { _canCreateFolder = value; OnPropertyChanged(nameof(CanCreateFolder)); }
+
+        }
+        private bool _canUseNotesTemplate;
+        public bool CanUseNotesTemplate
+        {
+            get => _canUseNotesTemplate;
+            set { _canUseNotesTemplate = value; OnPropertyChanged(nameof(CanUseNotesTemplate)); }
+
+        }
+        private bool _canUnfavorite;
+        public bool CanUnfavorite
+        {
+            get => _canUnfavorite;
+            set { _canUnfavorite = value; OnPropertyChanged(nameof(CanUnfavorite)); }
+
+
+        }
 
 
 
 
 
 
+        private void UpdateMenuItems()
+        {
+            if (IsArchiveFolder)
+            {
+                // Setup for Archive folder
+                CanEdit = false; // If you want editing in the archive
+                CanCreateFolder = false;
+                CanUnfavorite = false;
+                CanUseNotesTemplate = false;
+                CanRestore = true;
+                CanDelete = true;
+            }
+            else if(IsRegularFolder) // It's a regular folder if not an archive
+            {
+                // Setup for Regular folder
+                CanEdit = false; // Editing is typically allowed in regular folders
+                CanCreateFolder = true;
+                CanUnfavorite = true;
+                CanUseNotesTemplate = true;
+                CanRestore = false; // Restore and Delete typically don't apply to regular folders
+                CanDelete = false;
+            }
+        }
+       
+        public void SwitchFolderType(AppFolder folder)
+        {
+            IsArchiveFolder = folder.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase);
+            IsRegularFolder = !IsArchiveFolder; // Directly oppose IsArchiveFolder
+            UpdateMenuItems();
+        }
+        private bool _isRegularFolder;
 
+        public bool IsRegularFolder
+        {
+            get => _isRegularFolder;
+            set
+            {
+                if (_isRegularFolder != value)
+                {
+                    _isRegularFolder = value;
+                    OnPropertyChanged(nameof(IsRegularFolder));
+                    UpdateMenuItems();
+                }
+            }
+        }
+        
+        /*private bool _canEdit;
+        public bool CanEdit
+        {
+            get => _canEdit;
+            set { _canEdit = value; OnPropertyChanged(nameof(CanEdit)); }
+        }*/
+        // public bool CanUnfavorite { get; private set; }
 
+       
 
+        
+           
 
 
         private string _favoriteActionText;
@@ -249,7 +383,7 @@ namespace AllNotes.ViewModels
             IsEditMode = true;
 
             OnSelectedNotesChanged();
-            ResetEditModeState();
+         //   ResetEditModeState();
             // Other logic specific to entering edit mode
         }
         public void ExitEditMode()
@@ -741,6 +875,8 @@ namespace AllNotes.ViewModels
         }
 
         private bool _isFavorite;
+      
+
         public bool IsFavorite
         {
             get => _isFavorite;
@@ -853,7 +989,9 @@ namespace AllNotes.ViewModels
                 var moveNotePopupViewModel = new MoveNotePopupViewModel(SelectedNotes.ToList());
                 var moveNotePopupPage = new MoveNotePopup(moveNotePopupViewModel);
                 moveNotePopupViewModel.SetNotesToMove(SelectedNotes.ToList());
-                RefreshNotes();
+               
+                RefreshNotes(); 
+                InitializeNoteCount();
 
                 ResetSelectionStates();
 
@@ -875,8 +1013,120 @@ namespace AllNotes.ViewModels
                 System.Diagnostics.Debug.WriteLine("Error in OpenMoveNotePopupAsync: " + ex.Message);
             }
         }
-        public ICommand ShareNoteCommand { get; private set; }
 
+        /*private async Task ArchiveNotesAsync()
+        {
+            if (SelectedNotes == null || !SelectedNotes.Any())
+            {
+                await Application.Current.MainPage.DisplayAlert("No Notes Selected", "Please select at least one note to archive.", "OK");
+                return;
+            }
+
+            // Assume we have a method to get the specific Archive folder. Adjust as necessary.
+            var archiveFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault(f => f.Name == "Archive");
+            if (archiveFolder == null)
+            {
+                Debug.WriteLine("Archive folder not found.");
+                return;
+            }
+
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Archive",
+                "Are you sure you want to archive the selected note(s)?",
+                "Yes", "No");
+
+            if (confirm)
+            {
+                foreach (var note in SelectedNotes)
+                {
+                    note.folderID = archiveFolder.Id; // Update the folder ID to the archive folder
+                    await AppDatabase.Instance().UpdateNote(note); // Update the note in the database
+                }
+
+                // Optionally, refresh the notes list and UI
+                RefreshNotes();
+                ResetSelectionStates();
+                InitializeNoteCount();
+                MessagingCenter.Send(this, "NotesArchived");
+            }
+        }*/
+        private async Task ArchiveNotesAsync()
+        {
+            if (SelectedNotes == null || !SelectedNotes.Any(note => note.IsSelected))
+            {
+                await Application.Current.MainPage.DisplayAlert("No Notes Selected", "Please select at least one note to archive.", "OK");
+                return;
+            }
+
+            // Find the archive folder; adjust as necessary if your method to get the folder list could return null
+            var archiveFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault(f => f.Name == "Archive");
+            if (archiveFolder == null)
+            {
+                Debug.WriteLine("Archive folder not found.");
+                return;
+            }
+
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Archive",
+                "Are you sure you want to archive the selected note(s)?",
+                "Yes", "No");
+
+            if (!confirm)
+            {
+                return; // User canceled the operation
+            }
+
+            // Proceed with archiving notes
+            foreach (var note in SelectedNotes.Where(note => note.IsSelected).ToList())
+            {
+                note.folderID = archiveFolder.Id; // Assign the ID of the archive folder
+                await AppDatabase.Instance().UpdateNote(note); // Update the note with the new folder ID
+            }
+
+            // Refresh UI components to reflect changes
+            RefreshNotes();
+            ResetSelectionStates();
+            InitializeNoteCount();
+
+            // Send a message indicating that a note was updated, using the archive folder's ID
+            // This assumes that listeners elsewhere in the app will respond to this message to update the UI accordingly
+            MessagingCenter.Send(this, "NoteUpdated", archiveFolder.Id);
+
+            // Notify the rest of the app that notes have been archived
+            MessagingCenter.Send(this, "NotesArchived");
+        }
+
+        // int? folderId = selectedNotes.FirstOrDefault()?.folderID;
+        /*foreach (AppNote note in SelectedNotes.ToList())
+                 {
+                     Debug.WriteLine($"Note: {note.Title}, IsSelected: {note.IsSelected}");
+                     if (note is AppNote) // Ensure only AppNote objects are deleted
+                     {
+                         db.DeleteNote(note); // Use async version for database operations
+                         folderId = note.folderID; // Store the folder ID
+                         Debug.WriteLine($"Deleting note: {note.Title}");
+                     }
+ }
+ // Check if folder ID was set and send message
+ if (folderId.HasValue)
+ {
+     MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", folderId.Value);
+ }*/
+        private void ExecuteDeleteNote()
+        {
+            // Your delete logic here...
+            Debug.WriteLine("Executing Delete Note");
+        }
+
+        private void ExecuteRestoreNote()
+        {
+            // Your restore logic here...
+            Debug.WriteLine("Executing Restore Note");
+        }
+        public ICommand DeleteNoteCommand { get; private set; }
+        public ICommand RestoreNoteCommand { get; private set; }
+        public ICommand ShareNoteCommand { get; private set; }
+        public ICommand ArchiveCommand { get; private set; }
         public ICommand OpenMoveNotePopupCommand { get; private set; }
         public ICommand TestSelectedNotesCommand { get; private set; }
 
@@ -888,6 +1138,21 @@ namespace AllNotes.ViewModels
         }
         public MainPageViewModel(AppFolder selectedFolder)
         {
+            ArchiveCommand = new Command(async () => await ArchiveNotesAsync());
+            DeleteNoteCommand = new Command(ExecuteDeleteNote);
+            RestoreNoteCommand = new Command(ExecuteRestoreNote);
+            _database = AppDatabase.Instance(); // Ensure you have a reference to your database
+                                                // IsArchiveFolder = selectedFolder.Name == "Archive";                // IsArchiveFolder = _database.IsFolderArchive(selectedFolder);
+            /* IsArchiveFolder = true;                                               // IsArchiveFolder = selectedFolder != null && selectedFolder.Name == "Archive";
+             Debug.WriteLine($"Selected folder: {selectedFolder.Name}");
+           //  IsArchiveFolder = selectedFolder.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase);
+             Debug.WriteLine($"IsArchiveFolder set to: {IsArchiveFolder}");                                            //  IsArchiveFolder = selectedFolder.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase);
+             Debug.WriteLine($"IsArchiveFolder set to: {IsArchiveFolder}");*/
+
+            Debug.WriteLine($"Selected folder: {selectedFolder.Name}");
+            IsArchiveFolder = selectedFolder.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase);
+            Debug.WriteLine($"IsArchiveFolder initially set to: {IsArchiveFolder}");
+
 
             var notes = FetchNotesForFolder(selectedFolder.Id);
             var updatedNotes = new List<AppNote>();
@@ -1476,7 +1741,7 @@ namespace AllNotes.ViewModels
         public ICommand DeleteNotesCommand => new Command(DeleteNotes);
 
 
-        public async void DeleteNotes()
+        /*public async void DeleteNotes()
         {
             if (!IsEditMode)
                 return;
@@ -1533,7 +1798,88 @@ namespace AllNotes.ViewModels
                 await Application.Current.MainPage.DisplayAlert("Error Deleting Notes", "An error occurred while deleting notes. Please try again.", "OK");
                 Debug.WriteLine("Error deleting notes: " + ex.Message);
             }
+        }*/
+        public async void DeleteNotes()
+        {
+            if (!IsEditMode)
+                return;
+
+            var selectedNotes = SelectedNotes.Where(n => n.IsSelected).ToList();
+            if (!selectedNotes.Any())
+            {
+                Debug.WriteLine("No notes selected for deletion.");
+                return; // Exit if no notes are selected
+            }
+            int? folderId = selectedNotes.FirstOrDefault()?.folderID; // This line extracts folderId from the selected notes
+
+            if (folderId == null)
+            {
+                Debug.WriteLine("Error: Cannot determine folder ID.");
+                return; // Handle error or exit if folderId cannot be determined
+            }
+            // Add a confirmation prompt before deletion
+            bool confirm = await Application.Current.MainPage.DisplayAlert(
+                "Confirm Deletion",
+                "Are you sure you want to delete the selected notes?",
+                "Yes", "No");
+
+            if (!confirm)
+            {
+                Debug.WriteLine("Deletion cancelled by the user.");
+                return; // Exit if the user cancels the deletion
+            }
+
+            try
+            {
+                var db = AppDatabase.Instance(); // Get a reference to the database
+
+                foreach (AppNote note in SelectedNotes.ToList())
+                {
+                    Debug.WriteLine($"Note: {note.Title}, IsSelected: {note.IsSelected}");
+                    if (note is AppNote) // Ensure only AppNote objects are deleted
+                    {
+                        db.DeleteNote(note); // Use async version for database operations
+                        folderId = note.folderID; // Store the folder ID
+                        Debug.WriteLine($"Deleting note: {note.Title}");
+                    }
+                }
+                // Check if folder ID was set and send message
+                if (folderId.HasValue)
+                {
+                    MessagingCenter.Send<MainPageViewModel, int>(this, "NoteUpdated", folderId.Value);
+                }
+                // MessagingCenter.Send(this, "FolderContentChanged", folderId);
+                // Refresh the note count and list after deletion
+                InitializeNoteCount(); // Updates the note count for the current folder
+                RefreshNotes(); // Reloads the notes for the current folder and updates the UI
+
+                SelectedNotes.Clear(); // Clear the selection
+                ShowOrHideToolbar(); // Reset the UI state after changes
+                SelectionMode = SelectionMode.None;
+            }
+            catch (Exception ex)
+            {
+                // Handle errors gracefully
+                await Application.Current.MainPage.DisplayAlert("Error Deleting Notes", "An error occurred while deleting notes. Please try again.", "OK");
+                Debug.WriteLine("Error deleting notes: " + ex.Message);
+            }
         }
+      //  MessagingCenter.Send(this, "RefreshNotes");
+      //  MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", selectedFolderID);
+
+       /* private void UpdateNoteCountForCurrentFolder(int? folderId)
+        {
+            if (!folderId.HasValue) return;
+
+            // Assuming you store the current folder's ID or have access to it here
+            // And assuming you have a method to fetch and update the note count for a specific folder
+            var updatedCount = AppDatabase.Instance().GetNoteCountForFolder(folderId.Value);
+            // Update UI or ViewModel property representing the note count for the current folder
+
+            // Messaging or direct UI update logic here
+            MessagingCenter.Send(this, "NoteCountUpdated", updatedCount);
+        }*/
+
 
 
 

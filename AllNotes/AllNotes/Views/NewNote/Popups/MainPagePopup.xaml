@@ -21,33 +21,50 @@ HorizontalOptions="End"
 
         <StackLayout>
             <!-- Edit Menu Item -->
-            <Label Text="Edit" FontAttributes="Bold">
+            <Label Text="Edit" FontAttributes="Bold" IsVisible="{Binding CanEditFolder}">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding EditCommand}" Tapped="Edit_Tapped" />
                 </Label.GestureRecognizers>
             </Label>
 
             <!-- Create Folder Menu Item -->
-            <Label Text="Create Folder" FontAttributes="Bold">
+            <Label Text="Create Folder" FontAttributes="Bold" IsVisible="{Binding CanCreateFolder}">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding CreateFolderCommand}" />
                 </Label.GestureRecognizers>
             </Label>
 
             <!-- Unfavorite Menu Item -->
-            <Label Text="Unfavorite" FontAttributes="Bold">
+            <Label Text="Unfavorite" FontAttributes="Bold" IsVisible="{Binding CanUnfavorite}">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding UnfavoriteCommand}" />
                 </Label.GestureRecognizers>
             </Label>
 
             <!-- Notes Template Menu Item -->
-            <Label Text="Notes Template" FontAttributes="Bold">
+            <Label Text="Notes Template" FontAttributes="Bold" IsVisible="{Binding CanUseNotesTemplate}">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding NotesTemplateCommand}" />
                 </Label.GestureRecognizers>
             </Label>
-            <Button Command="{Binding EditCommand}" Text="Edit" />
+
+            <Label Text="Edit" IsVisible="{Binding CanEdit}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EditCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label Text="Restore Note" IsVisible="{Binding CanRestore}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding RestoreNoteCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label Text="Delete Note" IsVisible="{Binding CanDelete}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding DeleteNotesCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
         </StackLayout>
     </Frame>
 </xct:Popup>

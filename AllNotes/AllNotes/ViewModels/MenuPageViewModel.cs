@@ -127,6 +127,15 @@ namespace AllNotes.ViewModels
 
         public MenuPageViewModel(Views.MenuPage menuPage)
         {
+
+            MessagingCenter.Subscribe<MainPageViewModel, int>(this, "FolderContentChanged", async (sender, folderId) =>
+            {
+                // Logic to refresh the folder count, this might involve re-querying the database
+                // For example:
+                await RefreshFolderCount(folderId);
+            });
+
+
             MessagingCenter.Subscribe<MoveNotePopupViewModel, int>(this, "NotesMoved", (sender, folderId) =>
             {
                 // Call method to update the UI based on the moved note
@@ -174,8 +183,12 @@ namespace AllNotes.ViewModels
                     OnPropertyChanged(nameof(FolderList));
                 }
             });
+            MessagingCenter.Subscribe<MoveNotePopupViewModel, int>(this, "NoteUpdated", async (sender, folderId) =>
+            {
+                // Logic to refresh the note count for the folder with folderId
+                UpdateNoteCountForFolder(folderId);
+            });
 
-            
 
 
             MessagingCenter.Subscribe<ManageFoldersViewModel>(this, "FolderListUpdated", (sender) =>
@@ -258,6 +271,17 @@ namespace AllNotes.ViewModels
                 UpdateNoteCountForFolder(folderId);
             });
 
+        }
+        private async Task RefreshFolderCount(int folderId)
+        {
+            var newCount = AppDatabase.Instance().GetNoteList(folderId).Count;
+            // Assuming you have a collection of folders in your ViewModel
+            var folderToUpdate = Folders.FirstOrDefault(f => f.Id == folderId);
+            if (folderToUpdate != null)
+            {
+                folderToUpdate.NoteCount = newCount;
+                OnPropertyChanged(nameof(Folders)); // Notify the change if necessary
+            }
         }
         private void HandleRenamedFolder(AppFolder updatedFolder)
         {

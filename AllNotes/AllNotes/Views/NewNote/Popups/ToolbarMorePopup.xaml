@@ -36,18 +36,22 @@ HorizontalOptions="Start"
             </Label>
 
             <!-- Unfavorite Menu Item -->
-           <!-- <Label Text="Make Duplicate" FontAttributes="Bold">
+            <Label Text="Make Duplicate" FontAttributes="Bold">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding DuplicateCommand}" />
                 </Label.GestureRecognizers>
-            </Label>-->
+            </Label>
 
-            <!-- Notes Template Menu Item -->
-           <!-- <Label Text="Save as Pdf" FontAttributes="Bold">
+            <Label Text="Archive Notes" FontAttributes="Bold">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding ArchiveCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            <Label Text="Save as Pdf" FontAttributes="Bold">
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding PdfCommand}" />
                 </Label.GestureRecognizers>
-            </Label>-->
+            </Label>
             
         </StackLayout>
     </Frame>

@@ -22,7 +22,9 @@ namespace AllNotes.Services
         {
             var mainPageViewModel = new MainPageViewModel(selectedFolder);
             var flyoutPage1Detail = new FlyoutPage1Detail { BindingContext = mainPageViewModel };
+            mainPageViewModel.SwitchFolderType(selectedFolder);
 
+            mainPageViewModel.SetCurrentFolder(selectedFolder);
             if (Application.Current.MainPage is FlyoutPage flyoutPage)
             {
                 flyoutPage.Detail = new NavigationPage(flyoutPage1Detail);

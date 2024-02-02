@@ -50,6 +50,7 @@ namespace AllNotes.ViewModels
         // public string NewNoteText { get; set; }
         public string Date { get; set; }
         public int folderID { get; set; }
+        int selectedFolderID = 0;
         public ObservableCollection<int> NoteColors { get; set; }
         public Collection<int> FontSizes { get; set; }
 
@@ -58,7 +59,7 @@ namespace AllNotes.ViewModels
         private MenuPageViewModel _menuPageViewModel;
 
         private AppNote _note;
-        int selectedFolderID = 0;
+        
         AppNote selectedNote = null;
         private FontAttributes _fontAttribute = FontAttributes.None;
         private MenuViewModel _menuViewModel;

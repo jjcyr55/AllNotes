@@ -193,4 +193,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\empty_circle.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\archive_folder.png" />
+  </ItemGroup>
 </Project>

@@ -144,7 +144,8 @@ namespace AllNotes.ViewModels
                         MessagingCenter.Send(this, "NotesMoved", SelectedFolder);
                         await Application.Current.MainPage.Navigation.PopModalAsync();
                         MessagingCenter.Send(this, "CloseModal");
-                       
+                        MessagingCenter.Send(this, "NoteUpdated", SelectedFolder.Id);
+
                         // MessagingCenter.Send(this, "CloseModal");
                         // Optionally, refresh the main page to reflect changes
                         // This depends on how your main page is set up to listen for updates

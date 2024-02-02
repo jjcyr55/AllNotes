@@ -68,13 +68,45 @@ namespace AllNotes.Database
             {
                 InsertFolder(new AppFolder("Default Folder", "folder_account_outline.png"));
             }
+            // Ensure "Default Folder" exists
+            EnsureDefaultFolderExists();
+
+            // Ensure "Archive" folder exists
+            EnsureArchiveFolderExists();
         }
-
-
         public List<AppFolder> GetFolderList()
         {
-            return dbConnection.Table<AppFolder>().ToList();
+            // Your existing logic to get the list
+            return dbConnection.Table<AppFolder>().ToList() ?? new List<AppFolder>(); // Assuming LINQ to SQL/EF or similar
         }
+        public bool IsFolderArchive(int folderId)
+        {
+            // Assuming "Archive" is a special name for the Archive folder
+            var folder = dbConnection.Table<AppFolder>().FirstOrDefault(f => f.Id == folderId);
+            return folder != null && folder.Name == "Archive";
+        }
+        private void EnsureDefaultFolderExists()
+        {
+            var defaultFolder = dbConnection.Table<AppFolder>().FirstOrDefault(f => f.Name == "Default Folder");
+            if (defaultFolder == null)
+            {
+                InsertFolder(new AppFolder { Name = "Default Folder", IconPath = "folder_account_outline.png" });
+            }
+        }
+
+        private void EnsureArchiveFolderExists()
+        {
+            var archiveFolder = dbConnection.Table<AppFolder>().FirstOrDefault(f => f.Name == "Archive");
+            if (archiveFolder == null)
+            {
+                InsertFolder(new AppFolder { Name = "Archive", IconPath = "archive_folder.png" });
+                // Note: You can customize 'IconPath' with an appropriate icon for the Archive folder.
+            }
+        }
+           /* public List<AppFolder> GetFolderList()
+        {
+            return dbConnection.Table<AppFolder>().ToList();
+        }*/
       
         public async Task<AppFolder> GetFirstFolder()
         {

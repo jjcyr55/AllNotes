@@ -24,6 +24,7 @@
             <converters:SelectionToColorConverter x:Key="SelectionToColorConverter"/>
             <converters:BooleanToColorConverter x:Key="BooleanToColorConverter" TrueColor="LightGray" FalseColor="Transparent"/>
             <converters:FavoriteIconConverter x:Key="FavoriteIconConverter"/>
+            <converters:InverseBooleanConverter x:Key="InverseBooleanConverter" />
             <converters:BooleanToColorConverter x:Key="BoolToColorConverter" 
                                        TrueColor="Green" 
                                        FalseColor="Transparent"/>

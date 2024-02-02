@@ -35,8 +35,9 @@ namespace AllNotes.Models
         public int? ParentFolderId { get; set; }
         public bool HasSubfolders => Subfolders.Any();
 
-        
-        public string ExpandCollapseIcon => HasSubfolders && IsExpanded ? "arrow_up.png" : "arrow_down.png";
+      //  public bool IsArchive { get; set; }
+    
+    public string ExpandCollapseIcon => HasSubfolders && IsExpanded ? "arrow_up.png" : "arrow_down.png";
 
         [Ignore]
         public ObservableCollection<AppFolder> Subfolders { get; set; }
