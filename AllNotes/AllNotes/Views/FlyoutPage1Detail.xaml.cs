@@ -77,7 +77,7 @@ namespace AllNotes.Views
         }
 
 
-
+        
         /*protected override bool OnBackButtonPressed()
         {
             if (_mainPageViewModel.MultiSelectEnabled)
@@ -97,7 +97,7 @@ namespace AllNotes.Views
                 return false; // Not handled here, continue with default behavior
             }
         }*/
-        
+
 
 
 

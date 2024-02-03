@@ -155,6 +155,7 @@ namespace AllNotes.Database
         }*/
         public async Task<int> UpdateNote(AppNote note)
         {
+           
             // Assuming note is an instance of AppNote with all the updated properties
             return dbConnection.Update(note); // Use UpdateAsync if using async
         }

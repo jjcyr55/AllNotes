@@ -130,13 +130,21 @@ namespace AllNotes.ViewModels
                 {
                     try
                     {
+                        int archiveFolderId = await GetArchiveFolderIdAsync();
+                        if (archiveFolderId == -1)
+                        {
+                            // Archive folder ID wasn't found; handle this case
+                            return;
+                        }
                         foreach (var note in NotesToMove)
                         {
                             // Assuming AppNote has a property named 'FolderID' or similar to represent its folder
                             note.folderID = SelectedFolder.Id;
-
-                            // Assuming you have a method in your database service to update a note
-                            await AppDatabase.Instance().UpdateNote(note);
+                            note.OriginalFolderId = note.folderID; // Save current folder ID as OriginalFolderId
+                            note.folderID = archiveFolderId; // Then set folderID to Archive's folder ID
+                            note.IsArchived = true; 
+                                                    // Assuming you have a method in your database service to update a note
+                                                    await AppDatabase.Instance().UpdateNote(note);
                          //   MessagingCenter.Send(this, "NotesUpdated", note.folderID);
                         }
 
@@ -158,7 +166,22 @@ namespace AllNotes.ViewModels
                 }
             }
         }
-
+        private async Task<int> GetArchiveFolderIdAsync()
+        {
+            // Assume AppDatabase.Instance().GetFolderList() returns a list of folders
+            var archiveFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault(f => f.Name == "Archive");
+            if (archiveFolder != null)
+            {
+                return archiveFolder.Id;
+            }
+            else
+            {
+                // Handle the case where the archive folder doesn't exist
+                // This might involve creating the archive folder if it's missing
+                Debug.WriteLine("Archive folder not found.");
+                return -1; // Return an invalid ID, or handle this scenario appropriately
+            }
+        }
         /*private async void ShowConfirmationPrompt()
         {
             bool confirm = await Application.Current.MainPage.DisplayAlert(

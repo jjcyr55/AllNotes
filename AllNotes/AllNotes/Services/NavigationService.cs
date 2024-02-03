@@ -23,12 +23,14 @@ namespace AllNotes.Services
             var mainPageViewModel = new MainPageViewModel(selectedFolder);
             var flyoutPage1Detail = new FlyoutPage1Detail { BindingContext = mainPageViewModel };
             mainPageViewModel.SwitchFolderType(selectedFolder);
-
+            
             mainPageViewModel.SetCurrentFolder(selectedFolder);
             if (Application.Current.MainPage is FlyoutPage flyoutPage)
             {
                 flyoutPage.Detail = new NavigationPage(flyoutPage1Detail);
                 flyoutPage.IsPresented = false; // Close the menu if it's open
+                mainPageViewModel.ResetEditModeState();
+                mainPageViewModel.ExitEditMode();
             }
             else
             {
@@ -37,7 +39,10 @@ namespace AllNotes.Services
                 {
                     Detail = new NavigationPage(flyoutPage1Detail),
                     Flyout = new MenuPage() // Assuming MenuPage is your flyout menu
-                };
+                    
+            };
+                mainPageViewModel.ResetEditModeState();
+                mainPageViewModel.ExitEditMode();
                 Application.Current.MainPage = newFlyoutPage;
             }
         }
