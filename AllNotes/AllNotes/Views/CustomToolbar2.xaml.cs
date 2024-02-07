@@ -17,7 +17,7 @@ namespace AllNotes.Views
         {
             InitializeComponent();
         }
-        /*public event EventHandler OpenColorPickerRequested;
+        public event EventHandler OpenColorPickerRequested;
 
         protected virtual void OnOpenColorPickerRequested()
         {
@@ -26,6 +26,6 @@ namespace AllNotes.Views
         private void OpenColorPicker_Clicked(object sender, EventArgs e)
         {
             OnOpenColorPickerRequested();
-        }*/
+        }
     }
     }

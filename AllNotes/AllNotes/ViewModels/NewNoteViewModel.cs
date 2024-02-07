@@ -33,9 +33,10 @@ namespace AllNotes.ViewModels
         public ICommand MenuItemSelectedCommand { get; }
        public ICommand SaveNoteCommand => new Command(SaveNote);
         public ICommand OpenMenuCommand => new Command(OpenMenu);
+        public ICommand ShowColorPickerPopupCommand => new Command(ShowColorPickerPopup);
 
-
-        public ICommand OpenColorPickerPopupCommand { get; private set; }
+       // public ICommand ShowColorPickerPopupCommand { get; }
+      //  public ICommand ShowColorPickerPopupCommand { get; private set; }
         public Func<Task<string>> FetchWebViewContent { get; set; }
 
         public ICommand BoldTextCommand => new Command(BoldText);
@@ -286,8 +287,8 @@ public FontAttributes FontAttribute
 
             public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
-
-            OpenColorPickerPopupCommand = new Command(ExecuteOpenColorPickerPopup);
+          //  ShowColorPickerPopupCommand = new Command(ShowColorPickerPopup);
+          //  OpenColorPickerPopupCommand = new Command(ExecuteOpenColorPickerPopup);
             //    SaveNoteCommand = new Command<string>(SaveNote);
             //    BackgroundColorAction = () => { /* Logic for Background Color */ };
             //   ShareAction = () => { /* Logic for Share */ };
@@ -373,8 +374,17 @@ public FontAttributes FontAttribute
                 selectedFolderID = note.folderID;
             }
         }
-
-
+       /* var newNotePopup = new NewNotePopup();
+        newNotePopup.BindingContext = this;
+            Application.Current.MainPage.Navigation.ShowPopup(newNotePopup);*/
+        private void ShowColorPickerPopup()
+        {
+            var colorPickerPopup = new ColorPickerPopup();
+            // colorPickerViewModel.ColorSelected += OnColorSelected;
+            colorPickerPopup.BindingContext = this;
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
+        }
+        
         private void ExecuteOpenColorPickerPopup()
         {
             var colorPickerViewModel = new ColorPickerViewModel();

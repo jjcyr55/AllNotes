@@ -16,7 +16,7 @@
 
                 </Label>
             </FlexLayout>
-            
+            <Button Text="Set Text Color" Clicked="OpenColorPicker_Clicked" />
             <Button Text="B" Command="{Binding BoldCommand}" />
             <Button Text="I" Command="{Binding ItalicCommand}" />
             <Button Text="U" Command="{Binding UnderlineCommand}" />
@@ -37,7 +37,7 @@
             <Button Text="Subscript" Command="{Binding SubscriptCommand}" />
             <Button Text="Superscript" Command="{Binding SuperscriptCommand}" />
             <Button Text="Clear Formatting" Command="{Binding ClearFormattingCommand}" />
-            <Button Text="Set Text Color" Clicked="OpenColorPicker_Clicked" />
+            
             <!-- Add other buttons as needed, with Margin for spacing -->
         </StackLayout>
     </ScrollView>

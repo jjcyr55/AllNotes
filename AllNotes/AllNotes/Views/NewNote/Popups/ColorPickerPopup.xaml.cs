@@ -25,15 +25,19 @@ namespace AllNotes.Views.NewNote.Popups
         public ColorPickerPopup(WebView webViewRte) : this() // Call the default constructor
         {
             _webViewRte = webViewRte;
+            BindingContext = new ColorPickerViewModel();
             // Additional initialization with WebView if necessary
         }
         public ColorPickerPopup()
         {
             InitializeComponent();
-           
-      
-        }
 
+            BindingContext = new ColorPickerViewModel();
+        }
+        /*private void OnRedButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte?.EvaluateJavaScriptAsync("setTextColor('#FF0000')");
+        }*/
         /*public ColorPickerPopup()
         {
         }*/
@@ -48,7 +52,7 @@ namespace AllNotes.Views.NewNote.Popups
         {
             _webViewRte?.EvaluateJavaScriptAsync("setTextColor('#FF0000')");
         }
-        private void RedButton_Clicked(object sender, EventArgs e)
+        /*private void RedButton_Clicked(object sender, EventArgs e)
         {
             OnColorSelected(Color.Red);
 
@@ -64,7 +68,7 @@ namespace AllNotes.Views.NewNote.Popups
         {
             OnColorSelected(Color.Blue);
 
-        }
+        }*/
         /*public void OnSetTextColorRedClicked(object sender, EventArgs e)
         {
             ExecuteJavaScript("setTextColor('#FF0000')");
@@ -95,6 +99,56 @@ namespace AllNotes.Views.NewNote.Popups
                 var script = $"setTextColor('{color}')";
                 _webViewRte.EvaluateJavaScriptAsync(script);
             }
+        }
+        private void OnRedButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#FF0000')");
+            this.Dismiss(null);
+        }
+        /*private void OnRedButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte?.EvaluateJavaScriptAsync("setTextColor('#FF0000')");
+            this.Dismiss(null); // Close the popup after setting the color
+        }*/
+        private void OnGreenButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#00FF00')");
+            this.Dismiss(null);
+        }
+
+        private void OnBlueButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#0000FF')");
+            this.Dismiss(null);
+        }
+        private void OnYellowButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#FFFF00')");
+            this.Dismiss(null);
+        }
+
+        private void OnPurpleButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#800080')");
+            this.Dismiss(null);
+        }
+
+        private void OnOrangeButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#FFA500')");
+            this.Dismiss(null);
+        }
+
+        private void OnBlackButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#000000')");
+            this.Dismiss(null);
+        }
+
+        private void OnWhiteButtonClicked(object sender, EventArgs e)
+        {
+            _webViewRte.EvaluateJavaScriptAsync("setTextColor('#FFFFFF')");
+            this.Dismiss(null);
         }
         private void ColorPicker_ColorChanged(object sender, EventArgs e)
         {

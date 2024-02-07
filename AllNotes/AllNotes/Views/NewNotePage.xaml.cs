@@ -15,6 +15,8 @@ using AllNotes.Database;
 using System.ComponentModel;
 using System.Net;
 using System.IO;
+using AllNotes.Views.NewNote.Popups;
+using Xamarin.CommunityToolkit.Extensions;
 
 namespace AllNotes.Views.NewNote
 {
@@ -47,8 +49,10 @@ namespace AllNotes.Views.NewNote
         public NewNotePage(NewNoteViewModel newNoteViewModel)
         {
             InitializeComponent();
+            customToolbar.OpenColorPickerRequested += CustomToolbar_OpenColorPickerRequested;
             NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = newNoteViewModel;
+            SubscribeToMessages();
             newNoteViewModel.FetchWebViewContent = async () => await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
             /*MessagingCenter.Subscribe<NewNoteViewModel>(this, "RequestSaveContent", async (sender) =>
             {
@@ -57,7 +61,7 @@ namespace AllNotes.Views.NewNote
                 // Ensure you have a method in your ViewModel to call for saving
                 (BindingContext as NewNoteViewModel)?.SaveNote();
             });*/
-
+            
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RequestHtmlContent", async (sender) =>
             {
                 var content = await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
@@ -82,7 +86,19 @@ namespace AllNotes.Views.NewNote
                 webViewRte.EvaluateJavaScriptAsync(script).ConfigureAwait(false);
             });
         }
-
+        private void ShowColorPickerPopup()
+        {
+            var popup = new ColorPickerPopup(); // Assuming this is your custom popup
+            popup.BindingContext = new ColorPickerViewModel();
+            Application.Current.MainPage.Navigation.ShowPopup(popup);
+        }
+        private void SubscribeToMessages()
+        {
+            MessagingCenter.Subscribe<ColorPickerViewModel, string>(this, "ExecuteJavaScript", (sender, script) =>
+            {
+                webViewRte.EvaluateJavaScriptAsync(script);
+            });
+        }
         // Default constructor for a new note without specifying a folder
         public NewNotePage()
         {
@@ -90,6 +106,7 @@ namespace AllNotes.Views.NewNote
             NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = new NewNoteViewModel();
         }
+        
 
         // Optional: Override the back button behavior if needed
         /*protected override bool OnBackButtonPressed()
@@ -159,7 +176,11 @@ namespace AllNotes.Views.NewNote
                 };
             }
         }
-
+        private void CustomToolbar_OpenColorPickerRequested(object sender, EventArgs e)
+        {
+            var colorPickerPopup = new ColorPickerPopup(webViewRte);
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
+        }
         private async void SaveButton_Clicked(object sender, EventArgs e)
         {
             var content = await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
