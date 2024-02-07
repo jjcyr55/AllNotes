@@ -34,18 +34,98 @@ namespace AllNotes.ViewModels
        public ICommand SaveNoteCommand => new Command(SaveNote);
         public ICommand OpenMenuCommand => new Command(OpenMenu);
 
-        
-       
 
-       
+        public ICommand OpenColorPickerPopupCommand { get; private set; }
+        public Func<Task<string>> FetchWebViewContent { get; set; }
+
         public ICommand BoldTextCommand => new Command(BoldText);
 
         public ICommand ShareNoteCommand => new Command(ShareNote);
 
+        public ICommand BoldCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setBold()");
+        });
 
+        public ICommand ItalicCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setItalic()");
+        });
 
+        public ICommand UnderlineCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setUnderline()");
+        });
 
+        public ICommand StrikeThroughCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setStrikeThrough()");
+        });
+        public ICommand AlignLeftCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setTextAlignLeft()");
+        });
 
+        public ICommand AlignCenterCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setTextAlignCenter()");
+        });
+
+        public ICommand AlignRightCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setTextAlignRight()");
+        });
+
+        public ICommand JustifyCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setTextAlignJustify()");
+        });
+
+        public ICommand BulletedListCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setBulletedList()");
+        });
+
+        public ICommand NumberedListCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setNumberedList()");
+        });
+
+        public ICommand IncreaseIndentCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "increaseIndent()");
+        });
+
+        public ICommand DecreaseIndentCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "decreaseIndent()");
+        });
+
+        public ICommand SubscriptCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setSubscript()");
+        });
+
+        public ICommand SuperscriptCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "setSuperscript()");
+        });
+        /* public ICommand SetBackgroundColorCommand => new Command<string>((color) =>
+         {
+             MessagingCenter.Send(this, "ExecuteJavaScript", $"setBackgroundColor('{color}')");
+         });*/
+        public ICommand SetBackgroundColorCommand { get; private set; }
+        public ICommand SetTextColorCommand => new Command<string>((color) =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", $"setTextColor('{color}')");
+        });
+
+        public ICommand ClearFormattingCommand => new Command(() =>
+        {
+            MessagingCenter.Send(this, "ExecuteJavaScript", "clearFormatting()");
+        });
+
+        
         // public string NewNoteTitle { get; set; }
         // public string NewNoteText { get; set; }
         public string Date { get; set; }
@@ -71,10 +151,46 @@ namespace AllNotes.ViewModels
          {
              return Enum.GetValues(typeof(Colors)).Cast<Colors>();
          }*/
-
        
+       // public ICommand SaveNoteCommand => new Command(SaveNoteContent);
+        public async void SaveNoteContent(object parameter)
+        {
+            var content = parameter as string;
+            /* await WaitForHtmlContent();
+             if (string.IsNullOrEmpty(HtmlContent))
+             {
+                 return; // Return if the HTML content is null or empty
+             }*/
+            var db = AppDatabase.Instance();
+            
+            if (_note == null)
+            {
+                _note = new AppNote(); // Create a new note if it doesn't exist
+            }
 
-        public FontAttributes FontAttribute
+            _note.Text = content; // Assuming 'Text' is where you want to store the HTML content
+            if (_note.id == 0)
+            {
+                await db.InsertNote(_note);
+            }
+            else
+            {
+                await db.UpdateNote(_note);
+
+            }
+
+            Device.BeginInvokeOnMainThread(async () =>
+            {
+                if (_mainPageViewModel != null)
+                {
+                 //   _mainPageViewModel.GetNotesFromDb();
+                    await Application.Current.MainPage.Navigation.PopAsync();
+                }
+            });
+            
+
+        }
+public FontAttributes FontAttribute
         {
             get => _fontAttribute;
             set
@@ -171,10 +287,20 @@ namespace AllNotes.ViewModels
             public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
 
+            OpenColorPickerPopupCommand = new Command(ExecuteOpenColorPickerPopup);
+            //    SaveNoteCommand = new Command<string>(SaveNote);
             //    BackgroundColorAction = () => { /* Logic for Background Color */ };
             //   ShareAction = () => { /* Logic for Share */ };
 
+            SetBackgroundColorCommand = new Command<string>((color) =>
+            {
+                MessagingCenter.Send(this, "ExecuteJavaScript", $"setBackgroundColor('{color}')");
+            });
 
+            MessagingCenter.Subscribe<App, Color>(this, "SelectedColor", (sender, color) =>
+            {
+                // Apply the color to your target property, e.g., text color or background color
+            });
 
 
             //  InitializeMenuItems();
@@ -247,19 +373,35 @@ namespace AllNotes.ViewModels
                 selectedFolderID = note.folderID;
             }
         }
-       /* private void InitializeMenuItems()
-        {
-            MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
-            MenuItems = new ObservableCollection<MenuItemModel>
-            
-            {
-                 new MenuItemModel { Title = "Share", CommandAction = ShareNote },
-            // new MenuItemModel { Title = "Background Color", Command = ChangeNoteColorCommand },
-           //   new MenuItemModel { Title = "Share", CommandAction = ShareNote },
-            // Other dynamic menu items...
 
-        };
-        }*/
+
+        private void ExecuteOpenColorPickerPopup()
+        {
+            var colorPickerViewModel = new ColorPickerViewModel();
+           // colorPickerViewModel.ColorSelected += OnColorSelected;
+            var colorPickerPopup = new ColorPickerPopup { BindingContext = colorPickerViewModel };
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
+        }
+        private void OnColorSelected(object sender, ColorEventArgs e)
+        {
+            // Perform action with the selected color e.SelectedColor
+            // For example, set the text color of the rich text editor
+            // MessagingCenter.Send(this, "ExecuteJavaScript", $"setTextColor('{e.SelectedColor.ToHex()}')");
+        }
+
+        /* private void InitializeMenuItems()
+         {
+             MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
+             MenuItems = new ObservableCollection<MenuItemModel>
+
+             {
+                  new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+             // new MenuItemModel { Title = "Background Color", Command = ChangeNoteColorCommand },
+            //   new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+             // Other dynamic menu items...
+
+         };
+         }*/
 
         private void FavoriteNote(object obj)
         {
@@ -300,7 +442,8 @@ namespace AllNotes.ViewModels
             }
             else if (!string.IsNullOrEmpty(HtmlContent))
             {
-                SaveNote(); // Save the new note with the favorite status
+                //  SaveNote(HtmlContent); // Save the new note with the favorite status
+                SaveNote();
             }
             // Send a message to refresh the notes list in the main view
             MessagingCenter.Send(this, "RefreshNotes");
@@ -518,11 +661,31 @@ namespace AllNotes.ViewModels
 
             }
         }*/
-        private async void SaveNote()
+        //    public ICommand SaveNoteCommand { get; }
+
+        // In your ViewModel constructor
+
+        //string content
+        /*public async void SaveNote()
         {
-            if (string.IsNullOrEmpty(HtmlContent))
+            // MessagingCenter.Send(this, "RequestSaveContent");
+            // var content = parameter as string;
+            //  MessagingCenter.Send(this, "RequestHtmlContent");
+
+            // Assuming HtmlContent will be updated with the content from the WebView
+            // Wait until HtmlContent is not null or empty
+            // await WaitForHtmlContent();
+            if (FetchWebViewContent == null)
             {
-                return; // Return if the HTML content is null or empty
+                Debug.WriteLine("FetchWebViewContent delegate is not set.");
+                return;
+            }
+
+            var content = await FetchWebViewContent();
+            if (string.IsNullOrEmpty(content))
+            {
+                Debug.WriteLine("Content is empty.");
+                return;
             }
 
             var db = AppDatabase.Instance();
@@ -532,8 +695,10 @@ namespace AllNotes.ViewModels
             {
                 AppNote note = new AppNote
                 {
-                    folderID = selectedFolderID,
-                    Text = HtmlContent,
+                    //Text = content,
+                    HtmlContent = content,
+                folderID = selectedFolderID,
+                 //   Text = HtmlContent,
                     Title = NewNoteTitle,
                     Date = currentDateTime,
                     IsFavorite = IsFavorite,
@@ -558,8 +723,68 @@ namespace AllNotes.ViewModels
                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
                 await navigationPage?.PopAsync();
             }
+        }*/
+        public async void SaveNote()
+        {
+            if (FetchWebViewContent == null)
+            {
+                Debug.WriteLine("FetchWebViewContent delegate is not set.");
+                return;
+            }
+
+            var content = await FetchWebViewContent();
+            if (string.IsNullOrEmpty(content))
+            {
+                Debug.WriteLine("Content is empty.");
+                return;
+            }
+
+            var db = AppDatabase.Instance();
+            string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            if (_note == null) // If creating a new note
+            {
+                AppNote note = new AppNote
+                {
+                    // Assign the content fetched from the WebView to the Text property
+                    Text = content,
+                    folderID = selectedFolderID,
+                    Title = NewNoteTitle,
+                    Date = currentDateTime,
+                    IsFavorite = IsFavorite,
+                    // Add other properties as needed
+                };
+
+                await db.InsertNote(note); // Insert the new note
+                MessagingCenter.Send(this, "RefreshNotes");
+                MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", selectedFolderID); // Notify MenuPageViewModel
+            }
+            else // If updating an existing note
+            {
+                _note.Text = content; // Update the existing note with the new content
+                await db.UpdateNote(_note); // Update the existing note
+                MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", _note.folderID);
+                MessagingCenter.Send(this, "NoteUpdated", _note);
+            }
+
+            // Navigation logic after saving
+            if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+            {
+                var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                await navigationPage?.PopAsync();
+            }
         }
 
+        private Task WaitForHtmlContent()
+        {
+            return Task.Run(() =>
+            {
+                while (string.IsNullOrEmpty(HtmlContent))
+                {
+                    Task.Delay(100).Wait(); // Adjust delay as necessary
+                }
+            });
+        }
 
         private string _htmlContent;
         public string HtmlContent

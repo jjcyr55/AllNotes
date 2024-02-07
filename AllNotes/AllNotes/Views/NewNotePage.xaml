@@ -30,7 +30,8 @@
      CornerRadius="30"
      xct:TouchEffect.NativeAnimation="True" />
         <local:EntryNoUnderline Placeholder="Title" Text="{Binding NewNoteTitle}" FlexLayout.Grow="1" />
-        <!-- Custom Back Button -->
+                 
+                <!-- Custom Back Button -->
         <ImageButton
      Command="{Binding OpenMenuCommand}"
      Source="menuDots.png"
@@ -45,10 +46,13 @@
             </FlexLayout>
            
         </FlexLayout>
-        <richtexteditor:SfRichTextEditor x:Name="richTextEditor"
+        <Button Text="Save" x:Name="saveButton" Clicked="SaveButton_Clicked"  />
+        <WebView x:Name="webViewRte" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" HtmlText="{Binding HtmlContent, Mode=TwoWay}"/>
+       <!-- <richtexteditor:SfRichTextEditor x:Name="richTextEditor"
 VerticalOptions="FillAndExpand"
-HtmlText="{Binding HtmlContent, Mode=TwoWay}" />
-        <views:CustomToolbar/>
+HtmlText="{Binding HtmlContent, Mode=TwoWay}" />-->
+
+        <views:CustomToolbar2 x:Name="customToolbar"/>
     </StackLayout>
 </ContentPage>
 

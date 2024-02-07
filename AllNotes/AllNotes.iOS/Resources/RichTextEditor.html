@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<style>
+		body, #editor {
+			margin: 0;
+			padding: 10px;
+			height: 100%;
+			overflow: auto;
+			font-family: Arial;
+		}
+
+		#editor {
+			border: 1px solid #ccc;
+			min-height: 200px;
+		}
+	</style>
+</head>
+<body>
+	<div id='editor' contenteditable='true'></div>
+
+	<script>
+		function initEditor() {
+			// Initialization logic here
+		}
+
+		function setContent(content) {
+			setTimeout(() => {
+				document.getElementById('editor').innerHTML = content;
+				document.getElementById('editor').style.display = 'block';
+			}, 100); // Adjust delay as needed
+		}
+
+		function setBold() {
+			document.execCommand('bold', false, null);
+		}
+
+		function setItalic() {
+			document.execCommand('italic', false, null);
+		}
+
+		window.onload = initEditor;
+	</script>
+</body>
+</html>

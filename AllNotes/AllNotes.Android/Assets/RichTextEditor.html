@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<style>
+		body, #editor {
+			margin: 0;
+			padding: 10px;
+			height: 100%;
+			overflow: auto;
+			font-family: Arial;
+		}
+
+		#editor {
+			border: 1px solid #ccc;
+			min-height: 200px;
+		}
+	</style>
+</head>
+<body>
+	<div id='editor' contenteditable='true'></div>
+
+	<script>
+		function initEditor() {
+			// Initialization logic here
+		}
+
+		function setContent(content) {
+			setTimeout(() => {
+				document.getElementById('editor').innerHTML = content;
+				document.getElementById('editor').style.display = 'block';
+			}, 100); // Adjust delay as needed
+		}
+
+        function setBold() {
+            console.log('Executing setBold');
+			document.execCommand('bold', false, null);
+		}
+
+        function setItalic() {
+            
+			document.execCommand('italic', false, null);
+		}
+            function setUnderline() {
+                document.execCommand('underline', false, null);
+            }
+
+            function setStrikeThrough() {
+                document.execCommand('strikeThrough', false, null);
+            }
+        function setTextAlignLeft() {
+            document.execCommand('justifyLeft', false, null);
+        }
+
+        function setTextAlignCenter() {
+            document.execCommand('justifyCenter', false, null);
+        }
+
+        function setTextAlignRight() {
+            document.execCommand('justifyRight', false, null);
+        }
+
+        function setTextAlignJustify() {
+            document.execCommand('justifyFull', false, null);
+        }
+        /*function setUnorderedList() {
+            document.execCommand('insertUnorderedList', false, null);
+        }
+
+        function setOrderedList() {
+            document.execCommand('insertOrderedList', false, null);
+		}*/
+        function setBulletedList() {
+            document.execCommand('insertUnorderedList', false, null);
+        }
+
+        function setNumberedList() {
+            document.execCommand('insertOrderedList', false, null);
+        }
+        function increaseIndent() {
+            document.execCommand('indent', false, null);
+        }
+
+        function decreaseIndent() {
+            document.execCommand('outdent', false, null);
+		}
+        function setTextColor(color) {
+            console.log('Executing setTextColor');
+            document.execCommand('foreColor', false, color);
+        }
+
+        function setTextBackgroundColor(color) {
+            document.execCommand('hiliteColor', false, color);
+		}
+        function setSubscript() {
+            document.execCommand('subscript', false, null);
+        }
+
+        function setSuperscript() {
+            document.execCommand('superscript', false, null);
+        }
+        function clearFormatting() {
+            document.execCommand('removeFormat', false, null);
+        }
+		window.onload = initEditor;
+	</script>
+</body>
+</html>
+

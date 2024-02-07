@@ -196,4 +196,7 @@
   <ItemGroup>
     <BundleResource Include="Resources\archive_folder.png" />
   </ItemGroup>
+  <ItemGroup>
+    <BundleResource Include="Resources\RichTextEditor.html" />
+  </ItemGroup>
 </Project>

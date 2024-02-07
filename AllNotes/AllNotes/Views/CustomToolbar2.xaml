@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="AllNotes.Views.CustomToolbar2">
+    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never" HorizontalOptions="FillAndExpand">
+        <StackLayout Orientation="Horizontal" BackgroundColor="LightGray" Padding="5" WidthRequest="3000" HorizontalOptions="FillAndExpand" >
+            <FlexLayout Direction="Column" JustifyContent="Start" AlignItems="Center" Margin="10, 5" Padding="5">
+                <ImageButton Source="menuDots.png"
+                     HeightRequest="20"
+                     WidthRequest="20"
+                     BackgroundColor="Transparent"
+                     Command="{Binding OpenToolBarMenuCommand}"/>
+                <Label Text="More"
+               VerticalOptions="Center"
+               Margin="5,0,0,0">
+
+                </Label>
+            </FlexLayout>
+            
+            <Button Text="B" Command="{Binding BoldCommand}" />
+            <Button Text="I" Command="{Binding ItalicCommand}" />
+            <Button Text="U" Command="{Binding UnderlineCommand}" />
+            <Button Text="S" Command="{Binding StrikeThroughCommand}" />
+            <Button Text="Left" Command="{Binding AlignLeftCommand}" />
+            <Button Text="Center" Command="{Binding AlignCenterCommand}" />
+            <Button Text="Right" Command="{Binding AlignRightCommand}" />
+            <Button Text="Justify" Command="{Binding JustifyCommand}" />
+            <Button Text="Bulleted List" Command="{Binding BulletedListCommand}" />
+            <Button Text="Numbered List" Command="{Binding NumberedListCommand}" />
+            <Button Text="Increase Indent" Command="{Binding IncreaseIndentCommand}" />
+            <Button Text="Decrease Indent" Command="{Binding DecreaseIndentCommand}" />
+            
+
+            <Button Text="Set Background Color" Command="{Binding SetBackgroundColorCommand}" CommandParameter="yellow" />
+           
+
+            <Button Text="Subscript" Command="{Binding SubscriptCommand}" />
+            <Button Text="Superscript" Command="{Binding SuperscriptCommand}" />
+            <Button Text="Clear Formatting" Command="{Binding ClearFormattingCommand}" />
+            <Button Text="Set Text Color" Clicked="OpenColorPicker_Clicked" />
+            <!-- Add other buttons as needed, with Margin for spacing -->
+        </StackLayout>
+    </ScrollView>
+    </ContentView>

@@ -47,6 +47,8 @@
    
 	  <PackageReference Include="Syncfusion.Xamarin.SfRichTextEditor" Version="24.1.46" />
    
+	  <PackageReference Include="System.Text.Json" Version="8.0.1" />
+   
 	  
 	 
 	  <PackageReference Include="Xamarin.CommunityToolkit" Version="2.0.6" />
@@ -76,6 +78,9 @@
 		<Compile Update="Views\NewNote\Popups\NoteColorSelectionPopup.xaml.cs">
 		  <DependentUpon>NoteColorSelectionPopup.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="Views\NewNote\Popups\ColorPickerPopup.xaml.cs">
+		  <DependentUpon>ColorPickerPopup.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\NewNote\UI\ToolbarButton.xaml.cs">
 			<DependentUpon>ToolbarButton.xaml</DependentUpon>
 		</Compile>
@@ -83,6 +88,9 @@
 
   <ItemGroup>
     <EmbeddedResource Update="Views\CustomToolbar.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Views\CustomToolbar2.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="Views\NewNote\Popups\MainPagePopup.xaml">
@@ -125,6 +133,9 @@
 	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\SubFolderPopup.xaml">
+	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+	</EmbeddedResource>
+	<EmbeddedResource Update="Views\NewNote\Popups\ColorPickerPopup.xaml">
 	  <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
 	</EmbeddedResource>
 	<EmbeddedResource Update="Views\NewNote\Popups\ToolbarMorePopup.xaml">

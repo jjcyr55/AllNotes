@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Foundation;
 using Syncfusion.Licensing;
 using UIKit;
@@ -12,6 +11,7 @@ namespace AllNotes.iOS
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
     [Register("AppDelegate")]
+ 
     public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
         //
@@ -26,11 +26,15 @@ namespace AllNotes.iOS
             SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NAaF5cWWJCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWX5feXRcR2NeU0NyXEQ=");
             Syncfusion.XForms.iOS.RichTextEditor.SfRichTextEditorRenderer.Init();
             Syncfusion.XForms.iOS.Buttons.SfCheckBoxRenderer.Init();
-            Syncfusion.SfDataGrid.XForms.iOS.SfDataGridRenderer.Init();
+           // Syncfusion.SfDataGrid.XForms.iOS.SfDataGridRenderer.Init();
             global::Xamarin.Forms.Forms.Init();
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
+        }
+        public class BaseUrlGetter : IBaseUrlGetter
+        {
+            public string GetBaseUrl() => NSBundle.MainBundle.BundlePath + "/";
         }
     }
 }

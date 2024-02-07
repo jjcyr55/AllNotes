@@ -50,7 +50,7 @@ namespace AllNotes.ViewModels
         private Dictionary<int, bool> selectedNotes = new Dictionary<int, bool>();
 
         // Method to update the selection state
-        
+
 
         public bool IsNotEditMode => !IsEditMode;
         private bool isFirstNoteAfterRestart = true;
@@ -69,7 +69,7 @@ namespace AllNotes.ViewModels
                     UpdateMenuItems();
 
                     // Re-evaluate command execution status
-                 //   ((Command)DeleteNoteCommand).ChangeCanExecute();
+                    //   ((Command)DeleteNoteCommand).ChangeCanExecute();
                     ((Command)RestoreNoteCommand).ChangeCanExecute();
                 }
             }
@@ -1023,20 +1023,20 @@ namespace AllNotes.ViewModels
 
 
         public async Task<int> GetArchiveFolderIdAsync()
-         {
-             var archiveFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault(f => f.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase));
-             if (archiveFolder != null)
-             {
-                 return archiveFolder.Id;
-             }
-             else
-             {
-                 Debug.WriteLine("Archive folder not found.");
-                 return -1; // Indicate failure or handle this case as needed.
-             }
-         }
+        {
+            var archiveFolder = AppDatabase.Instance().GetFolderList().FirstOrDefault(f => f.Name.Equals("Archive", StringComparison.OrdinalIgnoreCase));
+            if (archiveFolder != null)
+            {
+                return archiveFolder.Id;
+            }
+            else
+            {
+                Debug.WriteLine("Archive folder not found.");
+                return -1; // Indicate failure or handle this case as needed.
+            }
+        }
 
-       
+
         private async Task ArchiveNotesAsync()
         {
             int archiveFolderId = await GetArchiveFolderIdAsync();
@@ -1081,7 +1081,7 @@ namespace AllNotes.ViewModels
 
 
 
-        
+
         private async Task RestoreSelectedNoteAsync()
         {
             Debug.WriteLine($"Starting RestoreSelectedNoteAsync with {SelectedNotes.Count(note => note.IsSelected)} selected notes.");
@@ -1187,7 +1187,7 @@ namespace AllNotes.ViewModels
 
 
             ArchiveCommand = new Command(async () => await ArchiveNotesAsync());
-           
+
             RestoreNoteCommand = new Command(async () => await RestoreSelectedNoteAsync());
             _database = AppDatabase.Instance(); // Ensure you have a reference to your database
                                                 // IsArchiveFolder = selectedFolder.Name == "Archive";                // IsArchiveFolder = _database.IsFolderArchive(selectedFolder);

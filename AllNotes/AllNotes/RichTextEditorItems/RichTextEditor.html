@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+	<title>Rich Text Editor</title>
+	<style>
+		body {
+			padding: 0;
+			margin: 0;
+			font-family: Arial, Helvetica, sans-serif;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		#editor {
+			border: 1px solid #ccc;
+			min-height: 200px;
+			width: 100%;
+			height: calc(100% - 20px);
+			overflow-y: auto;
+		}
+	</style>
+</head>
+<body onLoad="initEditor();">
+    <div id="editor" contenteditable="true"></div>
+   
+    <script>
+        function initEditor() {
+            console.log('Editor initialized');
+        }
+        function setBold() {
+            console.log('Executing setBold');
+            document.execCommand('bold', false, null);
+		}
+        function setItalic() {
+            console.log('Executing setItalic');
+            document.execCommand('italic', false, null);
+		}
+        function setUnderline() {
+            console.log('Executing setUnderline');
+            document.execCommand('underline', false, null);
+        }
+
+        function setStrikeThrough() {
+            console.log('Executing setStrikeThrough');
+            document.execCommand('strikeThrough', false, null);
+        }
+        // Define setItalic and other functions similarly
+    </script>
+</body>
+</html>
+
