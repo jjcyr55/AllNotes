@@ -3,8 +3,8 @@
            xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
            xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
            
-           x:Class="AllNotes.Views.NewNote.Popups.ColorPickerPopup"
-           x:Name="ColorPickerPopup1"
+           x:Class="AllNotes.Views.NewNote.Popups.ColorPickerPopup1"
+           x:Name="ColorPickerPopup11"
            Size="300,60" VerticalOptions="Center" HorizontalOptions="Center"
            Color="Transparent"
            BackgroundColor="Transparent"

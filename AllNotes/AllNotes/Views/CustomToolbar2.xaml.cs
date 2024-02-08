@@ -18,14 +18,24 @@ namespace AllNotes.Views
             InitializeComponent();
         }
         public event EventHandler OpenColorPickerRequested;
+        public event EventHandler OpenColorPickerRequested1;
 
         protected virtual void OnOpenColorPickerRequested()
         {
             OpenColorPickerRequested?.Invoke(this, EventArgs.Empty);
         }
+        protected virtual void OnOpenColorPickerRequested1()
+        {
+            OpenColorPickerRequested1?.Invoke(this, EventArgs.Empty);
+        }
         private void OpenColorPicker_Clicked(object sender, EventArgs e)
         {
             OnOpenColorPickerRequested();
         }
+        private void OpenTextHighlightPicker_Clicked(object sender, EventArgs e)
+        {
+            OnOpenColorPickerRequested1();
+        }
+
     }
     }

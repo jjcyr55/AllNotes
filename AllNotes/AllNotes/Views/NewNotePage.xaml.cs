@@ -50,17 +50,12 @@ namespace AllNotes.Views.NewNote
         {
             InitializeComponent();
             customToolbar.OpenColorPickerRequested += CustomToolbar_OpenColorPickerRequested;
+            customToolbar.OpenColorPickerRequested1 += CustomToolbar_OpenColorPickerRequested1;
             NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = newNoteViewModel;
             SubscribeToMessages();
             newNoteViewModel.FetchWebViewContent = async () => await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
-            /*MessagingCenter.Subscribe<NewNoteViewModel>(this, "RequestSaveContent", async (sender) =>
-            {
-                var content = await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
-                // Now call a method on your ViewModel to actually save this content
-                // Ensure you have a method in your ViewModel to call for saving
-                (BindingContext as NewNoteViewModel)?.SaveNote();
-            });*/
+            
             
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RequestHtmlContent", async (sender) =>
             {
@@ -108,16 +103,7 @@ namespace AllNotes.Views.NewNote
         }
         
 
-        // Optional: Override the back button behavior if needed
-        /*protected override bool OnBackButtonPressed()
-        {
-            var viewModel = BindingContext as NewNoteViewModel;
-            if (viewModel != null)
-            {
-                Task.Run(() => viewModel.SaveNote()).Wait();
-            }
-            return base.OnBackButtonPressed();
-        }*/
+       
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -156,15 +142,8 @@ namespace AllNotes.Views.NewNote
                 LoadContentIntoWebView(_note.Text);
             }
         }
-        /*public async void GetNotesFromDb()
-        {
-            Notes.Clear();
-            var notes = await _noteRepository.GetNotes();
-            foreach (Note note in notes)
-            {
-                Notes.Add(note);
-            }
-        }*/
+       
+        
 
         private void LoadNoteContentIntoWebView(AppNote note)
         {
@@ -176,11 +155,11 @@ namespace AllNotes.Views.NewNote
                 };
             }
         }
-        private void CustomToolbar_OpenColorPickerRequested(object sender, EventArgs e)
+        /*private void CustomToolbar_OpenColorPickerRequested(object sender, EventArgs e)
         {
             var colorPickerPopup = new ColorPickerPopup(webViewRte);
             Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
-        }
+        }*/
         private async void SaveButton_Clicked(object sender, EventArgs e)
         {
             var content = await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
@@ -190,14 +169,22 @@ namespace AllNotes.Views.NewNote
                 viewModel.SaveNoteCommand.Execute(content);
             }
         }
-        /*private void WebViewRte_Navigated(object sender, WebNavigatedEventArgs e)
+        private void CustomToolbar_OpenColorPickerRequested(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(_newNoteViewModel.HtmlContent))
-            {
-                var decodedContent = WebUtility.UrlDecode(_newNoteViewModel.HtmlContent);
-                webViewRte.EvaluateJavaScriptAsync($"setContent('{decodedContent}');");
-            }
+            var colorPickerPopup = new ColorPickerPopup(webViewRte);
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
+        }
+        private void CustomToolbar_OpenColorPickerRequested1(object sender, EventArgs e)
+        {
+            var colorPickerPopup1 = new ColorPickerPopup1(webViewRte);
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup1);
+        }
+        /*private void CustomToolbar_OpenColorPickerRequested1(object sender, EventArgs e)
+        {
+            var colorPickerPopup1 = new ColorPickerPopup1(webViewRte);
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup1);
         }*/
+
         private void WebViewRte_Navigated(object sender, WebNavigatedEventArgs e)
         {
             if (!string.IsNullOrEmpty(_newNoteViewModel.HtmlContent))
