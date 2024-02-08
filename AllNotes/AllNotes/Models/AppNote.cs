@@ -26,7 +26,8 @@ namespace AllNotes.Models
         public string Text { get; set; }
         public string Text1 { get; set; }
         public string Date { get; set; }
-        public int Color { get; set; }
+          public int Color { get; set; }
+      //  public string Color { get; set; }
 
         // public bool IsFavorite { get; set; }
 

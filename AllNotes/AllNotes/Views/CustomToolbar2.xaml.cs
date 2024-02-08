@@ -36,6 +36,10 @@ namespace AllNotes.Views
         {
             OnOpenColorPickerRequested1();
         }
-
+        public event EventHandler OpenColorPickerRequested2;
+        private void OpenColorPicker_Clicked2(object sender, EventArgs e)
+        {
+            OpenColorPickerRequested2?.Invoke(this, EventArgs.Empty);
+        }
     }
     }

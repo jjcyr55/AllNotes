@@ -29,14 +29,15 @@ namespace AllNotes.ViewModels
 {
     public class NewNoteViewModel : BaseViewModel
     {
+        public Func<Task<string>> FetchWebViewBackgroundColor { get; set; }
 
         public ICommand MenuItemSelectedCommand { get; }
-       public ICommand SaveNoteCommand => new Command(SaveNote);
+        public ICommand SaveNoteCommand => new Command(SaveNote);
         public ICommand OpenMenuCommand => new Command(OpenMenu);
         public ICommand ShowColorPickerPopupCommand => new Command(ShowColorPickerPopup);
 
-       // public ICommand ShowColorPickerPopupCommand { get; }
-      //  public ICommand ShowColorPickerPopupCommand { get; private set; }
+        // public ICommand ShowColorPickerPopupCommand { get; }
+        //  public ICommand ShowColorPickerPopupCommand { get; private set; }
         public Func<Task<string>> FetchWebViewContent { get; set; }
 
         public ICommand BoldTextCommand => new Command(BoldText);
@@ -126,7 +127,7 @@ namespace AllNotes.ViewModels
             MessagingCenter.Send(this, "ExecuteJavaScript", "clearFormatting()");
         });
 
-        
+
         // public string NewNoteTitle { get; set; }
         // public string NewNoteText { get; set; }
         public string Date { get; set; }
@@ -140,7 +141,7 @@ namespace AllNotes.ViewModels
         private MenuPageViewModel _menuPageViewModel;
 
         private AppNote _note;
-        
+
         AppNote selectedNote = null;
         private FontAttributes _fontAttribute = FontAttributes.None;
         private MenuViewModel _menuViewModel;
@@ -152,8 +153,8 @@ namespace AllNotes.ViewModels
          {
              return Enum.GetValues(typeof(Colors)).Cast<Colors>();
          }*/
-       
-       // public ICommand SaveNoteCommand => new Command(SaveNoteContent);
+
+        // public ICommand SaveNoteCommand => new Command(SaveNoteContent);
         public async void SaveNoteContent(object parameter)
         {
             var content = parameter as string;
@@ -163,7 +164,7 @@ namespace AllNotes.ViewModels
                  return; // Return if the HTML content is null or empty
              }*/
             var db = AppDatabase.Instance();
-            
+
             if (_note == null)
             {
                 _note = new AppNote(); // Create a new note if it doesn't exist
@@ -184,14 +185,14 @@ namespace AllNotes.ViewModels
             {
                 if (_mainPageViewModel != null)
                 {
-                 //   _mainPageViewModel.GetNotesFromDb();
+                    //   _mainPageViewModel.GetNotesFromDb();
                     await Application.Current.MainPage.Navigation.PopAsync();
                 }
             });
-            
+
 
         }
-public FontAttributes FontAttribute
+        public FontAttributes FontAttribute
         {
             get => _fontAttribute;
             set
@@ -285,14 +286,14 @@ public FontAttributes FontAttribute
         }
 
 
-            public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
+        public NewNoteViewModel(MainPageViewModel mainPageViewModel, AppNote note)
         {
-          //  ShowColorPickerPopupCommand = new Command(ShowColorPickerPopup);
-          //  OpenColorPickerPopupCommand = new Command(ExecuteOpenColorPickerPopup);
+            //  ShowColorPickerPopupCommand = new Command(ShowColorPickerPopup);
+            //  OpenColorPickerPopupCommand = new Command(ExecuteOpenColorPickerPopup);
             //    SaveNoteCommand = new Command<string>(SaveNote);
             //    BackgroundColorAction = () => { /* Logic for Background Color */ };
             //   ShareAction = () => { /* Logic for Share */ };
-
+            WaitForHtmlContent();
             SetBackgroundColorCommand = new Command<string>((color) =>
             {
                 MessagingCenter.Send(this, "ExecuteJavaScript", $"setBackgroundColor('{color}')");
@@ -322,26 +323,26 @@ public FontAttributes FontAttribute
                 // Existing note - initialize with its content
                 NewNoteTitle = note.Title;
                 HtmlContent = note.Text; // Ensure this is the correct property for HTML content
-                NewNoteColorValue = note.Color;
+              //  NewNoteColorValue = note.Color;
             }
             else
             {
                 // New note - initialize as necessary
                 NewNoteTitle = "";
                 HtmlContent = ""; // Set as blank or a default value if needed
-                NewNoteColorValue= 0;
+                NewNoteColorValue = 0;
             }
 
 
 
             MenuItemSelectedCommand = new Command<MenuItemModel>(ExecuteMenuItem);
             MenuItems = new ObservableCollection<MenuItemModel>
-         {
-        //    new MenuItemModel { Title = "Background Color", Type = MenuType.ColorPicker },
-         //    new MenuItemModel { Title = "Share", CommandAction = ShareNote },
-         //    new MenuItemModel {  Icon = "heart.png", CommandAction = ToggleFavorite }, // Update this line
-             
-         };
+            {
+                //    new MenuItemModel { Title = "Background Color", Type = MenuType.ColorPicker },
+                //    new MenuItemModel { Title = "Share", CommandAction = ShareNote },
+                //    new MenuItemModel {  Icon = "heart.png", CommandAction = ToggleFavorite }, // Update this line
+
+            };
 
             //   new MenuItemModel { Title = "Favorite", Command = new Command(FavoriteNote) }
 
@@ -368,15 +369,15 @@ public FontAttributes FontAttribute
                 NewNoteTitle = note.Title;
                 NewNoteText = note.Text;
                 Date = note.Date;
-                NewNoteColorValue = note.Color;
+              //  NewNoteColorValue = note.Color;
                 folderID = note.folderID;
                 selectedNote = note;
                 selectedFolderID = note.folderID;
             }
         }
-       /* var newNotePopup = new NewNotePopup();
-        newNotePopup.BindingContext = this;
-            Application.Current.MainPage.Navigation.ShowPopup(newNotePopup);*/
+        /* var newNotePopup = new NewNotePopup();
+         newNotePopup.BindingContext = this;
+             Application.Current.MainPage.Navigation.ShowPopup(newNotePopup);*/
         private void ShowColorPickerPopup()
         {
             var colorPickerPopup = new ColorPickerPopup();
@@ -384,11 +385,11 @@ public FontAttributes FontAttribute
             colorPickerPopup.BindingContext = this;
             Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
         }
-        
+
         private void ExecuteOpenColorPickerPopup()
         {
             var colorPickerViewModel = new ColorPickerViewModel();
-           // colorPickerViewModel.ColorSelected += OnColorSelected;
+            // colorPickerViewModel.ColorSelected += OnColorSelected;
             var colorPickerPopup = new ColorPickerPopup { BindingContext = colorPickerViewModel };
             Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup);
         }
@@ -439,7 +440,7 @@ public FontAttributes FontAttribute
         {
             item?.CommandAction?.Invoke();
         }
-       
+
         private async void ToggleFavorite()
         {
             IsFavorite = !IsFavorite;
@@ -578,7 +579,7 @@ public FontAttributes FontAttribute
             }
         }
 
-        
+
         private string _newNoteTitle;
 
         public string NewNoteTitle
@@ -736,6 +737,7 @@ public FontAttributes FontAttribute
         }*/
         public async void SaveNote()
         {
+
             if (FetchWebViewContent == null)
             {
                 Debug.WriteLine("FetchWebViewContent delegate is not set.");
@@ -784,6 +786,60 @@ public FontAttributes FontAttribute
                 await navigationPage?.PopAsync();
             }
         }
+        // This property or method should be set up to fetch the background color from the WebView
+        //  public Func<Task<string>> FetchWebViewBackgroundColor { get; set; }
+
+        /* public async void SaveNote()
+         {
+             var content = await FetchWebViewContent(); // Fetch content from WebView
+             var backgroundColor = await FetchWebViewBackgroundColor?.Invoke(); // Fetch the background color
+
+             if (string.IsNullOrEmpty(content))
+             {
+                 Debug.WriteLine("Content is empty.");
+                 return;
+             }
+
+             // Ensure you have a valid format for the color, adjust if necessary
+             // For example, if your JavaScript returns color in "rgb()" format, you might need to convert it to HEX
+             // For this example, assuming backgroundColor is already in a suitable format (e.g., "#ffffff")
+
+             var db = AppDatabase.Instance();
+             string currentDateTime = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+             if (_note == null) // Creating a new note
+             {
+                 _note = new AppNote
+                 {
+                     Text = content,
+                     folderID = selectedFolderID,
+                     Title = NewNoteTitle,
+                     Date = currentDateTime,
+                     IsFavorite = IsFavorite,
+                     Color = backgroundColor, // Save the fetched background color
+                 };
+
+                 await db.InsertNote(_note);
+                 MessagingCenter.Send(this, "RefreshNotes");
+                 MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", selectedFolderID);
+             }
+             else // If updating an existing note
+             {
+                 _note.Text = content;
+                 _note.Color = backgroundColor; // Update the background color
+                 await db.UpdateNote(_note);
+                 MessagingCenter.Send<NewNoteViewModel, int>(this, "NoteUpdated", _note.folderID);
+                 MessagingCenter.Send(this, "NoteUpdated", _note);
+             }
+
+             // Navigation logic after saving
+             if (Application.Current.MainPage is FlyoutPage mainFlyoutPage)
+             {
+                 var navigationPage = mainFlyoutPage.Detail as NavigationPage;
+                 await navigationPage?.PopAsync();
+             }
+         }*/
+
 
         private Task WaitForHtmlContent()
         {
@@ -791,7 +847,7 @@ public FontAttributes FontAttribute
             {
                 while (string.IsNullOrEmpty(HtmlContent))
                 {
-                    Task.Delay(100).Wait(); // Adjust delay as necessary
+                    Task.Delay(500).Wait(); // Adjust delay as necessary
                 }
             });
         }

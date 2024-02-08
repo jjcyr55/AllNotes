@@ -30,7 +30,7 @@ namespace AllNotes.Views.NewNote
         private AppNote _note;
         public NewNoteViewModel _newNoteViewModel;
         private MainPageViewModel _mainPageViewModel;
-     
+
         public int FolderID { get; set; } // If needed for specific logic
 
         // Constructor for a new note in a specific folder
@@ -51,12 +51,13 @@ namespace AllNotes.Views.NewNote
             InitializeComponent();
             customToolbar.OpenColorPickerRequested += CustomToolbar_OpenColorPickerRequested;
             customToolbar.OpenColorPickerRequested1 += CustomToolbar_OpenColorPickerRequested1;
+            customToolbar.OpenColorPickerRequested2 += CustomToolbar_OpenColorPickerRequested2;
             NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = newNoteViewModel;
             SubscribeToMessages();
             newNoteViewModel.FetchWebViewContent = async () => await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
-            
-            
+
+
             MessagingCenter.Subscribe<NewNoteViewModel>(this, "RequestHtmlContent", async (sender) =>
             {
                 var content = await webViewRte.EvaluateJavaScriptAsync("document.getElementById('editor').innerHTML;");
@@ -65,7 +66,7 @@ namespace AllNotes.Views.NewNote
 
             NavigationPage.SetHasNavigationBar(this, false); // Assuming you want to hide the navigation bar
             _newNoteViewModel = newNoteViewModel ?? throw new ArgumentNullException(nameof(newNoteViewModel));
-        
+
 
             // After ensuring _newNoteViewModel is not null, subscribe to PropertyChanged.
             _newNoteViewModel.PropertyChanged += ViewModel_PropertyChanged;
@@ -101,9 +102,9 @@ namespace AllNotes.Views.NewNote
             NavigationPage.SetHasNavigationBar(this, false);
             BindingContext = new NewNoteViewModel();
         }
-        
 
-       
+
+
         protected override void OnDisappearing()
         {
             base.OnDisappearing();
@@ -128,7 +129,7 @@ namespace AllNotes.Views.NewNote
                 webViewRte.Source = new HtmlWebViewSource { Html = content };
             });
 
-           // _newNoteViewModel.LoadNoteContent().ConfigureAwait(false);
+            // _newNoteViewModel.LoadNoteContent().ConfigureAwait(false);
             webViewRte.Navigated += WebViewRte_Navigated;
             // Don't load content here since it's now handled after the WebView navigates
             SetWebViewSource();
@@ -142,8 +143,8 @@ namespace AllNotes.Views.NewNote
                 LoadContentIntoWebView(_note.Text);
             }
         }
-       
-        
+
+
 
         private void LoadNoteContentIntoWebView(AppNote note)
         {
@@ -178,6 +179,13 @@ namespace AllNotes.Views.NewNote
         {
             var colorPickerPopup1 = new ColorPickerPopup1(webViewRte);
             Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup1);
+        }
+        private void CustomToolbar_OpenColorPickerRequested2(object sender, EventArgs e)
+        {
+            var colorPickerPopup2 = new ColorPickerPopup2(webViewRte); // Assuming webViewRte is accessible here
+                                                                       // Subscribe to the ColorSelected event if your popup supports it
+                                                                       // This step depends on your ColorPickerPopup implementation
+            Application.Current.MainPage.Navigation.ShowPopup(colorPickerPopup2);
         }
         /*private void CustomToolbar_OpenColorPickerRequested1(object sender, EventArgs e)
         {

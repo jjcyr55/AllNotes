@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<xct:Popup xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+           
+           x:Class="AllNotes.Views.NewNote.Popups.ColorPickerPopup2"
+           x:Name="ColorPickerPopup22"
+           Size="300,60" VerticalOptions="Center" HorizontalOptions="Center"
+           Color="Transparent"
+           BackgroundColor="Transparent"
+           xct:ShadowEffect.Color="Transparent">
+
+    <Frame CornerRadius="15"
+           HasShadow="True"
+           IsClippedToBounds="True"
+           Padding="20"
+           Margin="20"
+           BackgroundColor="White">
+        <!-- You might want to set a solid background color to ensure readability -->
+        <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+            <StackLayout Orientation="Horizontal" Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
+                <!-- Red Button -->
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Red" Clicked="OnRedButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Green" Clicked="OnGreenButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Blue" Clicked="OnBlueButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Yellow" Clicked="OnYellowButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Purple" Clicked="OnPurpleButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Orange" Clicked="OnOrangeButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="Black" Clicked="OnBlackButtonClicked" />
+                <Button WidthRequest="50" HeightRequest="50" CornerRadius="25" BackgroundColor="White" Clicked="OnWhiteButtonClicked" />
+                <!-- Add more buttons as needed for different colors -->
+            </StackLayout>
+        </ScrollView>
+    </Frame>
+</xct:Popup>

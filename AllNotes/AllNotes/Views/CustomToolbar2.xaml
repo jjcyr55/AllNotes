@@ -16,6 +16,7 @@
 
                 </Label>
             </FlexLayout>
+            <Button x:Name="ChangeBackgroundButton" Text="Change Background Color" Clicked="OpenColorPicker_Clicked2"/>
             <Button Text="Set Text Color" Clicked="OpenColorPicker_Clicked" />
             <Button Text="Set Text Hilite" Clicked="OpenTextHighlightPicker_Clicked" />
             <Button Text="B" Command="{Binding BoldCommand}" />

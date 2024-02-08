@@ -57,6 +57,9 @@
   </ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Views\NewNote\Popups\ColorPickerPopup2.xaml.cs">
+		  <DependentUpon>ColorPickerPopup2.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="Views\NewNote\Popups\ColorPickerPopup1.xaml.cs">
 		  <DependentUpon>ColorPickerPopup1.xaml</DependentUpon>
 		</Compile>

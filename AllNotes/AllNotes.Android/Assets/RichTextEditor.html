@@ -23,14 +23,21 @@
 	<script>
 		function initEditor() {
 			// Initialization logic here
-		}
+        }
+        function setContent(content, backgroundColor = "#FFFFFF") { // Default to white if no color provided
+            var editor = document.getElementById('editor');
+            editor.innerHTML = content;
+            document.body.style.backgroundColor = backgroundColor; // Apply to the body for overall background
+            editor.setAttribute('data-background-color', backgroundColor); // Store the color in the data-attribute
+        }
 
-		function setContent(content) {
-			setTimeout(() => {
+        /*function setContent(content, backgroundColor = '#FFFFFF') {
+            setTimeout(() => {
+                document.body.style.backgroundColor = backgroundColor;
 				document.getElementById('editor').innerHTML = content;
 				document.getElementById('editor').style.display = 'block';
 			}, 100); // Adjust delay as needed
-		}
+		}*/
 
         function setBold() {
             console.log('Executing setBold');
@@ -91,7 +98,16 @@
 
         function setTextBackgroundColor(color) {
             document.execCommand('hiliteColor', false, color);
-		}
+
+        }
+        function setBackgroundColor(color) {
+            document.body.style.backgroundColor = color;
+            var editor = document.getElementById('editor');
+            editor.setAttribute('data-background-color', color); // Update the stored color
+        }
+        /*function getBackgroundColor() {
+            return document.body.style.backgroundColor;
+        }*/
         function setSubscript() {
             document.execCommand('subscript', false, null);
         }
@@ -101,6 +117,16 @@
         }
         function clearFormatting() {
             document.execCommand('removeFormat', false, null);
+        }
+        function saveContent() {
+            var editor = document.getElementById('editor');
+            var content = editor.innerHTML;
+            var backgroundColor = editor.getAttribute('data-background-color') || '#FFFFFF'; // Default to white
+            // Save content and backgroundColor to your storage
+        }
+        function loadContent(content, backgroundColor) {
+            document.body.style.backgroundColor = backgroundColor;
+            document.getElementById('editor').innerHTML = content;
         }
 		window.onload = initEditor;
 	</script>
